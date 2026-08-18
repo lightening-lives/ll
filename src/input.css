@@ -1,0 +1,436 @@
+@import "tailwindcss";
+
+@source "../index.html";
+@source "../src/**/*.js";
+
+/* =====================================================================
+   DARKFIELD — design tokens
+   Colour derived from what you physically see in a molecular lab.
+   ===================================================================== */
+@theme {
+  --color-void:  oklch(13% 0.012 250);   /* darkfield ground            */
+  --color-ink:   oklch(17% 0.014 250);   /* instrument housing          */
+  --color-slab:  oklch(23% 0.014 250);   /* raised panel                */
+  --color-line:  oklch(33% 0.014 250);   /* hairline rule               */
+  --color-mute:  oklch(64% 0.012 250);   /* secondary text on dark      */
+  --color-chalk: oklch(93% 0.006 250);   /* primary text on dark        */
+
+  --color-lumen: oklch(80% 0.150 72);    /* transmitted light — PRIMARY */
+  --color-serum: oklch(58% 0.170 30);    /* whole blood — STRUCTURAL only */
+  --color-alarm: oklch(70% 0.160 33);    /* warning text on dark  7.0:1  */
+  --color-deep:  oklch(48% 0.180 30);    /* accent text on paper  6.2:1  */
+  --color-probe: oklch(82% 0.140 170);   /* fluorophore — data states   */
+  --color-bone:  oklch(95% 0.012 85);    /* filter paper — the payoff   */
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-sans:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+
+  --tracking-hud: 0.18em;
+}
+
+/* Global illumination level, 0 → 1, written by scene.js as you scroll. */
+:root { --lumen-level: 0.06; }
+
+/* =====================================================================
+   BASE
+   ===================================================================== */
+@layer base {
+  * { -webkit-tap-highlight-color: transparent; }
+
+  html {
+    scroll-behavior: smooth;
+    background: var(--color-void);
+  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+  body {
+    background: var(--color-void);
+    color: var(--color-chalk);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    overflow-x: clip;
+  }
+
+  ::selection { background: var(--color-lumen); color: var(--color-void); }
+
+  /* the nav is fixed — anchor targets must not land underneath it */
+  section[id], main[id] { scroll-margin-top: 6rem; }
+
+  h1, h2, h3 {
+    font-family: var(--font-display);
+    font-variation-settings: "SOFT" 20, "WONK" 0;
+    font-weight: 400;
+    line-height: 0.94;
+    letter-spacing: -0.02em;
+    text-wrap: balance;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-lumen);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Instrumentation, not software. Nothing rounds past 4px but the drop. */
+  input, select, textarea, button { font: inherit; border-radius: 2px; }
+}
+
+/* =====================================================================
+   TYPE UTILITIES
+   ===================================================================== */
+@utility hud {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: var(--tracking-hud);
+  text-transform: uppercase;
+}
+
+@utility display-xl {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
+  font-size: clamp(2.5rem, min(8.2vw, 15.5svh), 7.5rem);
+  line-height: 0.86;
+  letter-spacing: -0.035em;
+}
+
+@utility display-lg {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 96, "SOFT" 25, "WONK" 0;
+  font-size: clamp(2.25rem, 5.6vw, 4.75rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+}
+
+/* Figures always read as measured data. */
+@utility figure-num {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.04em;
+}
+
+@utility rule-t { border-top: 1px solid var(--color-line); }
+
+/* =====================================================================
+   3D STAGE SYSTEM
+   Real DOM in real Z. No canvas — every word stays selectable.
+   ===================================================================== */
+.scene        { position: relative; }
+.stage        { position: sticky; top: 0; height: 100svh;
+                perspective: 1200px; perspective-origin: 50% 48%;
+                overflow: hidden; }
+.world        { position: absolute; inset: 0; transform-style: preserve-3d;
+                will-change: transform; }
+.layer        { position: absolute; inset: 0; transform-style: preserve-3d; }
+.flat         { transform-style: flat; }
+
+/* --- the drop --------------------------------------------------------
+   A pendant droplet, not a sphere — a sphere always reads as a marble.
+   Drawn as SVG so the silhouette is exact: dark body, one tight specular,
+   and light TRANSMITTED through the bulb from below. Glow tracks the
+   global illumination level, so the hero really does start near-dark.
+   -------------------------------------------------------------------- */
+.drop {
+  position: absolute;
+  left: var(--drop-x, 50%); top: var(--drop-y, 50%);
+  width: var(--drop-size, 30vmin);
+  aspect-ratio: 100 / 140;
+  transform: translate(-50%, -50%);
+}
+.drop__svg {
+  width: 100%; height: 100%; display: block; overflow: visible;
+  filter:
+    drop-shadow(0 0 3vmin oklch(58% 0.18 34 / calc(.12 + var(--lumen-level) * .34)))
+    drop-shadow(0 0 12vmin oklch(62% 0.16 46 / calc(.05 + var(--lumen-level) * .24)));
+}
+/* the caustic the drop throws onto the ground plane below it */
+.drop::after {
+  content: ""; position: absolute; left: 50%; top: 99%;
+  width: 128%; height: 30%; transform: translateX(-50%);
+  background: radial-gradient(ellipse at 50% 10%,
+    oklch(76% 0.15 56 / calc(.05 + var(--lumen-level) * .22)) 0%, transparent 58%);
+  filter: blur(2.4vmin);
+  pointer-events: none;
+}
+
+.speck {
+  position: absolute; border-radius: 50%;
+  background: var(--color-lumen);
+  opacity: .5;
+}
+
+/* --- dried blood spot card ------------------------------------------- */
+.dbs {
+  position: absolute; left: var(--dbs-x, 50%); top: var(--dbs-y, 50%);
+  width: var(--dbs-w, min(64vw, 300px)); aspect-ratio: 1.62;
+  margin-left: calc(var(--dbs-w, min(64vw, 300px)) / -2);
+  margin-top: calc(var(--dbs-w, min(64vw, 300px)) / -3.24);
+  transform-style: preserve-3d;
+}
+.dbs__face {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, oklch(88% 0.012 85 / .5) 0 1px, transparent 1px 3px),
+    linear-gradient(150deg, oklch(93% 0.014 85), oklch(83% 0.016 82));
+  border: 1px solid oklch(70% 0.02 80);
+  box-shadow: 0 3vmin 8vmin oklch(0% 0 0 / .55);
+  backface-visibility: hidden;
+}
+.dbs__back {
+  position: absolute; inset: 0;
+  background: linear-gradient(150deg, oklch(66% 0.014 82), oklch(56% 0.016 80));
+  transform: translateZ(-3px) rotateY(180deg);
+  backface-visibility: hidden;
+}
+.dbs__spot {
+  position: absolute; width: 15%; aspect-ratio: 1; border-radius: 50%;
+  top: 50%; transform: translateY(-50%);
+  background: radial-gradient(circle at 40% 36%,
+    oklch(48% 0.17 32), oklch(30% 0.13 28) 62%, oklch(22% 0.09 26));
+  border: 1px solid oklch(62% 0.02 80);
+}
+.dbs__spot.is-lit {
+  background: radial-gradient(circle at 40% 36%,
+    oklch(86% 0.15 66), oklch(66% 0.18 44) 55%, oklch(44% 0.17 32));
+  box-shadow: 0 0 3vmin oklch(78% 0.16 55 / .75);
+}
+
+/* --- double helix ----------------------------------------------------- */
+.helix       { position: absolute; left: var(--helix-x, 50%); top: 50%;
+               transform-style: preserve-3d; }
+.rung        { position: absolute; left: 0; top: 0; transform-style: preserve-3d;
+               height: 2px; }
+.rung__bar   { position: absolute; inset: 0;
+               background: linear-gradient(90deg,
+                 var(--color-probe), oklch(50% 0.03 220), var(--color-lumen));
+               opacity: .5; }
+.rung__node  { position: absolute; top: 50%; width: 1.15vmin; height: 1.15vmin;
+               margin-top: -0.575vmin; border-radius: 50%; }
+.rung__node--a { left: -0.575vmin;  background: var(--color-probe);
+                 box-shadow: 0 0 1.4vmin oklch(82% 0.14 170 / .6); }
+.rung__node--b { right: -0.575vmin; background: var(--color-lumen);
+                 box-shadow: 0 0 1.4vmin oklch(80% 0.15 72 / .6); }
+.rung.is-variant .rung__bar  { background: var(--color-serum); opacity: 1; height: 3px; top: -0.5px; }
+.rung.is-variant .rung__node { background: var(--color-serum);
+                               box-shadow: 0 0 2.6vmin oklch(58% 0.17 30 / .95);
+                               width: 1.7vmin; height: 1.7vmin; margin-top: -0.85vmin; }
+
+/* --- golden circle rings ---------------------------------------------- */
+.ring {
+  position: absolute; left: 50%; top: 50%;
+  border: 1px solid var(--color-line); border-radius: 50%;
+  transform-style: preserve-3d;
+}
+.ring::before {
+  content: ""; position: absolute; inset: 8%;
+  border: 1px solid oklch(33% 0.014 250 / .5); border-radius: 50%;
+}
+
+/* =====================================================================
+   SCENE GEOMETRY PLACEMENT — mobile first, then the side-by-side desktop
+   composition. Kept here (not inline) so the breakpoints can actually win.
+   ===================================================================== */
+.scene-copy { background: none; }
+
+/* --- narrow: geometry sits in the upper third, copy below on a scrim --- */
+.drop  { --drop-x: 50%; --drop-y: 22%; --drop-size: 30vw; }
+.dbs   { --dbs-x: 50%;  --dbs-y: 24%; }
+.helix { --helix-x: 50%; }
+.rung  { width: 44vw; margin-left: -22vw; }
+.ring  { width: 86vw; height: 86vw; margin: -43vw 0 0 -43vw; }
+
+.scene-copy {
+  background: linear-gradient(to top,
+    var(--color-void) 58%,
+    oklch(13% 0.012 250 / .88) 78%,
+    transparent 100%);
+  padding-top: 3.5rem;
+}
+
+@media (min-width: 768px) {
+  .scene-copy { background: none; padding-top: 0; }
+  .drop  { --drop-x: 71%; --drop-y: 38%; --drop-size: 29vmin; }
+  .dbs   { --dbs-x: 30%;  --dbs-y: 52%; --dbs-w: min(58vmin, 460px); }
+  .helix { --helix-x: 70%; }
+  .rung  { width: 30vmin; margin-left: -15vmin; }
+  .ring  { width: 62vmin; height: 62vmin; margin: -31vmin 0 0 -31vmin; }
+}
+
+/* =====================================================================
+   ILLUMINATION — the page lightens as you descend
+   ===================================================================== */
+.illum {
+  position: fixed; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    radial-gradient(120vmax 90vmax at 50% 42%,
+      oklch(80% 0.15 72 / calc(var(--lumen-level) * 0.16)) 0%,
+      transparent 62%);
+  mix-blend-mode: screen;
+}
+/* the darkfield stop — heavy at the top of the page, lifts as you go */
+.vignette {
+  position: fixed; inset: 0; pointer-events: none; z-index: 6;
+  background: radial-gradient(120vmax 85vmax at 50% 45%,
+    transparent 20%,
+    oklch(8% 0.01 250 / calc(0.85 - var(--lumen-level) * 0.8)) 100%);
+}
+
+/* =====================================================================
+   HUD — the instrument chrome
+   ===================================================================== */
+.hud-rail {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 4.5rem; z-index: 40;
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 1rem; pointer-events: none;
+  padding: 5.75rem 0 1.75rem;   /* clear the fixed nav, and the floor */
+}
+@media (max-width: 767px) { .hud-rail { display: none; } }
+.hud-rail__track {
+  width: 1px; flex: 1; background: var(--color-line); position: relative;
+}
+.hud-rail__fill {
+  position: absolute; left: 0; top: 0; width: 1px; height: 0%;
+  background: var(--color-lumen);
+  box-shadow: 0 0 8px oklch(80% 0.15 72 / .8);
+}
+.hud-rail__scale {
+  writing-mode: vertical-rl; transform: rotate(180deg);
+  color: var(--color-mute);
+}
+
+/* HUD inverts over the closing light section */
+body.is-lit .hud-rail__track { background: oklch(80% 0.02 85); }
+body.is-lit .hud-rail__scale,
+body.is-lit .nav a,
+body.is-lit .nav__mark { color: oklch(25% 0.02 250); }
+body.is-lit .nav { border-color: oklch(82% 0.015 85); }
+/* must out-specify `body.is-lit .nav a` above, or the CTA goes dark-on-dark */
+body.is-lit .nav a.nav__cta {
+  background: var(--color-void); color: var(--color-bone);
+}
+body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
+
+/* =====================================================================
+   COMPONENTS
+   ===================================================================== */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 50;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem clamp(1rem, 4vw, 2.5rem);
+  border-bottom: 1px solid transparent;
+  backdrop-filter: blur(14px);
+  transition: border-color .4s ease, background-color .4s ease;
+}
+.nav.is-stuck { border-color: var(--color-line); background: oklch(13% 0.012 250 / .72); }
+body.is-lit .nav.is-stuck { background: oklch(95% 0.012 85 / .82); }
+
+.spec-strip {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+  background: var(--color-line); border: 1px solid var(--color-line);
+}
+@media (min-width: 640px) { .spec-strip { grid-template-columns: repeat(4, 1fr); } }
+.spec-strip > * { background: var(--color-void); padding: .9rem 1rem; }
+
+/* the workflow lane — a real timeline above the steps, filling as you scroll */
+.wf-lane { position: relative; padding-top: 3rem; }
+.wf-lane::before,
+.wf-lane::after {
+  content: ""; position: absolute; top: 1.35rem; height: 1px; pointer-events: none;
+}
+.wf-lane::before {
+  left: 0; right: 0;
+  background: linear-gradient(90deg, transparent, var(--color-line) 4%,
+              var(--color-line) 96%, transparent);
+}
+.wf-lane::after {
+  left: 0; width: calc(var(--wf-progress, 0) * 100%);
+  background: var(--color-lumen);
+  box-shadow: 0 0 10px oklch(80% 0.15 72 / .7);
+}
+
+/* assay cards tilt into place — 3D, not a fade */
+.assay-card {
+  background: linear-gradient(160deg, var(--color-ink), var(--color-void));
+  border: 1px solid var(--color-line);
+  transform-style: preserve-3d;
+  transition: border-color .35s ease, transform .35s cubic-bezier(.22,.61,.36,1),
+              box-shadow .35s ease;
+}
+.assay-card:hover {
+  border-color: oklch(55% 0.09 66);
+  transform: translateZ(28px) translateY(-2px);
+  box-shadow: 0 1.5rem 3.5rem oklch(0% 0 0 / .5);
+}
+@media (prefers-reduced-motion: reduce) {
+  .assay-card:hover { transform: none; }
+}
+
+.field input, .field select {
+  width: 100%; background: transparent; color: inherit;
+  border: 0; border-bottom: 1px solid oklch(55% 0.02 85);
+  padding: .55rem 0; border-radius: 0;
+  transition: border-color .25s ease;
+}
+.field input:focus, .field select:focus {
+  outline: none; border-bottom-color: var(--color-deep);
+}
+.field label { color: oklch(45% 0.02 250); }
+
+/* =====================================================================
+   HANDOFF AID — press S to outline every unfilled data slot
+   ===================================================================== */
+body.show-slots [data-slot] {
+  outline: 1px dashed var(--color-probe);
+  outline-offset: 3px;
+  position: relative;
+}
+body.show-slots [data-slot]::after {
+  content: attr(data-slot);
+  position: absolute; top: -0.25rem; left: 0; transform: translateY(-100%);
+  font-family: var(--font-mono); font-size: 9px; letter-spacing: .1em;
+  background: var(--color-probe); color: var(--color-void);
+  padding: 1px 5px; z-index: 60; pointer-events: none; white-space: nowrap;
+}
+
+/* =====================================================================
+   MOTION SAFETY
+   scene.js adds body.no-motion when the OS asks for reduced motion (or
+   when ?motion=off is used for QA). Every scrub scene then collapses to
+   a static, fully readable document — nothing is hidden behind a tween.
+   ===================================================================== */
+body.no-motion .scene       { height: auto !important; }
+body.no-motion .stage       { position: static; height: auto; overflow: visible; }
+body.no-motion .world       { position: relative; height: 42svh; min-height: 280px;
+                              overflow: hidden; }
+body.no-motion .world,
+body.no-motion .helix,
+body.no-motion .dbs,
+body.no-motion .ring        { transform: none !important; }
+body.no-motion .dbs         { transform: translate(-50%, -50%) !important;
+                              left: 50%; top: 50%; margin: 0; }
+body.no-motion .scene-layer { position: relative; inset: auto;
+                              padding: 0 0 6svh; }
+body.no-motion .scene-layer > div { height: auto; }
+body.no-motion .scene-copy  { background: none; padding-top: 0; }
+body.no-motion #ringCopy    { height: auto; }
+body.no-motion .ring-copy   { position: relative; inset: auto; opacity: 1 !important;
+                              margin-bottom: 3.5rem; }
+body.no-motion #variantCallout { position: relative; left: auto; top: auto;
+                              opacity: 1 !important; margin-top: 1.5rem; }
+body.no-motion #workflowTrack  { flex-wrap: wrap; transform: none !important;
+                              gap: 1rem; padding-right: 1.5rem; }
+body.no-motion .wf-step     { width: 100%; min-height: 0; }
+body.no-motion .wf-lane     { overflow: visible; padding-top: 2rem; }
+body.no-motion .wf-lane::after { width: 100%; }
+body.no-motion .hud-rail    { display: none; }
+body.no-motion .vignette    { display: none; }
+
+@media (prefers-contrast: more) {
+  :root { --lumen-level: 1; }
+  .vignette { display: none; }
+}

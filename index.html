@@ -1,0 +1,315 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Lightening Lives — genetic screening from one drop of blood</title>
+<meta name="description" content="Dried-blood-spot genetic and molecular screening built for the places cold chains do not reach. Newborn panels, haemoglobinopathies and carrier testing at population scale.">
+<meta name="theme-color" content="#0a0d14">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./dist/site.css">
+</head>
+<body>
+
+<!-- ============ instrument chrome ============ -->
+<div class="illum" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+
+<a href="#menu" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-lumen focus:text-void focus:px-3 focus:py-2 hud">Skip to assay menu</a>
+
+<nav class="nav">
+  <a href="#top" class="nav__mark flex items-baseline gap-2 text-chalk no-underline">
+    <span class="font-display text-[1.35rem] leading-none tracking-[-.02em]">Lightening&nbsp;Lives</span>
+    <span class="hud text-mute hidden sm:inline">LLP</span>
+  </a>
+  <div class="hidden md:flex items-center gap-7">
+    <a href="#menu"        class="hud text-mute hover:text-chalk transition-colors no-underline">Assays</a>
+    <a href="#performance" class="hud text-mute hover:text-chalk transition-colors no-underline">Performance</a>
+    <a href="#workflow"    class="hud text-mute hover:text-chalk transition-colors no-underline">Workflow</a>
+    <a href="#circle"      class="hud text-mute hover:text-chalk transition-colors no-underline">About</a>
+  </div>
+  <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
+</nav>
+
+<div class="hud-rail" aria-hidden="true">
+  <span class="hud-rail__scale hud" id="scaleRead">10⁰ m</span>
+  <div class="hud-rail__track"><div class="hud-rail__fill" id="railFill"></div></div>
+  <span class="hud-rail__scale hud" id="pctRead">00%</span>
+</div>
+
+<main id="top">
+
+<!-- ================= 1 · HERO ================= -->
+<section class="scene" id="hero" style="height:200svh">
+  <div class="stage" data-pin>
+    <!-- DEPTH: the only thing the camera dollies through. Type never enters Z. -->
+    <div class="world" id="heroDepth" aria-hidden="true">
+      <div class="layer" id="speckField"></div>
+      <div class="layer" style="transform:translateZ(-260px)">
+        <div class="drop" id="heroDrop">
+          <svg class="drop__svg" viewBox="0 0 100 140" role="presentation">
+            <defs>
+              <radialGradient id="dBody" cx="38%" cy="27%" r="82%">
+                <stop offset="0%"   stop-color="#9d2418"/>
+                <stop offset="34%"  stop-color="#5d1310"/>
+                <stop offset="72%"  stop-color="#2c0806"/>
+                <stop offset="100%" stop-color="#150403"/>
+              </radialGradient>
+              <radialGradient id="dThrough" cx="52%" cy="78%" r="42%">
+                <stop offset="0%"   stop-color="#ffb264" stop-opacity=".92"/>
+                <stop offset="46%"  stop-color="#e4622a" stop-opacity=".34"/>
+                <stop offset="100%" stop-color="#e4622a" stop-opacity="0"/>
+              </radialGradient>
+              <linearGradient id="dRim" x1="0" y1="1" x2="0.4" y2="0">
+                <stop offset="0%"   stop-color="#ffc789" stop-opacity=".75"/>
+                <stop offset="55%"  stop-color="#ff8f4d" stop-opacity=".12"/>
+                <stop offset="100%" stop-color="#ff8f4d" stop-opacity="0"/>
+              </linearGradient>
+              <filter id="dSoft" x="-40%" y="-40%" width="180%" height="180%">
+                <feGaussianBlur stdDeviation="3.2"/>
+              </filter>
+              <clipPath id="dClip">
+                <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z"/>
+              </clipPath>
+            </defs>
+            <g clip-path="url(#dClip)">
+              <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z" fill="url(#dBody)"/>
+              <rect x="0" y="0" width="100" height="140" fill="url(#dThrough)" style="mix-blend-mode:screen"/>
+              <ellipse cx="35" cy="52" rx="7" ry="12" fill="#ffe4c4" opacity=".62"
+                       filter="url(#dSoft)" transform="rotate(-18 35 52)"/>
+            </g>
+            <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z"
+                  fill="none" stroke="url(#dRim)" stroke-width="1.6"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+    <!-- TYPE: flat, at Z=0, so it stays crisp and uncropped at every scroll position -->
+    <div class="scene-layer absolute inset-0 flex items-end" id="heroType">
+      <div class="scene-copy mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-[9svh]">
+        <p class="hud text-lumen mb-6" data-ll="hero.eyebrow"></p>
+        <h1 class="display-xl text-chalk">
+          <span class="block" data-ll="hero.line1"></span>
+          <span class="block" data-ll="hero.line2"></span>
+          <span class="block italic" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
+        </h1>
+        <p class="mt-7 max-w-[44ch] text-mute text-[1.0625rem]" data-slot="SLOT-03" data-ll="hero.standfirst"></p>
+        <div class="mt-8 flex flex-wrap items-center gap-3" id="heroCta">
+          <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Request a test kit</a>
+          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors" data-slot="SLOT-04">Download assay menu</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- spec strip: the four numbers a lab director looks for before anything else -->
+<section class="relative z-10 mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-[10svh]">
+  <div class="spec-strip" data-slot="SLOT-05" id="specStrip"></div>
+</section>
+
+<!-- ================= 2 · THE SPECIMEN ================= -->
+<section class="scene" id="specimen" style="height:260svh">
+  <div class="stage" data-pin>
+    <div class="world" aria-hidden="true">
+      <div class="layer">
+        <div class="dbs" id="dbsCard">
+          <div class="dbs__face">
+            <div class="absolute inset-x-0 top-0 p-[6%] flex justify-between items-start">
+              <span class="font-mono text-[8px] tracking-[.14em] uppercase text-[oklch(38%_.02_250)]">Lightening Lives · DBS-05</span>
+              <span class="font-mono text-[8px] tracking-[.14em] text-[oklch(38%_.02_250)]">ID ▮▮▮▮▮▮</span>
+            </div>
+            <div class="dbs__spot" style="left:6%"></div>
+            <div class="dbs__spot" style="left:24.5%"></div>
+            <div class="dbs__spot is-lit" style="left:43%"></div>
+            <div class="dbs__spot" style="left:61.5%"></div>
+            <div class="dbs__spot" style="left:80%"></div>
+          </div>
+          <div class="dbs__back"></div>
+        </div>
+      </div>
+    </div>
+    <!-- copy stays flat at Z=0 -->
+    <div class="scene-layer absolute inset-0">
+      <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end md:items-center">
+        <div class="scene-copy w-full md:w-[46%] md:ml-auto pb-[7svh] md:pb-0 px-5 md:px-0">
+          <p class="hud text-probe mb-4"><span data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
+          <h2 class="display-lg text-chalk" data-ll="specimen.head"></h2>
+          <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-06" data-ll="specimen.body"></p>
+          <dl class="mt-7 grid gap-px bg-line border border-line" data-slot="SLOT-07" id="specimenPoints"></dl>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 3 · THE ASSAY ================= -->
+<section class="scene" id="assay" style="height:300svh">
+  <div class="stage" data-pin>
+    <div class="world" aria-hidden="true">
+      <div class="layer">
+        <div class="helix" id="helix"></div>
+      </div>
+    </div>
+    <div class="scene-layer absolute inset-0">
+      <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end md:items-center">
+        <div class="scene-copy w-full md:w-[44%] pb-[7svh] md:pb-0 px-5 md:px-0">
+          <p class="hud text-probe mb-4"><span data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
+          <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
+          <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-08" data-ll="assay.body"></p>
+          <ol class="mt-7 border-t border-line" data-slot="SLOT-09" id="assayStack"></ol>
+          <p class="md:hidden mt-6 border-l-2 border-alarm pl-4" data-slot="SLOT-10">
+            <span class="figure-num text-alarm text-[1.1rem] block" data-ll="assay.variantCallout.label"></span>
+            <span class="hud text-mute" data-ll="assay.variantCallout.note"></span>
+          </p>
+        </div>
+      </div>
+      <!-- desktop: the callout rides in beside the flared base pair -->
+      <div id="variantCallout" class="opacity-0 hidden md:block absolute left-[76%] top-[62%]">
+        <span class="figure-num text-alarm text-[1.35rem]" data-ll="assay.variantCallout.label"></span>
+        <p class="hud text-mute mt-1 max-w-[20ch]" data-slot="SLOT-10" data-ll="assay.variantCallout.note"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 4 · ASSAY MENU ================= -->
+<section id="menu" class="relative z-10 py-[14svh]">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <header class="flex flex-wrap items-end justify-between gap-6 pb-8 border-b border-line">
+      <div>
+        <p class="hud text-lumen mb-4" data-ll="menu.kicker"></p>
+        <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="menu.head"></h2>
+      </div>
+      <p class="hud text-mute max-w-[24ch]" data-slot="SLOT-11" data-ll="menu.note"></p>
+    </header>
+    <div class="mt-10 grid gap-4 md:grid-cols-2 xl:grid-cols-3" style="perspective:1400px" id="assayGrid"></div>
+  </div>
+</section>
+
+<!-- ================= 5 · PERFORMANCE ================= -->
+<section id="performance" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <div class="grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-20 items-start">
+      <div class="lg:sticky lg:top-28">
+        <p class="hud text-probe mb-4" data-ll="validation.kicker"></p>
+        <h2 class="display-lg text-chalk" data-ll="validation.head"></h2>
+        <p class="mt-6 hud text-alarm" data-slot="SLOT-12" data-ll="validation.disclaimer"></p>
+        <div class="mt-10 rule-t pt-6">
+          <p class="hud text-mute" data-ll="validation.runNote"></p>
+          <p class="figure-num text-lumen text-[clamp(2.5rem,6vw,4.5rem)] leading-none mt-2"
+             data-slot="SLOT-14"><span id="runCounter">0</span></p>
+          <p class="hud text-mute mt-1" data-ll="validation.runUnit"></p>
+        </div>
+      </div>
+      <div>
+        <div class="grid sm:grid-cols-2 gap-px bg-line border border-line" id="statGrid"></div>
+        <div class="mt-8 flex flex-wrap gap-2" data-slot="SLOT-13" id="accreditations"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6 · WORKFLOW ================= -->
+<section class="scene" id="workflow" style="height:340svh">
+  <div class="stage" data-pin>
+    <div class="scene-layer absolute inset-0 flex flex-col justify-center">
+      <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-10">
+        <p class="hud text-lumen mb-4" data-ll="workflow.kicker"></p>
+        <h2 class="display-lg text-chalk max-w-[12ch]" data-ll="workflow.head"></h2>
+      </div>
+      <div class="wf-lane overflow-hidden" style="perspective:1100px">
+        <div class="flex gap-5 pl-6 md:pl-10 will-change-transform" data-slot="SLOT-15"
+             id="workflowTrack" style="transform-style:preserve-3d"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7 · WHY / HOW / WHAT ================= -->
+<section class="scene" id="circle" style="height:300svh">
+  <div class="stage" data-pin>
+    <div class="world" aria-hidden="true">
+      <div class="layer">
+        <div class="ring" data-ring="0"></div>
+        <div class="ring" data-ring="1"></div>
+        <div class="ring" data-ring="2"></div>
+      </div>
+    </div>
+    <!-- copy lives outside .world so it is never clipped by it -->
+    <div class="scene-layer absolute inset-0">
+      <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex flex-col justify-center items-center text-center">
+        <p class="hud text-mute mb-8" data-ll="circle.kicker"></p>
+        <div class="relative w-full max-w-[42rem] h-[23rem]" data-slot="SLOT-16" id="ringCopy"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 8 · REACH ================= -->
+<section id="reach" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <p class="hud text-lumen mb-4" data-ll="reach.kicker"></p>
+    <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="reach.head"></h2>
+    <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line"
+         data-slot="SLOT-17" id="reachGrid"></div>
+    <figure class="mt-14 max-w-[52rem]" data-slot="SLOT-18">
+      <blockquote class="font-display text-[clamp(1.4rem,3vw,2.15rem)] leading-[1.25] text-chalk"
+                  style="font-variation-settings:'opsz'72,'SOFT'40,'WONK'1">
+        <span data-ll="reach.quote.text"></span>
+      </blockquote>
+      <figcaption class="hud text-mute mt-6">
+        <span data-ll="reach.quote.who"></span> · <span data-ll="reach.quote.role"></span>
+      </figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- ================= 9 · CONTACT — the page resolves to light ============ -->
+<section id="contact" class="relative z-10 bg-bone text-void py-[14svh]" data-lit>
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <div class="grid gap-14 lg:grid-cols-2 lg:gap-24">
+      <div>
+        <p class="hud text-deep mb-4" data-ll="contact.kicker"></p>
+        <h2 class="display-lg" data-ll="contact.head"></h2>
+        <p class="mt-6 max-w-[38ch] text-[oklch(38%_.02_250)]" data-ll="contact.body"></p>
+        <dl class="mt-12 grid gap-6 sm:grid-cols-2 text-[oklch(30%_.02_250)]">
+          <div><dt class="hud text-[oklch(52%_.02_250)]">Email</dt>
+               <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cEmail" href="#"></a></dd></div>
+          <div><dt class="hud text-[oklch(52%_.02_250)]">Phone</dt>
+               <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cPhone" href="#"></a></dd></div>
+          <div class="sm:col-span-2"><dt class="hud text-[oklch(52%_.02_250)]">Laboratory</dt>
+               <dd class="mt-1" data-slot="SLOT-01" data-ll="brand.addressFull"></dd>
+               <dd class="hud mt-1 text-[oklch(52%_.02_250)]"><span data-ll="brand.city"></span></dd></div>
+        </dl>
+      </div>
+      <form class="self-start" data-slot="SLOT-19" id="kitForm" novalidate>
+        <div class="grid gap-7 sm:grid-cols-2" id="formFields"></div>
+        <button type="submit" class="mt-10 hud bg-void text-bone px-8 py-4 hover:bg-deep transition-colors">
+          <span data-ll="contact.submit"></span>
+        </button>
+        <p class="hud mt-4 text-[oklch(52%_.02_250)]" id="formNote">Not wired up — SLOT-19 needs an endpoint.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="bg-bone text-[oklch(45%_.02_250)] border-t border-[oklch(85%_.015_85)] py-10">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 flex flex-wrap justify-between gap-4 hud">
+    <span>© <span id="year"></span> <span data-ll="brand.legal"></span></span>
+    <span data-slot="SLOT-02">LLPIN <span data-ll="brand.cin"></span></span>
+    <span>Darkfield — press <kbd class="border border-current px-1">S</kbd> to reveal data slots</span>
+  </div>
+</footer>
+
+<script src="./vendor/gsap.min.js"></script>
+<script src="./vendor/ScrollTrigger.min.js"></script>
+<script src="./src/content.js"></script>
+<script src="./src/scene.js"></script>
+</body>
+</html>

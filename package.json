@@ -1,0 +1,22 @@
+{
+  "name": "lightening-lives",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Lightening Lives LLP — Darkfield: a scroll-driven 3D site for affordable genetic & molecular diagnostics.",
+  "scripts": {
+    "css": "tailwindcss -i ./src/input.css -o ./dist/site.css",
+    "css:watch": "tailwindcss -i ./src/input.css -o ./dist/site.css --watch",
+    "build": "tailwindcss -i ./src/input.css -o ./dist/site.css --minify",
+    "serve": "http-server . -p 4173 -c-1 --silent",
+    "dev": "concurrently -k -n css,serve -c magenta,cyan \"npm:css:watch\" \"npm:serve\""
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.3.3",
+    "tailwindcss": "^4.3.3",
+    "concurrently": "^9.1.0",
+    "http-server": "^14.1.1"
+  },
+  "dependencies": {
+    "gsap": "^3.15.0"
+  }
+}
