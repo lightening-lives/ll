@@ -756,6 +756,96 @@
   padding-top: 3.5rem;
 }
 
+/* --- narrow: the two copy-heavy scenes stop being viewport-locked ------
+   MEASURED at 390x760: the specimen copy is 841px inside a 758px sticky
+   stage and the assay copy is 766px. Everything over the top of the stage
+   goes UNDER the fixed bar — 65px of "A card, a postbox, a result." and 39px
+   of "We read the variant" were simply not there — and what did fit sat on
+   top of the card artwork, so body text ran across the barcode. Both are the
+   same fault: a bottom-aligned column taller than the box holding it, and on
+   a 640px Android it is worse, not better.
+
+   So below 768 these two scenes flow instead of pinning: the geometry takes a
+   band of its own at the top, the copy runs at its natural length underneath,
+   and neither can reach the other. The hero keeps its pin (its copy measures
+   593px and fits), and the workflow lane is horizontal and already works.
+   ---------------------------------------------------------------------- */
+@media (max-width: 47.99rem) {
+  #specimen, #assay { height: auto !important; }
+  #specimen .stage, #assay .stage {
+    position: static; height: auto; overflow: hidden;
+  }
+  /* the geometry gets a fixed band — same 42svh the reduced-motion collapse
+     already uses, including its 280px floor for short handsets. `clip` rather
+     than the `hidden` used there because these scenes are still ANIMATING:
+     hidden would flatten the 3D chain into a flat rectangle. */
+  #specimen .world, #assay .world {
+    position: relative; height: 42svh; min-height: 280px; overflow: clip;
+  }
+  #specimen .scene-layer, #assay .scene-layer {
+    position: static; padding-bottom: 6svh;
+  }
+  #specimen .scene-layer > div, #assay .scene-layer > div {
+    height: auto; display: block;
+  }
+  /* the scrim existed to hold type legible ON the artwork; nothing is behind
+     the copy now, so it goes, and with it the padding that made room for it */
+  #specimen .scene-copy, #assay .scene-copy {
+    background: none; width: 100%;
+    padding-top: 2.25rem; padding-bottom: 0;
+  }
+  #specimen .world .layer, #assay .world .layer { pointer-events: none; }
+  /* the narrow values put the geometry in the upper third of a FULL viewport;
+     inside a 42svh band that reads as "stuck to the top", so it re-centres */
+  #specimen .dbs { --dbs-y: 47%; }
+}
+
+/* The pinned scenes centre their copy in a 100svh stage. On a SHORT window
+   that puts the top of the column above the fixed bar — measured at 1280x700,
+   the assay heading sat 17px under it, which is the same fault the phones had
+   and it appears on any laptop whose viewport is under about 720px.
+   `safe center` centres while there is room and falls back to start-alignment
+   the moment the column would overflow, and the padding keeps the bar's own
+   height out of the centring sum. Browsers without `safe` drop the line and
+   keep Tailwind's plain `items-center`, which is today's behaviour. */
+@media (min-width: 768px) {
+  #specimen .scene-layer > div,
+  #assay .scene-layer > div {
+    align-items: safe center;
+    padding-top: var(--nav-h, 4.5rem);
+  }
+}
+
+/* Narrow AND short — the 360x640 / 320x568 class of handset. The hero column
+   measures 582px against 568px of room at 360x640, and the overflow is spacing,
+   not words: the frame is simply shorter than the rhythm was drawn for. Nothing
+   is cut, only tightened, and only where it does not fit. Roomier phones
+   (360x800, 390x844) never see this block. */
+@media (max-width: 47.99rem) and (max-height: 46rem) {
+  #hero .scene-copy { padding-bottom: 3svh; }
+  #hero .scene-copy > .hud { margin-bottom: 0.75rem; }
+  #hero h1 { font-size: clamp(2rem, min(8.2vw, 15.5svh), 7.5rem); }
+  #hero [data-ll="hero.standfirst"] { margin-top: 1.25rem; font-size: 1rem; }
+  #heroCta { margin-top: 1.5rem; gap: 0.6rem; }
+  #heroCta a { padding-block: 0.8rem; }
+}
+
+/* the smallest frame still in the field — 320x568 — needs the last few pixels */
+@media (max-width: 22rem) and (max-height: 46rem) {
+  #hero .scene-copy { padding-bottom: 1.5svh; }
+  #hero [data-ll="hero.standfirst"] { font-size: 0.9375rem; }
+}
+
+/* The hero keeps its pin at every width — its column measures 593px and fits a
+   760px phone. It does not fit a 568px one, and bottom-alignment sends the
+   overflow straight up under the bar, so it gets the same safe treatment: hold
+   the type at the foot of the frame while there is room, fall back to the top
+   of the padded box when there is not. */
+#heroType {
+  align-items: safe flex-end;
+  padding-top: var(--nav-h, 4.5rem);
+}
+
 @media (min-width: 768px) {
   .scene-copy { background: none; padding-top: 0; }
   .plate-layer { --plate-x: 64%; --plate-y: 40%; --plate-w: 58vmin; --drop-w: 8.2vmin; }
@@ -911,6 +1001,29 @@ body.is-lit .nav__link::after { background: var(--color-deep); }
 
 .nav__end { display: flex; align-items: center; gap: 0.6rem; }
 
+/* Touch floors. Measured at 390px, the bar's CTA came out 114x36 and the menu
+   button 34x34; both are under the 44px a thumb needs. Keyed on a coarse
+   pointer OR a narrow viewport: the pointer query is the honest test, the
+   width query is the one that can actually be verified in a resized frame,
+   and a wide mouse-driven window still gets the tighter desktop proportions. */
+@media (pointer: coarse), (max-width: 47.99rem) {
+  .nav__cta { min-height: 2.75rem; display: inline-flex; align-items: center; }
+
+  /* The contact block's email, phone and WhatsApp links are the conversion
+     path for a field team on a handset, and they measured 20px tall. The
+     padding is vertical only, so the underline still hugs the text. */
+  #contact dd > a,
+  #contact dd#cSocial a {
+    display: inline-flex; align-items: center;
+    min-height: 2.75rem;
+  }
+  #contact dd#cSocial { gap: 1.25rem; flex-wrap: wrap; }
+
+  /* the footer index: twelve 18px-tall links in three columns */
+  .footnav a { display: inline-flex; align-items: center; min-height: 2.5rem; }
+  .footnav ul { gap: 0.15rem; }
+}
+
 /* ---------- the sheet, below 768 --------------------------------------
    The bar used to carry NO links at all on a phone: the link count stepped to
    zero at the md breakpoint, leaving a 16,000px document with a wordmark and a
@@ -918,7 +1031,7 @@ body.is-lit .nav__link::after { background: var(--color-deep); }
    move into a sheet rather than disappearing. */
 .nav__toggle {
   display: none;
-  width: 2.4rem; height: 2.4rem; flex: none;
+  width: 2.75rem; height: 2.75rem; flex: none;
   place-items: center;
   background: transparent;
   border: 1px solid var(--color-line);
@@ -992,7 +1105,8 @@ body.is-lit .nav__toggle { border-color: oklch(82% 0.015 85); }
   .nav { padding-inline: 0.7rem; }
   .nav__end { gap: 0.4rem; }
   .nav__cta { padding-inline: 0.6rem; }
-  .nav__toggle { width: 2.1rem; height: 2.1rem; }
+  /* the button narrows, it does not shorten — 44px is the floor for a thumb */
+  .nav__toggle { width: 2.35rem; }
 }
 /* Below 352px the name cannot be set beside a 44px symbol, a CTA and a menu
    button without one of them being squeezed — and DESIGN.md records 44px as the
