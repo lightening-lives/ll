@@ -6,6 +6,20 @@ population-scale genetic screening affordable and logistically simple enough to 
 tribal and rural communities that conventional diagnostics never reaches.
 
 ## Product truth
+- **Two headline families (client, 2026-08-20):** the work is framed as
+  **haemoglobinopathies** and **musculopathies** — thalassaemia and sickle cell on one
+  side, SMA and DMD on the other — plus **haemophilia** (a coagulation disorder, filed
+  honestly as its own family rather than under either umbrella) and **drug response**.
+  These are the tests NGOs, government organisations and labs ask for; they are the
+  *popular* menu, not the whole menu.
+- **The catalogue is much wider.** "We do many more DNA related tests." The page must never
+  read as six or eight products — see SLOT-26 for the list still owed.
+- **Price is a proposition, not a footnote.** "Very affordable." Carried qualitatively:
+  no published per-sample figure, because a stale number is worse than none in a
+  procurement conversation. Argued from the method instead — no phlebotomist, no
+  centrifuge, no cold chain, no courier.
+- **"Built for the people."** Not "for tribal and rural communities": that framing put a
+  ceiling on the audience. The tribal and rural work is proven in Impact and Reach.
 - **Sampling:** dried blood spot ("one-drop") collection — no venipuncture, no cold chain.
 - **Core offer:** newborn screening and hereditary-disorder panels (haemoglobinopathies,
   inborn errors of metabolism), carrier screening, prenatal diagnosis.
@@ -26,6 +40,10 @@ Four audiences, **all of equal weight**. The page has to hold all of them at onc
   Evaluating legitimacy and scale: accreditation, throughput, accountability, prior deployments.
 - **NGOs** — implementation and community partners. Evaluating reach and fit: whether the
   logistics genuinely work where they operate, and whether the mission is real.
+
+Confirmed again on 2026-08-20: these three are the named buyers. The contact form is
+written to all three — the organisation field is neutral and carries an explicit type —
+rather than to "Hospital / laboratory" alone, as it was.
 
 Not served by this page: families/patients directly.
 

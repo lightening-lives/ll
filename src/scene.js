@@ -64,6 +64,13 @@
         <span class="text-mute text-sm"> — ${esc(s.d)}</span></span>
     </li>`).join('');
 
+  // the two umbrella families, glossed once, above the grid
+  $('#menuFamilies').innerHTML = C.menu.families.map((f) => `
+    <div class="bg-void p-5">
+      <dt class="claim text-chalk">${esc(f.t)}</dt>
+      <dd class="text-sm text-mute mt-2">${esc(f.d)}</dd>
+    </div>`).join('');
+
   // the catalogue — the section a lab director screenshots
   $('#assayGrid').innerHTML = C.menu.items.map((a) => `
     <article class="assay-card p-6 flex flex-col">
@@ -79,7 +86,20 @@
         <div><dt class="datakey text-mute">Method</dt><dd class="text-sm text-chalk mt-1 min-h-[2.6em]">${esc(a.method)}</dd></div>
         <div><dt class="datakey text-mute">Throughput</dt><dd class="figure-num text-chalk text-sm mt-1">${esc(a.throughput)}</dd></div>
       </dl>
-    </article>`).join('');
+    </article>`).join('')
+    // the ninth cell is not a product. It sits in the same grid and takes the
+    // same hover, but it is hollow and dashed, so the eye reads it as the end
+    // of the list AND as an opening rather than as one more thing to order.
+    + `
+    <article class="assay-card assay-card--more p-6 flex flex-col" data-slot="SLOT-26">
+      <span class="code text-probe">${esc(C.menu.more.eyebrow)}</span>
+      <h3 class="font-display text-[1.6rem] leading-[1.05] text-chalk mt-4">${esc(C.menu.more.t)}</h3>
+      <p class="text-sm text-mute mt-3 flex-1">${esc(C.menu.more.d)}</p>
+      <a class="hud text-lumen mt-6 no-underline inline-flex items-center gap-2 self-start
+                border-b border-lumen/40 pb-1 hover:border-lumen transition-colors"
+         href="${esc(C.menu.more.cta.href)}">${esc(C.menu.more.cta.label)}
+         <span aria-hidden="true">&rarr;</span></a>
+    </article>`;
 
   // performance figures — always with their denominator
   $('#statGrid').innerHTML = C.validation.stats.map((s) => `
@@ -360,6 +380,14 @@
       </footer>
     </article>`).join('');
 
+  // what it costs — same inset-rule grid as the specimen points, because it is
+  // making the same kind of claim: four things that are true of the method
+  $('#accessPoints').innerHTML = C.access.points.map((p) => `
+    <div class="bg-void p-5">
+      <dt class="claim text-chalk">${esc(p.t)}</dt>
+      <dd class="text-sm text-mute mt-2">${esc(p.d)}</dd>
+    </div>`).join('');
+
   $('#stateList').innerHTML = C.reach.states.map((n) =>
     `<li class="chip credential text-chalk">${esc(n)}</li>`).join('');
 
@@ -376,11 +404,19 @@
 
   // contact form
   $('#formFields').innerHTML = C.contact.fields.map((f) => {
+    // a select with its own `options` uses them; one without falls back to the
+    // test menu, which is what `panel` wants and what `orgType` must not inherit
+    const opts = f.options
+      ? f.options.map((o) => `<option>${esc(o)}</option>`).join('')
+      : C.menu.items.map((a) => `<option>${esc(a.name)}</option>`).join('')
+        + '<option>Not sure yet</option>';
     const control = f.t === 'select'
-      ? `<select id="f-${f.n}" name="${f.n}">${C.menu.items
-          .map((a) => `<option>${esc(a.name)}</option>`).join('')}<option>Not sure yet</option></select>`
+      ? `<select id="f-${f.n}" name="${f.n}">${opts}</select>`
       : `<input id="f-${f.n}" name="${f.n}" type="${f.t}" ${f.req ? 'required' : ''} autocomplete="on">`;
-    return `<div class="field ${f.n === 'org' || f.n === 'panel' ? 'sm:col-span-2' : ''}">
+    // `org` used to span both columns, which left a hole beside `name`. With the
+    // organisation type added there are seven fields, so six pair off cleanly and
+    // only `panel` — the widest label and the longest options — takes the full row.
+    return `<div class="field ${f.n === 'panel' ? 'sm:col-span-2' : ''}">
         <label class="field__label block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
         ${control}
         <p class="field__err" id="e-${f.n}" hidden></p>
@@ -456,7 +492,8 @@
     const get = (n) => (kitForm.elements[n] || {}).value || '—';
     const body = [
       'Name: ' + get('name'),
-      'Hospital / laboratory: ' + get('org'),
+      'Organisation: ' + get('org'),
+      'Type of organisation: ' + get('orgType'),
       'Email: ' + get('email'),
       'Phone: ' + get('phone'),
       'Samples per month: ' + get('volume'),
@@ -1301,7 +1338,7 @@
     ['hero', '10⁰ m'], ['specimen', '10⁻³ m'], ['assay', '10⁻⁹ m'],
     ['inheritance', '10⁰ m'], ['stories', '10⁰ m'],
     ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'], ['workflow', '10⁰ m'],
-    ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'], ['collaborators', '10³ m'],
+    ['access', '10⁰ m'], ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'], ['collaborators', '10³ m'],
     ['reach', '10⁵ m'], ['contact', '10⁰ m']
   ];
 

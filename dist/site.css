@@ -308,6 +308,9 @@
   .block {
     display: block;
   }
+  .contents {
+    display: contents;
+  }
   .flex {
     display: flex;
   }
@@ -322,6 +325,9 @@
   }
   .inline-block {
     display: inline-block;
+  }
+  .inline-flex {
+    display: inline-flex;
   }
   .table {
     display: table;
@@ -362,6 +368,9 @@
   .max-w-\[14ch\] {
     max-width: 14ch;
   }
+  .max-w-\[15ch\] {
+    max-width: 15ch;
+  }
   .max-w-\[16ch\] {
     max-width: 16ch;
   }
@@ -385,6 +394,9 @@
   }
   .max-w-\[46ch\] {
     max-width: 46ch;
+  }
+  .max-w-\[52ch\] {
+    max-width: 52ch;
   }
   .max-w-\[58ch\] {
     max-width: 58ch;
@@ -473,8 +485,14 @@
   .gap-x-4 {
     column-gap: calc(var(--spacing) * 4);
   }
+  .gap-x-16 {
+    column-gap: calc(var(--spacing) * 16);
+  }
   .gap-y-3 {
     row-gap: calc(var(--spacing) * 3);
+  }
+  .gap-y-10 {
+    row-gap: calc(var(--spacing) * 10);
   }
   .self-start {
     align-self: flex-start;
@@ -505,6 +523,12 @@
   }
   .border-line {
     border-color: var(--color-line);
+  }
+  .border-lumen\/40 {
+    border-color: color-mix(in srgb, oklch(83% 0.160 88) 40%, transparent);
+    @supports (color: color-mix(in lab, red, red)) {
+      border-color: color-mix(in oklab, var(--color-lumen) 40%, transparent);
+    }
   }
   .border-probe\/40 {
     border-color: color-mix(in srgb, oklch(80% 0.170 148) 40%, transparent);
@@ -592,6 +616,9 @@
   }
   .pt-12 {
     padding-top: calc(var(--spacing) * 12);
+  }
+  .pb-1 {
+    padding-bottom: var(--spacing);
   }
   .pb-8 {
     padding-bottom: calc(var(--spacing) * 8);
@@ -925,6 +952,9 @@
     }
     .sm\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .sm\:grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
   }
   @media (width >= 48rem) {
@@ -2397,6 +2427,14 @@ body.is-lit .nav.is-stuck {
   .assay-card:hover {
     transform: none;
   }
+}
+.assay-card--more {
+  background: none;
+  background-color: var(--color-void);
+  border-style: dashed;
+}
+.assay-card--more:hover {
+  border-style: dashed;
 }
 .field input, .field select {
   width: 100%;

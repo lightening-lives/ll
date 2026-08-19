@@ -40,15 +40,33 @@ window.LL_CONTENT = {
     line2: 'of blood',
     line3: 'is enough.',
     // 🟠 SLOT-03 approve the positioning line. Disorders named are ✅ real, and
-    // the list now matches the test menu and the variant ladder exactly — if
+    // the list still matches the test menu and the variant ladder exactly — if
     // one of the three changes, change all three.
-    // Measured against the old four-disorder line at 320x568, 360x640 and
-      // 390x844: identical column height. Naming six disorders instead of four
-      // cost nothing, because "Duchenne" and "sickle cell" carry on their own.
+    //
+    // Reframed 2026-08-20 on the client's own words. Two changes:
+    //   1. The two UMBRELLA families lead — haemoglobinopathies and
+    //      musculopathies — with the disorders following as their gloss. A flat
+    //      list of six read as six products; the families read as a discipline,
+    //      and they are the words the company's own team bios already use.
+    //   2. "Built for the people", not "for the tribal and rural communities
+    //      conventional diagnostics never reaches". The old line put a ceiling
+    //      on the audience, and a private lab or a state programme read itself
+    //      out of it. The tribal and rural evidence now lives in Impact and
+    //      Reach, where it is proven rather than claimed.
+    // Affordability is named here for the first time and argued in full in the
+    // `access` block below — no figure, because a published price goes stale
+    // and gets held against you in procurement.
+    //
+    // Re-measured against the line it replaces at 320, 360 and 390 CSS px:
+    // 7 / 7 / 6 lines, identical at all three. The first draft ended
+    // "Affordable at community scale. Built for the people." and cost an extra
+    // line at 320 and 390 — the hero column is the tightest block on the page,
+    // so the shorter close wins. "At community scale" is not lost: the whole
+    // `access` section below is that argument, at length.
     standfirst:
-      'Dried-blood-spot screening for sickle cell, thalassaemia, haemophilia, SMA, ' +
-      'Duchenne and drug response — built for the tribal and rural communities ' +
-      'conventional diagnostics never reaches.',
+      'Dried-blood-spot screening for haemoglobinopathies and musculopathies — ' +
+      'sickle cell, thalassaemia, haemophilia, SMA and Duchenne — plus drug ' +
+      'response. Affordable, and built for the people.',
     ctaPrimary:   { label: 'Contact us', href: '#contact' },
     ctaSecondary: { label: 'See our common tests', href: '#menu' }
   },
@@ -243,8 +261,32 @@ window.LL_CONTENT = {
     head: 'The tests we are asked for most.',
     // The menu below is a SELECTION, not the catalogue — the lab runs more than
     // it shows here. Saying so in the header is what stops a lab or a district
-    // programme reading six cards as the whole of what we can do and leaving.
-    deck: 'These are the disorders we are asked about most often. The full menu is longer — tell us what you need and we will send it.',
+    // programme reading eight cards as the whole of what we can do and leaving.
+    // The deck now leads on the two FAMILIES rather than on the disorders, so
+    // the section reads as a discipline with a long menu behind it.
+    deck: 'Two families account for most of what we are asked for. These cards are a selection, not the catalogue — we run a much wider DNA menu, and we build panels to a programme.',
+
+    /* --- the two umbrella families, glossed once ------------------------
+       ✅ "Haemoglobinopathies" and "musculopathies" are the company's own
+       words — they appear verbatim in Jyothi Vislavath's bio further down
+       this file. Naming them clinically is what a lab director expects; the
+       plain gloss under each is what a district health officer or an NGO
+       field lead needs. Neither audience is asked to look anything up.
+
+       Haemophilia is a COAGULATION disorder — not a haemoglobinopathy, and
+       not a musculopathy. The third row keeps that honest rather than filing
+       it under the wrong umbrella to make the pattern tidier. The three rows
+       map onto `assay.famLabels` above (haem · coag+pgx · neuro), so the
+       variant ladder and the menu tell the same story.
+       -------------------------------------------------------------------- */
+    families: [
+      { t: 'Haemoglobinopathies',
+        d: 'Disorders of haemoglobin — sickle cell anaemia, alpha and beta thalassaemia.' },
+      { t: 'Musculopathies',
+        d: 'Disorders of muscle and nerve — spinal muscular atrophy and Duchenne muscular dystrophy.' },
+      { t: 'Coagulation & drug response',
+        d: 'Haemophilia and other factor deficiencies, and pharmacogenomic metaboliser status.' }
+    ],
     // ✅ Every DISORDER below is in scope. The first four and the last two are
     //    named on the company's own site; coagulation and pharmacogenomics were
     //    confirmed directly by the client (2026-08-19) as work they already do,
@@ -290,7 +332,30 @@ window.LL_CONTENT = {
         indication: 'Tailored molecular testing for specific community needs',
         sample: 'DBS · 1 spot', tat: 'On scope', method: 'Built to the programme',
         throughput: 'By programme', flag: 'Programmes' }
-    ]
+    ],
+
+    /* --- the closing card: the menu does not end here --------------------
+       The grid stays flat — eight cards, one shape — and gains a ninth cell
+       that is deliberately NOT a product. It names only families that are not
+       already carded above: repeating prenatal/newborn (LL-PNS-07) or the
+       customised panels (LL-CUS-08) would make the company look smaller, not
+       wider.
+
+       🟠 SLOT-26 — this list is assembled from the company's OWN material:
+       "inborn errors of metabolism" is in the core offer in PRODUCT.md, and
+       "genetic disorders and NCDs" is the wording of the R&D pillar below.
+       Confirm and extend it — this is the line that tells a programme with an
+       unusual requirement that it is worth asking.
+       -------------------------------------------------------------------- */
+    more: {
+      eyebrow: 'Beyond these',
+      t: 'A much wider DNA menu.',
+      d: 'These are the tests NGOs, district programmes and laboratories ask us ' +
+         'for most. The menu is longer — inborn errors of metabolism, ' +
+         'non-communicable and complex-disease panels, and other single-gene ' +
+         'and carrier tests. Tell us what your programme needs.',
+      cta: { label: 'Ask for the full menu', href: '#contact' }
+    }
   },
 
   /* --- 5 · PERFORMANCE ---------------------------------------------- */
@@ -325,6 +390,46 @@ window.LL_CONTENT = {
       { n: '04', t: 'We run it',     d: 'Batch runs daily. Positives confirmed twice.',    time: 'Day 3' },
       { n: '05', t: 'Signed report', d: 'Report to you. Genetic counselling on request.',  time: 'Day 3' }
     ]
+  },
+
+  /* --- 6b · WHAT IT COSTS ------------------------------------------
+     The page could argue analytical performance, logistics, scope and people,
+     and never once said what it costs — while "very affordable" is the single
+     strongest thing this company has for the two audiences it is targeting
+     hardest. An NGO and a district health officer both arrive with this
+     question and neither of them is going to email to find out.
+
+     No figure, by decision (2026-08-20): a published per-sample price goes
+     stale, and in a procurement conversation a stale number is worse than no
+     number. So the section ARGUES the cost instead of asserting it — the same
+     dried spot that removes the phlebotomist, the centrifuge, the cold chain
+     and the courier is the reason the price is what it is. Every one of those
+     four is already claimed and explained in the Specimen section above, so
+     this reads as the conclusion of an argument the reader has already
+     followed rather than as a fresh boast.
+     ------------------------------------------------------------------- */
+  access: {
+    scale: '10⁰ m',
+    kicker: 'What it costs',
+    head: 'Priced so a programme can afford everyone.',
+    body: 'Cost is a design decision here, not a discount. A dried spot needs no ' +
+          'phlebotomist, no centrifuge, no cold chain and no courier contract — so ' +
+          'the cost of reaching one more village is close to the cost of a stamp.',
+    // 🟠 SLOT-27 confirm all three claims before launch.
+    //   · "Kits ship free"        — consistent with workflow step 01 and contact.body
+    //   · "One price per sample"  — consistent with contact.body and formNote
+    //   · "No cost to the family" — NOT corroborated anywhere in the existing
+    //     material. It is the strongest of the three and the one most likely to
+    //     be quoted back. Confirm it or cut it; do not ship it unverified.
+    points: [
+      { t: 'Kits ship free',
+        d: 'Cards, lancets and mailers at no charge, at any volume.' },
+      { t: 'One price per sample',
+        d: 'Quoted to your volume and panel. No instrument to buy, nothing to install.' },
+      { t: 'No cost to the family',
+        d: 'Programme- and partner-funded screening reaches the patient free.' }
+    ],
+    note: 'Cost claims are placeholder until confirmed — see SLOT-27.'
   },
 
   /* --- 7 · CAPABILITIES --------------------------------------------- */
@@ -609,14 +714,26 @@ window.LL_CONTENT = {
     kicker: 'Request a kit',
     head: 'Tell us the volume. We will send the cards.',
     body: 'Kits are free. We will come back with a panel recommendation, a per-sample ' +
-          'price and a collection schedule.',
+          'price and a collection schedule — whether you are a laboratory, a hospital, ' +
+          'an NGO or a district programme.',
+    // The organisation field used to be labelled "Hospital / laboratory", which
+    // quietly told an NGO field lead and a district health officer that the form
+    // was not for them — while both are named target buyers. It is now a neutral
+    // "Organisation" plus an explicit type, which also tells us who is asking
+    // before we quote.
     fields: [
-      { n: 'name',   l: 'Name',                   t: 'text',   req: true },
-      { n: 'org',    l: 'Hospital / laboratory',  t: 'text',   req: true },
-      { n: 'email',  l: 'Email',                  t: 'email',  req: true },
-      { n: 'phone',  l: 'Phone',                  t: 'tel',    req: false },
-      { n: 'volume', l: 'Samples per month',      t: 'text',   req: false },
-      { n: 'panel',  l: 'Panel of interest',      t: 'select', req: false }
+      { n: 'name',    l: 'Name',                  t: 'text',   req: true },
+      { n: 'org',     l: 'Organisation',          t: 'text',   req: true },
+      // this select carries its OWN options; without them it would inherit the
+      // test-menu list that every other select on this form uses
+      { n: 'orgType', l: 'Type of organisation',  t: 'select', req: false,
+        options: ['Laboratory', 'Hospital', 'NGO / foundation',
+                  'Government or public health programme', 'Research institute',
+                  'Other'] },
+      { n: 'email',   l: 'Email',                 t: 'email',  req: true },
+      { n: 'phone',   l: 'Phone',                 t: 'tel',    req: false },
+      { n: 'volume',  l: 'Samples per month',     t: 'text',   req: false },
+      { n: 'panel',   l: 'Panel of interest',     t: 'select', req: false }
     ],
     endpoint: '',                                       // 🟠 SLOT-19 form endpoint
     submit: 'Request a kit'

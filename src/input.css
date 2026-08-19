@@ -1448,6 +1448,17 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
   .assay-card:hover { transform: none; }
 }
 
+/* The closing cell of the menu grid. It is the same object — same border, same
+   hover lift, same preserve-3d — with the fill taken out and the border made
+   dashed, so it reads as the end of the list and an invitation, not as a ninth
+   product sitting alongside eight orderable ones. */
+.assay-card--more {
+  background: none;
+  background-color: var(--color-void);
+  border-style: dashed;
+}
+.assay-card--more:hover { border-style: dashed; }
+
 .field input, .field select {
   width: 100%; background: transparent; color: inherit;
   border: 0; border-bottom: 1px solid oklch(55% 0.02 85);

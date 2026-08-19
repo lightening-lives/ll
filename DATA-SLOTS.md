@@ -20,6 +20,7 @@ Most of the page is now real. What follows is what is still fabricated.
 | **SLOT-11** | Test menu | The **disorders are real** — sickle cell, α/β thalassaemia, SMA and DMD are named on your site; haemophilia/coagulation and pharmacogenomics were confirmed as in-scope by you on 2026-08-19. The **codes, turnaround times, methods and throughput are invented.** |
 | **SLOT-11b** | Test menu | Confirm the **coagulation** scope. The card is written for haemophilia A and B; if the panel also covers von Willebrand or other factor deficiencies, widen the indication line rather than the title. |
 | **SLOT-11c** | Test menu | Confirm **which drug genes** the pharmacogenomic panel reports. The ladder draws CYP2D6 because copy number is the clearest thing to show; the card is written to the panel, not to one gene. |
+| **SLOT-27** | What it costs | Confirm the three cost claims. Two are already implied elsewhere on the page — *kits ship free* (workflow step 01) and *one price per sample, quoted to volume* (contact). The third, **"No cost to the family"**, is not corroborated anywhere in your material. It is the strongest line in the section and the one most likely to be quoted back at you. Confirm it or I cut it. |
 | **SLOT-06 / 07** | Specimen | Confirm the logistics claims: ambient transport, ordinary post, exempt-specimen rules. Regulatory-adjacent. |
 | **SLOT-08 / 09** | Assay | The real platform description and pipeline. Currently generic. |
 | **SLOT-08b** | Assay | The seven loci the variant ladder and its index name. Every gene, variant and disease association is real and standard, and every disorder is already on the company's own menu — but confirm this is the exact locus set the signed-out panel reports, and swap in the lab's preferred variant nomenclature. Each locus links to the menu card that reports it — keep the two in step if either changes. |
@@ -28,7 +29,8 @@ Most of the page is now real. What follows is what is still fabricated.
 
 | Slot | Where | What I need |
 |---|---|---|
-| SLOT-03 | Hero | Approve the positioning line. The disorders it names are real. |
+| SLOT-03 | Hero | Approve the **rewritten** positioning line. It now leads on the two umbrella families — *haemoglobinopathies* and *musculopathies*, your own team's words — with the disorders following as their gloss, names affordability for the first time, and closes on **"Built for the people"** rather than on "the tribal and rural communities conventional diagnostics never reaches". The old line put a ceiling on the audience: a private lab or a state programme read itself out of it. The tribal and rural evidence has not been dropped — it now lives in Impact and Reach, where it is proven rather than claimed. |
+| **SLOT-26** | Test menu | The **wider catalogue**. The menu now closes on a card that says the eight test cards are a selection, and names *inborn errors of metabolism*, *non-communicable and complex-disease panels* and *other single-gene and carrier tests*. Those three are inferred from your own material — the core offer in PRODUCT.md and the "genetic disorders and NCDs" wording on your R&D pillar. **Send me the real list** and I will name it properly. This is the line that tells a programme with an unusual requirement it is worth asking. |
 | SLOT-14 | Performance | Samples reported to date. |
 | SLOT-15 | Workflow | Confirm the five steps and their day counts. |
 | SLOT-17 | Reach | States, collection points, partner facilities, workers trained. **Deliberately showing `0`** so nobody mistakes a placeholder for a real number. Five states are already listed from your own impact stories. |
@@ -70,9 +72,27 @@ line in `src/input.css`.
 
 ---
 
+## This pass (2026-08-20) — what your brief changed
+
+Nothing was invented. Four things were reframed:
+
+- **Two families lead now.** *Haemoglobinopathies* and *musculopathies* are named as the
+  organising categories, each glossed once in plain words in a strip above the test cards.
+  Haemophilia sits in a third row — *Coagulation & drug response* — because it is a
+  coagulation disorder and filing it under either umbrella would be wrong.
+- **Affordability became a section.** "What it costs" now sits between Workflow and
+  Capabilities. It carries no rupee figure by decision, and argues the price from the
+  method instead: no phlebotomist, no centrifuge, no cold chain, no courier. See SLOT-27.
+- **The menu stops claiming to be the catalogue.** A ninth, dashed cell closes the grid —
+  "A much wider DNA menu" — and the deck says outright that the cards are a selection.
+  See SLOT-26.
+- **The form stopped being addressed to labs only.** "Hospital / laboratory" is now
+  "Organisation" plus an explicit type, so an NGO or a district programme can see itself
+  in it. The type also reaches us in the enquiry.
+
 ## What I found on your site that was still missing
 
-Added this pass:
+Added in the previous pass:
 
 - **The entire Solutions & Services page** — all five pillars and their sixteen sub-services.
   This was the biggest gap. For a lab evaluating you, *Diagnostic lab consultancy*,
