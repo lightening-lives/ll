@@ -323,15 +323,33 @@
     teamResize = setTimeout(() => slotPanel(openTeam), 140);
   });
 
-  // collaborators — one flat grid, logo leading
-  $('#collabGrid').innerHTML = C.collaborators.items.map((o) => `
-    <li class="collab" data-slot="logo: ${esc(o.n)}">
-      <span class="collab__plate">${o.logo
-        ? `<img src="${esc(o.logo)}" alt="${esc(o.n)} logo" loading="lazy" decoding="async">`
-        : `<span class="collab__mono">${esc(initials(o.n))}</span>`}</span>
-      <span class="collab__name">${esc(o.n)}</span>
-      ${o.d ? `<span class="collab__desc">${esc(o.d)}</span>` : ''}
-    </li>`).join('');
+  /* --- the collaborator wall ------------------------------------------
+     Thirteen identical cards letterboxed every mark into the same box, so a
+     6.5:1 wordmark (Tata Trusts) rendered at a fraction of the height of a
+     square emblem — the exact "grey smudge" failure DESIGN.md set out to fix.
+     Each cell now spans according to its logo's MEASURED aspect ratio, so
+     every mark is reproduced at its own proportion. The column counts (2/4/8)
+     are chosen so the 16 spanned units fill each breakpoint exactly.
+     ------------------------------------------------------------------- */
+  /* Equal AREA, not equal height: w = u·√ar, h = u/√ar. Every mark therefore
+     occupies the same amount of ink at its own true proportion — the Tata
+     Trusts wordmark comes out near its native 285×44 and CCMB near its native
+     117×143, with no letterboxing anywhere. A ruled grid could not do this;
+     it is also what stops the section reading as one bright slab. */
+  /* Tailwind's logo-cloud caps every mark to one height, which works there
+     because their logos are all pre-normalised to 158×48. Ours run 0.75:1 to
+     9.2:1, so a single cap renders the tall emblems (CCMB, Blood Warriors)
+     tiny while the wordmarks fill their cells. The cap scales with the mark's
+     own aspect instead, which balances them optically inside a uniform grid. */
+  $('#collabGrid').innerHTML = C.collaborators.items.map((o) => {
+    const ar = o.ar || 1;
+    const cap = ar >= 3.5 ? '2.2rem' : ar >= 2 ? '2.7rem' : ar >= 1.2 ? '3.4rem' : '4.3rem';
+    return `
+    <li class="cloud__cell" style="--cap:${cap}" data-slot="logo: ${esc(o.n)}">
+      <img src="${esc(o.logo)}" alt="${esc(o.n)}${o.d ? ' — ' + esc(o.d) : ''}"
+           loading="lazy" decoding="async">
+    </li>`;
+  }).join('');
 
   // Impact — given testimonial weight. The `pull` line is the outcome sentence
   // lifted verbatim from the company's own case note and set large; the setup
@@ -856,6 +874,17 @@
         ease: 'power3.out',
         scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
   });
+
+  // ---- 4b · the collaborator field warms up
+  // Not a fade: the slides are already visible at rest (the plate sits at 32%
+  // bone), and what animates is the LIGHT on them. Staggered along the field so
+  // it reads as an instrument warming up rather than as another section fade.
+  // --reveal has initial-value 1, so if this never runs the field is simply lit.
+  gsap.fromTo('#collaborators .cloud__cell',
+    { '--reveal': 0 },
+    { '--reveal': 1, duration: 0.7, ease: 'power2.out',
+      stagger: { each: 0.035, from: 'start' },
+      scrollTrigger: { trigger: '#collaborators', start: 'top 78%', once: true } });
 
   // ---- 5 · the running total counts up once
   const runTarget = Number(String(C.validation.runValue).replace(/[^\d]/g, '')) || 0;

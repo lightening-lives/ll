@@ -393,35 +393,43 @@ window.LL_CONTENT = {
     // 🟠 SLOT-21 supply an individual SVG/PNG per collaborator — see DATA-SLOTS.md.
     // ✅ each logo extracted from the montage on the live Partnerships page.
     // 🟠 SLOT-21 these are raster crops — send vector originals when you have them.
-    note: 'Logos extracted from your montage. Vector originals preferred when available.',
+    // 🟠 SLOT-21 — the files in assets/partners/mono/ are generated from the
+    // colour originals alongside them: luminance drives alpha, so the white
+    // paper drops out and the ink becomes white. That lets every mark sit
+    // DIRECTLY on the dark ground with no plate behind it. A light-on-dark
+    // logo (Tata Steel Foundation) survives as a knockout, which still reads.
+    // `ar` is measured AFTER trimming to true ink bounds, so equal-area sizing
+    // is optical rather than dependent on each crop's stray padding.
+    // Regenerate both if a source logo is replaced.
+    note: 'Marks are monochrome from your own montage. Vector originals would sharpen them.',
     // One flat list — the category headings were more taxonomy than the reader needed.
     items: [
       { n: 'CSIR–CCMB', d: 'Centre for Cellular & Molecular Biology',
-        logo: 'assets/partners/csir-ccmb.png' },
+        logo: 'assets/partners/mono/csir-ccmb.png', ar: 0.797 },
       { n: 'Atal Incubation Centre', d: 'CCMB',
-        logo: 'assets/partners/atal-incubation-centre.png' },
+        logo: 'assets/partners/mono/atal-incubation-centre.png', ar: 3.148 },
       { n: 'Nucleome', d: 'Genomics',
-        logo: 'assets/partners/nucleome.png' },
+        logo: 'assets/partners/mono/nucleome.png', ar: 1.488 },
       { n: 'Tata Trusts', d: '',
-        logo: 'assets/partners/tata-trusts.png' },
+        logo: 'assets/partners/mono/tata-trusts.png', ar: 9.2 },
       { n: 'Tata Steel Foundation', d: '',
-        logo: 'assets/partners/tata-steel-foundation.png' },
+        logo: 'assets/partners/mono/tata-steel-foundation.png', ar: 2.094 },
       { n: 'Manasthya Foundation', d: 'Healing Minds, Transforming Lives',
-        logo: 'assets/partners/manasthya-foundation.png' },
+        logo: 'assets/partners/mono/manasthya-foundation.png', ar: 1.023 },
       { n: 'Thalassemia & Sickle Cell Society', d: 'TSCS',
-        logo: 'assets/partners/thalassemia-sickle-cell-society.png' },
+        logo: 'assets/partners/mono/thalassemia-sickle-cell-society.png', ar: 4.389 },
       { n: 'Cure SMA India', d: 'Hope Beyond Boundaries',
-        logo: 'assets/partners/cure-sma-india.png' },
+        logo: 'assets/partners/mono/cure-sma-india.png', ar: 2.083 },
       { n: 'Sickle Cell Saksham Rajasthan Foundation', d: '',
-        logo: 'assets/partners/sickle-cell-saksham-rajasthan.png' },
+        logo: 'assets/partners/mono/sickle-cell-saksham-rajasthan.png', ar: 0.933 },
       { n: 'IAMD', d: 'Because Life is Special',
-        logo: 'assets/partners/iamd.png' },
+        logo: 'assets/partners/mono/iamd.png', ar: 2.098 },
       { n: 'Blood Warriors', d: '',
-        logo: 'assets/partners/blood-warriors.png' },
+        logo: 'assets/partners/mono/blood-warriors.png', ar: 0.754 },
       { n: 'IDO', d: 'Indigenous Development Organization',
-        logo: 'assets/partners/ido.png' },
+        logo: 'assets/partners/mono/ido.png', ar: 1.95 },
       { n: 'NASCO', d: '',
-        logo: 'assets/partners/nasco.png' }
+        logo: 'assets/partners/mono/nasco.png', ar: 4.543 }
     ]
   },
 

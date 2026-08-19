@@ -882,7 +882,15 @@ body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
   letter-spacing: 0.07em;
   white-space: nowrap;
 }
-.nav__cta { white-space: nowrap; font-size: clamp(0.75rem, 0.5rem + 0.55vw, 0.875rem); }
+.nav__cta {
+  white-space: nowrap;
+  font-size: clamp(0.75rem, 0.5rem + 0.55vw, 0.875rem);
+  padding-inline: clamp(0.7rem, 2.6vw, 1rem);
+}
+/* the wordmark yields before the CTA does on the narrowest phones */
+@media (max-width: 25rem) {
+  .nav__mark .font-display { font-size: 1.05rem; }
+}
 
 .nav.is-stuck { border-color: var(--color-line);
                 background-color: oklch(13% 0.012 250 / .92);
@@ -965,70 +973,83 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
   display: inline-flex; align-items: center;
   border: 1px solid var(--color-line);
   padding: 0.45rem 0.8rem;
-  background: oklch(from var(--color-ink) l c h / .5);
+  background: oklch(17% 0.014 250 / .5);
   transition: border-color .28s ease, color .28s ease;
 }
 li.chip { display: inline-flex; }
 .chip:hover { border-color: oklch(52% 0.08 88); }
 
-/* --- collaborator grid --------------------------------------------------
-   Flex rather than grid, so the trailing partial row CENTRES. CSS grid can
-   only centre whole tracks, which left the last three logos hanging at the
-   left edge under two full rows of five.
-   ---------------------------------------------------------------------- */
-.collab-grid {
-  --collab-cols: 2;
-  --collab-gap: 1rem;
-  display: flex; flex-wrap: wrap; justify-content: center;
-  gap: var(--collab-gap);
-}
-.collab-grid > * {
-  flex: 0 1 calc((100% - (var(--collab-cols) - 1) * var(--collab-gap)) / var(--collab-cols));
-}
-@media (min-width: 640px)  { .collab-grid { --collab-cols: 3; } }
-@media (min-width: 1024px) { .collab-grid { --collab-cols: 4; } }
-@media (min-width: 1280px) { .collab-grid { --collab-cols: 5; } }
+/* --- the collaborators: a logo cloud -----------------------------------
+   The Tailwind UI logo-cloud pattern, inverted for a dark ground: hairline
+   0.5 gaps over the section ground draw the rules, each cell carries a barely
+   there tint instead of a plate, and every mark is capped to one height with
+   `object-fit: contain`. The marks are the white monochrome set in
+   assets/partners/mono/ — the dark-page equivalent of that pattern's
+   `-gray-900` logo variants.
 
-/* --- collaborator card -------------------------------------------------
-   One flat grid, no category headings. The logo leads and is given real
-   size — these are recognition marks, and at thumbnail scale they read as
-   grey smudges. Paper plate because the supplied crops sit on white.
+   Two deliberate departures from the reference snippet:
+   · Square corners, not `rounded-2xl`. DESIGN.md: "nothing rounded past 4px
+     except the drop and the wells. This is instrumentation."
+   · Thirteen logos do not fill a 2/3/4-column grid, so the trailing item
+     spans the remainder and the slab stays rectangular instead of ending on
+     a ragged half-row.
    -------------------------------------------------------------------- */
-.collab {
-  display: flex; flex-direction: column;
-  border: 1px solid var(--color-line);
-  background: linear-gradient(155deg, var(--color-ink), var(--color-void));
-  padding: .85rem;
-  transition: border-color .3s ease, transform .3s cubic-bezier(.22,.61,.36,1);
-}
-.collab:hover { border-color: oklch(60% 0.10 90); transform: translateY(-3px); }
+@property --reveal { syntax: "<number>"; inherits: false; initial-value: 1; }
 
-.collab__plate {
+/* Built on the page's own ruled-panel idiom, the one already used by the spec
+   strip, the specimen claims, the performance figures, the inheritance odds
+   and the reach grid: a 1px gap over `--color-line` draws the rules, and the
+   cells sit on `--color-void` — DARKER than the ground, with only the
+   hairlines light. The first pass had it backwards (2px gaps, cells tinted
+   lighter with white), which is why the block read as a foreign grey slab. */
+.logo-cloud {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  background: var(--color-line);
+  border: 1px solid var(--color-line);
+}
+@media (min-width: 640px)  { .logo-cloud { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .logo-cloud { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+/* keep the block rectangular whatever the column count */
+.logo-cloud > :last-child:nth-child(2n + 1) { grid-column: span 2; }
+@media (min-width: 640px) {
+  .logo-cloud > :last-child:nth-child(2n + 1) { grid-column: auto; }
+  .logo-cloud > :last-child:nth-child(3n + 1) { grid-column: span 3; }
+  .logo-cloud > :last-child:nth-child(3n + 2) { grid-column: span 2; }
+}
+@media (min-width: 1024px) {
+  .logo-cloud > :last-child:nth-child(3n + 1),
+  .logo-cloud > :last-child:nth-child(3n + 2) { grid-column: auto; }
+  .logo-cloud > :last-child:nth-child(4n + 1) { grid-column: span 4; }
+  .logo-cloud > :last-child:nth-child(4n + 2) { grid-column: span 3; }
+  .logo-cloud > :last-child:nth-child(4n + 3) { grid-column: span 2; }
+}
+
+.cloud__cell {
   display: grid; place-items: center;
-  width: 100%; height: 7.5rem;
-  background: var(--color-bone);
-  border: 1px solid oklch(80% 0.012 85);
-  padding: .85rem;
-  margin-bottom: .9rem;
+  background: var(--color-void);
+  padding: 1.5rem 1.25rem;
+  transition: background-color .35s ease;
 }
-/* absolute box + contain — percentage heights do not resolve on a centred
-   grid item, which silently lets tall logos escape the plate */
-.collab__plate img {
-  width: 100%; height: 5.8rem; object-fit: contain; object-position: center;
+@media (min-width: 640px) { .cloud__cell { padding: 2rem 1.75rem; } }
+/* the same lift the assay cards and collaborator rows use on hover */
+.cloud__cell:hover { background: var(--color-ink); }
+
+.cloud__cell img {
+  display: block;
+  width: 100%; max-width: 13rem;
+  max-height: var(--cap, 3.25rem);
+  object-fit: contain; object-position: center;
+  opacity: calc(0.34 + var(--reveal) * 0.38);
+  transition: opacity .35s ease;
 }
-.collab__mono {
-  font-family: var(--font-mono); font-size: 1rem; letter-spacing: .08em;
-  color: var(--color-void);
+.cloud__cell:hover img { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .cloud__cell, .cloud__cell img { transition: none; }
 }
-.collab__name {
-  font-family: var(--font-sans); font-weight: 600;
-  font-size: .8125rem; color: var(--color-chalk); line-height: 1.3;
-}
-.collab__desc {
-  font-family: var(--font-sans); font-size: .75rem; line-height: 1.35;
-  color: var(--color-mute); margin-top: .3rem;
-}
-@media (prefers-reduced-motion: reduce) { .collab:hover { transform: none; } }
 
 /* --- patron & advisory board -------------------------------------------
    The most senior people on the page. They were rendering at a third the
@@ -1421,6 +1442,12 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 /* =====================================================================
    HANDOFF AID — press S to outline every unfilled data slot
    ===================================================================== */
+/* A handful of notes in content.js are addressed to the client, not to a
+   visitor ("replace with the signed-off menu"). They belong in the slot
+   overlay, not in the page — press S to see them. */
+.build-note { display: none; }
+body.show-slots .build-note { display: block; }
+
 body.show-slots [data-slot] {
   outline: 1px dashed var(--color-probe);
   outline-offset: 3px;

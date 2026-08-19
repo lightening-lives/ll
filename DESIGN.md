@@ -130,6 +130,54 @@ shows the blank write-on area instead. And the **CSIR–CCMB co-brand is no long
 on the kit** (confirmed by the client), so the flap carries the sun mark and the brand
 alone. CCMB remains where it belongs, in Collaborations.
 
+## The collaborators — a logo cloud
+
+The live site's flat montage went through three failed shapes before this one: identical
+cards (which letterboxed marks running from 0.75:1 to 9.2:1), an aspect-sized ruled wall
+of bone plates (the second-largest light area on the page, and not the payoff), and dimmed
+slides (the same plates, muddier). Every one of them needed a plate, because the source
+logos are raster crops with **white paper baked in**. The design could not be fixed while
+the assets stayed wrong.
+
+`assets/partners/mono/` is generated from those originals: luminance drives alpha, so the
+paper drops out and the ink becomes white, then each file is trimmed to its true ink
+bounds. A light-on-dark logo (Tata Steel Foundation, white type in a blue box) survives as
+a knockout, which still reads.
+
+On that footing the section is a **logo-cloud grid built on the page's own ruled-panel
+idiom** — the one already used by the spec strip, the specimen claims, the performance
+figures, the inheritance odds and the reach grid: a **1px gap over `--color-line`** draws
+the rules, and the cells sit on **`--color-void`**, darker than the ground, with only the
+hairlines light. Hovering a cell lifts it to `--color-ink`, the same move the assay cards
+make, and takes its mark to full opacity.
+
+A first pass had this backwards — 2px gaps and cells tinted *lighter* with white — and the
+block read as a foreign grey slab dropped onto the page. Getting it consistent was purely
+a matter of adopting the idiom already in the stylesheet rather than inventing a second
+one. The panel and cell colours are now byte-identical to `#reachGrid` and `.spec-strip`.
+
+The marks are the monochrome set — the dark-page equivalent of the pattern's usual
+`-gray-900` logo variants. The one authored motion moment is a 35ms stagger on `--reveal`,
+a registered `@property` with `initial-value: 1`, so the grid is simply lit if the script
+never runs.
+
+Three departures from the reference pattern, each for a reason:
+
+- **Square corners, not `rounded-2xl`.** DESIGN.md: *nothing rounded past 4px except the
+  drop and the wells. This is instrumentation.*
+- **The height cap scales with each mark's aspect** (2.2rem for a wordmark, 4.3rem for a
+  tall emblem) rather than one `max-h-12` for all. That pattern normally ships logos
+  pre-normalised to a single 158×48 box; ours are not, so a single cap left CCMB and Blood
+  Warriors tiny while the wordmarks filled their cells.
+- **The trailing cell spans the remainder**, so the block stays rectangular at every
+  column count instead of ending on a ragged half-row. Verified 4 / 3 / 2 columns with the
+  last cell spanning 4 / 3 / 2.
+
+*Not kept:* a version that swapped each mark to its original colours on hover. The colour
+art was un-composited from its paper cleanly enough, but seven of the thirteen logos have
+dark ink that disappears on a dark ground, so colour needed a lit plate behind it — which
+reintroduced the plate this section spent three attempts removing.
+
 ## Core team — the record opens in place
 
 Six real bios, verbatim from the company's own `-details.php` pages, behind a click.
@@ -316,9 +364,7 @@ so the visitor is the camera operator. Reduced-motion collapses all scrub to sta
   It is *replaced*, not deleted: the slot now carries the founder's record, which is the
   real answer to "why should I trust this supplier, and why is it this cheap."
 - **The map.** Removed. It located an office; it never told a buyer anything.
-- **The single flat collaborator montage.** Replaced by thirteen individual cards in one
-  grid, each logo extracted from that montage and given real size — at thumbnail scale a
-  recognition mark reads as a grey smudge and does no work.
+- **The single flat collaborator montage.** Replaced — see *The collaborator wall* below.
 - **Lorem Ipsum.** The live "Free home sampling" card still ships placeholder Latin.
 - **The three short testimonials.** Dropped in favour of the four full impact narratives,
   which are specific, clinical, and far more persuasive. Those narratives now *carry*
