@@ -381,6 +381,32 @@ the scrubbed camera plus whatever the inspector has pushed it by.
 `rotateY(calc((var(--cam-ry) + var(--ins-ry) + var(--rot)) * -1deg))` holds the type flat at
 every scroll position *and* through a swing.
 
+## Reveals must survive being scrolled past twice
+
+Every flat-section reveal on this page was built with `once: true`, and that is not what it
+sounds like. `once` does not merely decline to replay — **it kills the ScrollTrigger the
+first time it fires.** Measured: eight `.assay-card` triggers before the first pass, *zero*
+after it. Scroll down through the test menu, scroll back up, come down again, and the whole
+section is inert for the rest of the session.
+
+Next to the three 3D scenes — which are scrubs, and so answer the wheel every single time —
+that reads as the flat sections being broken. They were the only thing on the page that
+stopped responding to scroll.
+
+They now use `toggleActions: 'play none none reverse'`: play on the way in, undo on the way
+back up past the start, play again next time down, and the trigger stays alive. Verified
+across two full passes.
+
+**One reveal keeps `once`, and it is the right call there.** The performance counter is a
+cumulative total. A total that counts itself back down when you scroll up is not a flourish,
+it is a number that looks wrong.
+
+**Refresh after the fonts land, not just after images.** Fraunces and three Plex families
+arrive with `display=swap`, so every heading is laid out in a fallback face and reflows when
+the real one lands. On a document this tall that is easily hundreds of pixels of drift, and
+every trigger measured before the swap then fires at the wrong scroll position.
+`document.fonts.ready` now joins `load` and per-image `load` in the refresh set.
+
 ## Scroll budget
 
 Pinned scenes cost the visitor time, so each one has to earn its runway. Currently

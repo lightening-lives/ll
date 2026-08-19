@@ -1345,13 +1345,24 @@
   });
   queuePlace();
 
-  // ---- 4 · catalogue cards tilt up into place
+  /* ---- 4 · catalogue cards tilt up into place
+
+     `toggleActions`, NOT `once: true`. `once` does not merely stop a replay —
+     it KILLS the ScrollTrigger the first time it fires. Every reveal on the
+     flat sections was therefore a single-use animation: scroll down once and
+     it plays, scroll back up and down again and the section is inert for the
+     rest of the session. Next to the 3D scenes, which are scrubs and so answer
+     the scroll wheel every time, that reads as the flat sections being broken.
+
+     play / none / none / reverse: play on the way in, undo on the way back up
+     past the start, and play again next time down. The trigger stays alive. */
+  const REVEAL = 'play none none reverse';
   gsap.utils.toArray('.assay-card').forEach((card, i) => {
     gsap.fromTo(card,
       { rotateX: -22, y: 46, opacity: 0, transformOrigin: '50% 100%' },
       { rotateX: 0, y: 0, opacity: 1, duration: 0.7, delay: (i % 3) * 0.06,
         ease: 'power3.out',
-        scrollTrigger: { trigger: card, start: 'top 88%', once: true } });
+        scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: REVEAL } });
   });
 
   // ---- 4b · the collaborator field warms up
@@ -1363,9 +1374,12 @@
     { '--reveal': 0 },
     { '--reveal': 1, duration: 0.7, ease: 'power2.out',
       stagger: { each: 0.035, from: 'start' },
-      scrollTrigger: { trigger: '#collaborators', start: 'top 78%', once: true } });
+      scrollTrigger: { trigger: '#collaborators', start: 'top 78%', toggleActions: REVEAL } });
 
-  // ---- 5 · the running total counts up once
+  // ---- 5 · the running total counts up once — and here `once` is RIGHT.
+  // This is the only reveal on the page that should not replay: it is a
+  // cumulative total, and a total that counts itself back down when you scroll
+  // up is not a flourish, it is a number that looks wrong.
   const runTarget = Number(String(C.validation.runValue).replace(/[^\d]/g, '')) || 0;
   const counter = { v: 0 };
   gsap.to(counter, {
@@ -1399,6 +1413,13 @@
     refreshPending = setTimeout(() => ScrollTrigger.refresh(), 120);
   };
   window.addEventListener('load', refreshSoon);
+  // Web fonts are the other thing that moves the document after triggers are
+  // measured. Fraunces and three Plex families arrive with `display=swap`, so
+  // every heading and paragraph is laid out in a fallback face first and
+  // reflows when the real one lands — on a page this long that is easily
+  // hundreds of pixels of drift, and every reveal then fires at the wrong
+  // scroll position. Cheap to guard, invisible when the fonts are cached.
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(refreshSoon);
   document.querySelectorAll('img').forEach((img) => {
     if (img.complete) return;
     img.addEventListener('load', refreshSoon, { once: true });
