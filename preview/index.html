@@ -723,7 +723,7 @@ footer { border-top: 1px solid var(--rule); padding-block: 1.5rem 3rem; color: v
 <script>
 const GROUNDS = [
   {
-    id: 'darkfield', name: 'Darkfield', sub: 'current',
+    id: 'darkfield', name: 'Darkfield', sub: 'as built',
     fam: 'instrument', src: 'Not in the mark  hue 250',
     top: 'oklch(11% 0.020 260)', bot: 'oklch(13.6% 0.009 244)',
     h: 250, c: 0.012, L: { void: 13, ink: 17, slab: 23, line: 33, mute: 64, chalk: 93 },
@@ -849,7 +849,9 @@ const PROFILE = {
 };
 
 const $ = (s) => document.querySelector(s);
-let current = GROUNDS[0];
+/* the standalone review page opens on the same ground the live switcher does,
+   so the two never disagree about what "default" means */
+let current = GROUNDS.find((g) => g.id === 'slate') || GROUNDS[0];
 
 /* --- the 96 wells, with a scattered handful reading positive --- */
 (function buildPlate() {

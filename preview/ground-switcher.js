@@ -20,7 +20,7 @@
   /* The candidate set, verbatim from preview/index.html. `L` is per-token
      lightness; every token in a family shares the ground's hue and chroma. */
   const GROUNDS = [
-    { id: 'darkfield', name: 'Darkfield',       sub: 'current',              fam: 'instrument',
+    { id: 'darkfield', name: 'Darkfield',       sub: 'as built',             fam: 'instrument',
       top: 'oklch(11% 0.020 260)',   bot: 'oklch(13.6% 0.009 244)', h: 250, c: 0.012,
       L: { void: 13, ink: 17, slab: 23, line: 33, mute: 64, chalk: 93 }, chip: '#05080c',
       risk: 'At 11% lightness the hue is invisible, so it reads as plain black.' },
@@ -73,6 +73,12 @@
   ];
 
   const KEY = 'll-ground';
+  /* The ground a first-time viewer lands on. Deliberately NOT GROUNDS[0]: the
+     array order is the review order (instrument → brand → inverted) and the
+     ‹ › stepping and the grouped dropdown both read from it, so reordering it
+     to change the default would quietly change the walkthrough. Name the
+     default instead and leave the running order alone. */
+  const DEFAULT_ID = 'slate';
   const root = document.documentElement;
 
   /* -------------------------------------------------------------------
@@ -295,7 +301,8 @@
   }
 
   function select(id) {
-    const g = GROUNDS.find((x) => x.id === id) || GROUNDS[0];
+    const g = GROUNDS.find((x) => x.id === id)
+           || GROUNDS.find((x) => x.id === DEFAULT_ID) || GROUNDS[0];
     apply(g);
     sel.value = g.id;
     /* the cost line rides along as the select's tooltip — the trade-off is the
@@ -340,7 +347,7 @@
 
   let saved = null;
   try { saved = localStorage.getItem(KEY); } catch { /* private mode */ }
-  select(saved && GROUNDS.some((g) => g.id === saved) ? saved : GROUNDS[0].id);
+  select(saved && GROUNDS.some((g) => g.id === saved) ? saved : DEFAULT_ID);
 
   document.body.append(host);
 })();
