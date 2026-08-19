@@ -1158,8 +1158,16 @@
     .fromTo('#dbsCard',
       { rotateY: -62, rotateX: 26, z: -420, scale: 0.92 },
       { rotateY: 16, rotateX: -7, z: 130, scale: 1, ease: 'none', duration: 1 }, 0)
+    // POSITIVE rotateX, and the sign is the whole point. The flap is hinged at
+    // its top edge with the printed face toward the camera, so opening it the
+    // way a hand does means lifting the free BOTTOM edge toward the viewer and
+    // folding it up over the crease. In CSS that is +deg: the free edge maps to
+    // +Z (toward you). The old -132 sent it the other way — straight back
+    // THROUGH the card body, which read as the flap starting behind the card
+    // and swinging round to the front, and drove the flap (z:4) into the body
+    // (z:2.5) on the first frame of the open.
     .fromTo('#dbsFlap', { rotateX: 0, z: 4 },
-      { rotateX: -132, z: 4, ease: 'none', duration: 0.55 }, 0.30)
+      { rotateX: 152, z: 4, ease: 'none', duration: 0.55 }, 0.30)
     .fromTo('#specimen .scene-layer > div > div',
       { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', duration: 0.28 }, 0.05);
 

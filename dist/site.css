@@ -3333,7 +3333,7 @@ body.no-motion .scene-copy {
   padding-top: 0;
 }
 body.no-motion .dbs__flap {
-  transform: translateZ(4px) rotateX(-132deg) !important;
+  transform: translateZ(4px) rotateX(152deg) !important;
 }
 body.no-motion .plate-layer {
   --plate-x: 50%;

@@ -130,6 +130,23 @@ shows the blank write-on area instead. And the **CSIR–CCMB co-brand is no long
 on the kit** (confirmed by the client), so the flap carries the sun mark and the brand
 alone. CCMB remains where it belongs, in Collaborations.
 
+**The flap opens the way a hand opens it**, and the sign of one rotation is the whole of
+it. The flap is hinged along its top edge with the printed face toward the camera, so
+lifting it means taking the free BOTTOM edge *toward the viewer* and folding it up over
+the crease — `rotateX: 0 → +152deg`, because a positive rotateX maps the free edge to
+**+Z, toward you**.
+
+It was `−132deg`, which is the same gesture run backwards through the card: the free edge
+dived away from the camera, passed behind the card body, and swung up from behind. It read
+as a flap that starts at the back and arrives at the front, which is not a thing paper
+does. It also drove the flap (`translateZ(4px)`) straight into the card body
+(`translateZ(2.5px)`) on the first frame of the open.
+
+The end angle is 152°, not a flat 180°: the flap settles just past upright, leaning
+slightly toward the camera, so its inside face catches light and the fold reads as a fold
+rather than as a second rectangle coplanar with the card. Max reach toward the camera is
++160px against a 1200px perspective — nowhere near the camera plane.
+
 ## The collaborators — a logo cloud
 
 The live site's flat montage went through three failed shapes before this one: identical
