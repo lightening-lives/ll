@@ -47,14 +47,6 @@
 
   /* ---------- 2 · render the repeating content ----------------------- */
 
-  // hero spec strip
-  $('#specStrip').innerHTML = C.hero.specs.map((s) => `
-    <div>
-      <p class="datakey text-mute">${esc(s.k)}</p>
-      <p class="figure-num text-chalk text-[1.6rem] mt-1.5 leading-none">${esc(s.v)}<span
-         class="figure-unit text-lumen ml-1 align-baseline">${esc(s.u)}</span></p>
-    </div>`).join('');
-
   // Specimen claims. "No venipuncture" is a STATEMENT, not a machine label, so
   // it is set in the sans voice (`.claim`) rather than the mono HUD. DESIGN.md
   // reserves IBM Plex Mono for data: IDs, specs, table heads, eyebrows.
@@ -1269,6 +1261,15 @@
   // Only #heroDepth enters Z — putting type in perspective scales and crops it.
   // The plate opens from raking to near-flat, the drop walks down to the lit
   // well, and only then does the well ignite — cause before effect.
+  //
+  // The type also stays LIT. #heroType used to tween to y:-90, opacity:0 from
+  // progress 0.56, which meant the headline and BOTH call-to-action buttons
+  // were simply gone for the back 44% of a 70svh pin — the section's only route
+  // into the site, animated off the page while its object was still on it.
+  // Worse, it faded `opacity` rather than `autoAlpha` and nothing set
+  // pointer-events, so the invisible inset-0 layer went on swallowing every
+  // click across the viewport. The plate keeps all of its motion; the words
+  // above it do not move at all.
   gsap.timeline({ scrollTrigger: scrub('#hero') })
     .fromTo('#heroDepth', { z: 0 }, { z: 340, ease: 'none', duration: 1 }, 0)
     .fromTo('#plate',
@@ -1280,8 +1281,7 @@
     // never fully dark: the lit well IS the hero image, so it is already
     // burning at rest and only blooms as the drop lands
     .fromTo('#plate', { '--ignite': 0.42 },
-      { '--ignite': 1, ease: 'none', duration: 0.34 }, 0.4)
-    .to('#heroType', { y: -90, opacity: 0, ease: 'none', duration: 0.38 }, 0.56);
+      { '--ignite': 1, ease: 'none', duration: 0.34 }, 0.4);
 
   // ---- 2 · the specimen card turns to face you
   gsap.timeline({ scrollTrigger: scrub('#specimen') })
@@ -1297,9 +1297,17 @@
     // and swinging round to the front, and drove the flap (z:4) into the body
     // (z:2.5) on the first frame of the open.
     .fromTo('#dbsFlap', { rotateX: 0, z: 4 },
-      { rotateX: 152, z: 4, ease: 'none', duration: 0.55 }, 0.30)
-    .fromTo('#specimen .scene-layer > div > div',
-      { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', duration: 0.28 }, 0.05);
+      { rotateX: 152, z: 4, ease: 'none', duration: 0.55 }, 0.30);
+  // The copy is deliberately NOT on this timeline. It used to be scrubbed from
+  // { y: 50, opacity: 0 } over progress 0.05–0.33, and because a scrub is tied
+  // to position rather than to arrival, the column was pinned at zero opacity
+  // for the whole top of the section and re-hid itself the moment you scrolled
+  // back up. It also ran unguarded below 768, where #specimen drops its pin for
+  // height:auto (input.css) — `top top`/`bottom bottom` over a flowed section
+  // barely taller than the viewport is a degenerate scroll distance, so a phone
+  // could settle on a partial opacity and stay there. Nothing writes opacity to
+  // .scene-copy now, so it simply reads at 1, which is what the reduced-motion
+  // path has always shown. The card still turns to face you underneath it.
 
   /* ---- 3 · the ladder arrives once, and then it is simply there.
 

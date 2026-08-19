@@ -51,13 +51,7 @@ window.LL_CONTENT = {
       'Duchenne and drug response — built for the tribal and rural communities ' +
       'conventional diagnostics never reaches.',
     ctaPrimary:   { label: 'Request a kit', href: '#contact' },
-    ctaSecondary: { label: 'See the test menu', href: '#menu' },
-    specs: [                                            // 🟠 SLOT-05 all four values
-      { k: 'Sample',     v: '1',    u: 'spot' },
-      { k: 'Turnaround', v: '48',   u: 'h' },
-      { k: 'Cold chain', v: 'None', u: '' },
-      { k: 'Marking',    v: 'CE',   u: 'IVD' }          // ✅ CE/IVD is on the real card
-    ]
+    ctaSecondary: { label: 'See the test menu', href: '#menu' }
   },
 
   /* --- 2 · THE SPECIMEN --------------------------------------------- */
