@@ -518,6 +518,83 @@
     ).observe(litSection);
   }
 
+  /* ---------- the sheet, below 768 ------------------------------------
+     The bar's link count used to step 7 → 6 → 4 → 0 across xl/lg/md/mobile,
+     so a phone got a 16,000px document with no way through it but scrolling.
+     Five links fit one row from 768px up; below that they open as a sheet.
+     -------------------------------------------------------------------- */
+  const navToggle = $('#navToggle');
+  const navLinks = $('#navLinks');
+
+  const setNavOpen = (open) => {
+    navBar.classList.toggle('is-open', open);
+    navToggle.setAttribute('aria-expanded', String(open));
+  };
+
+  if (navToggle && navLinks) {
+    navToggle.addEventListener('click', () =>
+      setNavOpen(!navBar.classList.contains('is-open')));
+
+    // picking a section closes it — the jump itself is handled below
+    navLinks.addEventListener('click', (e) => {
+      if (e.target.closest('a')) setNavOpen(false);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key !== 'Escape' || !navBar.classList.contains('is-open')) return;
+      setNavOpen(false);
+      navToggle.focus();
+    });
+
+    document.addEventListener('click', (e) => {
+      if (navBar.classList.contains('is-open') && !navBar.contains(e.target)) setNavOpen(false);
+    });
+
+    // rotating a phone past the breakpoint must not strand the open state
+    const wide = window.matchMedia('(min-width: 52rem)');
+    const onWide = (m) => { if (m.matches) setNavOpen(false); };
+    if (wide.addEventListener) wide.addEventListener('change', onWide);
+    else wide.addListener(onWide);                       // older WebKit
+  }
+
+  /* ---------- which section you are in ---------------------------------
+     The HUD rail reports a percentage, which is a distance, not a place. The
+     marker names the place. "Last section whose top has passed the reading
+     line" rather than an intersection test, because the five nav targets do
+     not tile the document — #provenance has to stay lit through the two
+     sections that follow it, and a band observer would go dark there.
+     -------------------------------------------------------------------- */
+  const spy = [...(navLinks ? navLinks.querySelectorAll('a[href^="#"]') : [])]
+    .map((a) => ({ a, el: document.getElementById(a.getAttribute('href').slice(1)) }))
+    .filter((t) => t.el);
+
+  if (spy.length) {
+    let active = -1;
+    const readSpy = () => {
+      const line = navBar.offsetHeight + window.innerHeight * 0.28;
+      let idx = -1;
+      for (let i = 0; i < spy.length; i++) {
+        if (spy[i].el.getBoundingClientRect().top > line) break;   // targets are in page order
+        idx = i;
+      }
+      if (idx === active) return;
+      active = idx;
+      spy.forEach((t, i) => {
+        if (i === idx) t.a.setAttribute('aria-current', 'location');
+        else t.a.removeAttribute('aria-current');
+      });
+    };
+    let queued = false;
+    const onSpy = () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => { queued = false; readSpy(); });
+    };
+    window.addEventListener('scroll', onSpy, { passive: true });
+    window.addEventListener('resize', onSpy);
+    readSpy();
+  }
+
   /* ---------- in-page navigation --------------------------------------
      Anchor jumps were landing short or long. Two causes, both about the
      document changing height WHILE the smooth scroll is in flight:

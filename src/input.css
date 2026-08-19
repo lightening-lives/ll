@@ -873,24 +873,161 @@ body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
      a transition having completed — the bar only deepens once stuck. */
   background-color: transparent;
 }
-/* Seven links plus a wordmark and a CTA have to share one row. The chrome
-   voice is sized and spaced fluidly so the bar never squeezes: at 14px flat it
+/* FIVE links plus a wordmark and a CTA share one row. Seven of them had to be
+   hidden a breakpoint at a time to fit — 7 → 6 → 4 → 0 across xl/lg/md/mobile —
+   which meant an evaluator on a 1280 laptop was already being shown a different
+   site to one on a 1440. Five measure ~45 characters against the old set's 63,
+   so the same five now hold from 832px up and nothing is hidden at any width.
+   832 and not 768: measured, the row runs 6px OVER its box at 768 and clears by
+   only 28px at 820, so tablet portrait takes the sheet rather than a bar with
+   no air in it.
+   The type is still sized and spaced fluidly: at a flat 14px the old bar
    overflowed its own box by 73px at 1024 and 101px at 768. */
-.nav__links { gap: clamp(0.7rem, 1.45vw, 1.5rem); }
+.nav__links { display: none; align-items: center; gap: clamp(0.7rem, 1.45vw, 1.5rem); }
+@media (min-width: 52rem) { .nav__links { display: flex; } }
 .nav__links a {
   font-size: clamp(0.75rem, 0.48rem + 0.62vw, 0.875rem);
   letter-spacing: 0.07em;
   white-space: nowrap;
+  transition: color .25s ease;
+}
+
+/* Where you are. On a document this tall the bar is the only thing that can
+   say it — the HUD rail gives a percentage, which is not the same as a place.
+   A pseudo-element, so nothing in the row moves when the marker arrives. */
+.nav__link { position: relative; }
+.nav__link::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -0.45rem; height: 1px;
+  background: var(--color-lumen);
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .3s cubic-bezier(.2, .7, .3, 1);
+}
+.nav__link[aria-current]::after { transform: scaleX(1); }
+.nav__link[aria-current] { color: var(--color-chalk); }
+/* gold measures 1.47:1 on the bone section — the marker changes colour with
+   the rest of the bar, or it vanishes exactly where the form is */
+body.is-lit .nav__link::after { background: var(--color-deep); }
+@media (prefers-reduced-motion: reduce) { .nav__link::after { transition: none; } }
+
+.nav__end { display: flex; align-items: center; gap: 0.6rem; }
+
+/* ---------- the sheet, below 768 --------------------------------------
+   The bar used to carry NO links at all on a phone: the link count stepped to
+   zero at the md breakpoint, leaving a 16,000px document with a wordmark and a
+   CTA — and tablet portrait now lands here too. NGO field teams on mid-range Android are a named audience, so the five
+   move into a sheet rather than disappearing. */
+.nav__toggle {
+  display: none;
+  width: 2.4rem; height: 2.4rem; flex: none;
+  place-items: center;
+  background: transparent;
+  border: 1px solid var(--color-line);
+  cursor: pointer;
+  transition: border-color .25s ease;
+}
+.nav__toggle:hover { border-color: var(--color-mute); }
+.nav__burger { position: relative; display: block; width: 1rem; height: 1px; }
+.nav__burger,
+.nav__burger::before,
+.nav__burger::after {
+  background: oklch(74% 0.012 250);
+  transition: transform .28s cubic-bezier(.2, .7, .3, 1), background-color .18s ease;
+}
+/* both rules pinned to the parent's own line, so rotating them crosses on one
+   point rather than wherever static position happened to leave them */
+.nav__burger::before, .nav__burger::after {
+  content: ''; position: absolute; left: 0; top: 0; width: 100%; height: 1px;
+}
+.nav__burger::before { transform: translateY(-0.32rem); }
+.nav__burger::after  { transform: translateY(0.32rem); }
+.nav.is-open .nav__burger { background: transparent; }
+.nav.is-open .nav__burger::before { transform: rotate(45deg); }
+.nav.is-open .nav__burger::after  { transform: rotate(-45deg); }
+body.is-lit .nav__burger,
+body.is-lit .nav__burger::before,
+body.is-lit .nav__burger::after { background: oklch(25% 0.02 250); }
+body.is-lit .nav.is-open .nav__burger { background: transparent; }
+body.is-lit .nav__toggle { border-color: oklch(82% 0.015 85); }
+@media (prefers-reduced-motion: reduce) {
+  .nav__burger, .nav__burger::before, .nav__burger::after { transition: none; }
+}
+
+@media (max-width: 51.99rem) {
+  .nav__toggle { display: grid; }
+  .nav.is-open .nav__links {
+    display: flex;
+    position: absolute; top: 100%; left: 0; right: 0;
+    flex-direction: column; align-items: stretch;
+    gap: 0;
+    padding: 0.35rem clamp(1rem, 4vw, 2.5rem) 0.9rem;
+    background-color: oklch(13% 0.012 250 / .97);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--color-line);
+  }
+  .nav.is-open .nav__links a {
+    padding: 0.85rem 0;
+    font-size: 0.875rem;
+    border-top: 1px solid var(--color-line);
+  }
+  /* the row marker is an underline; in a column it has to be a spine */
+  .nav.is-open .nav__link::after {
+    left: -0.7rem; right: auto; top: 0.85rem; bottom: 0.85rem;
+    width: 1px; height: auto;
+    transform: scaleY(0); transform-origin: top;
+  }
+  .nav.is-open .nav__link[aria-current]::after { transform: scaleY(1); }
+  body.is-lit .nav.is-open .nav__links { background-color: oklch(95% 0.012 85 / .97); }
 }
 .nav__cta {
   white-space: nowrap;
   font-size: clamp(0.75rem, 0.5rem + 0.55vw, 0.875rem);
   padding-inline: clamp(0.7rem, 2.6vw, 1rem);
 }
-/* the wordmark yields before the CTA does on the narrowest phones */
-@media (max-width: 25rem) {
-  .nav__mark .font-display { font-size: 1.05rem; }
+/* the wordmark yields before the CTA does on the narrowest phones — and the
+   menu button is ~48px the bar did not have to carry before, so the chrome
+   around it gives that back rather than letting the row overflow at 360 */
+@media (max-width: 26rem) {
+  .nav__mark .font-display { font-size: 0.98rem; }
+  .nav__mark { gap: 0.5rem; }
+  .nav { padding-inline: 0.7rem; }
+  .nav__end { gap: 0.4rem; }
+  .nav__cta { padding-inline: 0.6rem; }
+  .nav__toggle { width: 2.1rem; height: 2.1rem; }
 }
+/* Below 352px the name cannot be set beside a 44px symbol, a CTA and a menu
+   button without one of them being squeezed — and DESIGN.md records 44px as the
+   measured floor at which the figure inside the sun still reads, so the symbol
+   is not the thing that yields. The name is two lines down in the masthead. */
+@media (max-width: 22rem) {
+  .nav__mark .font-display { display: none; }
+}
+
+/* =====================================================================
+   FOOTER INDEX
+   The bar carries five decisions. This carries all twelve sections, so
+   nothing that lost a nav slot became unreachable — and a government or NGO
+   evaluator scanning for accreditations, partners or reach has one place
+   that lists them by name. Quiet on purpose: it sits on the bone payoff.
+   ===================================================================== */
+.footnav {
+  display: grid; gap: 2.5rem 3rem;
+  grid-template-columns: 1fr;
+}
+@media (min-width: 34rem) { .footnav { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.footnav__head {
+  font-family: var(--font-cond);
+  font-size: 0.75rem; font-weight: 600;
+  letter-spacing: var(--tracking-hud); text-transform: uppercase;
+  color: oklch(35% 0.03 40);
+  margin: 0 0 1rem;
+}
+.footnav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.55rem; }
+.footnav a {
+  font-family: var(--font-sans); font-size: 0.875rem; line-height: 1.4;
+  color: oklch(42% 0.02 250); text-decoration: none;
+  transition: color .2s ease;
+}
+.footnav a:hover { color: var(--color-deep); text-decoration: underline; text-underline-offset: 4px; }
 
 .nav.is-stuck { border-color: var(--color-line);
                 background-color: oklch(13% 0.012 250 / .92);

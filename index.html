@@ -30,16 +30,34 @@
       <span class="hud text-mute hidden xl:inline">Every Life Matters</span>
     </span>
   </a>
-  <div class="nav__links hidden md:flex items-center">
-    <a href="#inheritance"  class="hud transition-colors no-underline hidden xl:inline">Inheritance</a>
-    <a href="#stories"      class="hud transition-colors no-underline">Impact</a>
-    <a href="#menu"         class="hud transition-colors no-underline">Tests</a>
-    <a href="#performance"  class="hud transition-colors no-underline">Performance</a>
-    <a href="#workflow"     class="hud transition-colors no-underline hidden lg:inline">Workflow</a>
-    <a href="#capabilities" class="hud transition-colors no-underline hidden lg:inline">Capabilities</a>
-    <a href="#provenance"   class="hud transition-colors no-underline">Who we are</a>
+  <!-- Five items, one per question an evaluator actually arrives with, in page
+       order so the active marker only ever travels left to right:
+         Impact       does the mission hold up          NGOs, government
+         Tests        what can I order                  labs, hospitals
+         Performance  does it work — and the NABL /     labs, government
+                      ICMR / ISO 15189 accreditations
+         Workflow     can we run it where we work       NGOs, labs
+         Who we are   can we trust you at scale         government, NGOs
+       Every audience has at least three entries here. The set no longer steps
+       down at breakpoints — these same five hold from 768px up, and below that
+       they become the sheet the menu button opens. Sections that lost their
+       slot (the inheritance explainer, capabilities, reach, collaborators, the
+       two scroll scenes) are indexed in full in the footer. -->
+  <div class="nav__links" id="navLinks">
+    <a href="#stories"     class="hud nav__link no-underline">Impact</a>
+    <a href="#menu"        class="hud nav__link no-underline">Tests</a>
+    <a href="#performance" class="hud nav__link no-underline">Performance</a>
+    <a href="#workflow"    class="hud nav__link no-underline">Workflow</a>
+    <a href="#provenance"  class="hud nav__link no-underline">Who we are</a>
   </div>
-  <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
+  <div class="nav__end">
+    <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
+    <button type="button" class="nav__toggle" id="navToggle"
+            aria-expanded="false" aria-controls="navLinks">
+      <span class="sr-only">Sections</span>
+      <span class="nav__burger" aria-hidden="true"></span>
+    </button>
+  </div>
 </nav>
 
 <div class="hud-rail" aria-hidden="true">
@@ -396,12 +414,49 @@
 
 </main>
 
-<footer class="bg-bone text-[oklch(45%_.02_250)] border-t border-[oklch(85%_.015_85)] py-10">
-  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 flex flex-wrap items-center justify-between gap-4 meta">
-    <img src="assets/brand/lockup-on-light.png" alt="Lightening Lives" width="209" height="260"
-         class="w-[112px] h-auto -my-3" decoding="async">
-    <span>© <span id="year"></span> <span data-ll="brand.legal"></span></span>
-    <span data-ll="brand.city"></span>
+<footer class="bg-bone text-[oklch(45%_.02_250)] border-t border-[oklch(85%_.015_85)] pt-12 pb-10">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+
+    <!-- The full index. The bar carries five decisions; this carries every
+         section, so cutting the bar down orphans nothing. Grouped the way the
+         company organises itself — why, how, what — with labels that say what
+         is inside rather than what we call it internally. -->
+    <nav class="footnav" aria-label="All sections">
+      <div>
+        <h2 class="footnav__head">What we do</h2>
+        <ul>
+          <li><a href="#menu">Test menu</a></li>
+          <li><a href="#performance">Analytical performance</a></li>
+          <li><a href="#capabilities">Services &amp; training</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="footnav__head">How it works</h2>
+        <ul>
+          <li><a href="#specimen">The specimen</a></li>
+          <li><a href="#assay">The assay</a></li>
+          <li><a href="#inheritance">What a carrier result means</a></li>
+          <li><a href="#workflow">Workflow</a></li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="footnav__head">Who we are</h2>
+        <ul>
+          <li><a href="#stories">Impact</a></li>
+          <li><a href="#provenance">Our team</a></li>
+          <li><a href="#collaborators">Collaborations</a></li>
+          <li><a href="#reach">Reach</a></li>
+          <li><a href="#contact">Request a kit</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="mt-12 pt-8 border-t border-[oklch(85%_.015_85)] flex flex-wrap items-center justify-between gap-4 meta">
+      <img src="assets/brand/lockup-on-light.png" alt="Lightening Lives" width="209" height="260"
+           class="w-[112px] h-auto -my-3" decoding="async">
+      <span>© <span id="year"></span> <span data-ll="brand.legal"></span></span>
+      <span data-ll="brand.city"></span>
+    </div>
   </div>
 </footer>
 
