@@ -45,7 +45,7 @@ window.LL_CONTENT = {
       'Dried–blood–spot screening for sickle cell anaemia, thalassaemia, SMA and ' +
       'Duchenne muscular dystrophy — built to reach tribal and rural communities ' +
       'that conventional diagnostics never reaches.',
-    ctaPrimary:   { label: 'Request a test kit', href: '#contact' },
+    ctaPrimary:   { label: 'Request a kit', href: '#contact' },
     ctaSecondary: { label: 'See the test menu', href: '#menu' },
     specs: [                                            // 🟠 SLOT-05 all four values
       { k: 'Sample',     v: '1',    u: 'spot' },
@@ -429,7 +429,8 @@ window.LL_CONTENT = {
   stories: {
     kicker: 'Impact',
     head: 'What early detection actually changes.',
-    note: 'Four case notes from our own records. De-identified, published with consent.',
+    // 🟠 SLOT-18 — say "published with consent" only once consent is on file.
+    note: 'Four case notes from our own records, de-identified.',
     // ✅ All four narratives are the company's own, from the Impact Stories page.
     //
     // These are NOT quotes. They are case notes the company wrote in the third
@@ -504,6 +505,6 @@ window.LL_CONTENT = {
       { n: 'panel',  l: 'Panel of interest',      t: 'select', req: false }
     ],
     endpoint: '',                                       // 🟠 SLOT-19 form endpoint
-    submit: 'Request kits'
+    submit: 'Request a kit'
   }
 };

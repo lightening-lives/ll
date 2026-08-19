@@ -50,9 +50,9 @@
   // hero spec strip
   $('#specStrip').innerHTML = C.hero.specs.map((s) => `
     <div>
-      <p class="hud text-mute">${esc(s.k)}</p>
+      <p class="datakey text-mute">${esc(s.k)}</p>
       <p class="figure-num text-chalk text-[1.6rem] mt-1.5 leading-none">${esc(s.v)}<span
-         class="text-lumen text-[.8rem] ml-1 align-baseline">${esc(s.u)}</span></p>
+         class="figure-unit text-lumen ml-1 align-baseline">${esc(s.u)}</span></p>
     </div>`).join('');
 
   // Specimen claims. "No venipuncture" is a STATEMENT, not a machine label, so
@@ -67,7 +67,7 @@
   // assay pipeline
   $('#assayStack').innerHTML = C.assay.stack.map((s) => `
     <li class="flex gap-4 py-3 border-b border-line">
-      <span class="hud text-probe pt-0.5 shrink-0">${esc(s.step)}</span>
+      <span class="code text-probe pt-0.5 shrink-0">${esc(s.step)}</span>
       <span><span class="text-chalk text-sm">${esc(s.t)}</span>
         <span class="text-mute text-sm"> — ${esc(s.d)}</span></span>
     </li>`).join('');
@@ -76,16 +76,16 @@
   $('#assayGrid').innerHTML = C.menu.items.map((a) => `
     <article class="assay-card p-6 flex flex-col">
       <div class="flex items-start justify-between gap-3">
-        <span class="hud text-lumen">${esc(a.code)}</span>
-        ${a.flag ? `<span class="hud text-probe border border-probe/40 px-2 py-0.5">${esc(a.flag)}</span>` : ''}
+        <span class="code text-lumen">${esc(a.code)}</span>
+        ${a.flag ? `<span class="credential text-probe border border-probe/40 px-2.5 py-1">${esc(a.flag)}</span>` : ''}
       </div>
       <h3 class="font-display text-[1.6rem] leading-[1.05] text-chalk mt-4">${esc(a.name)}</h3>
       <p class="text-sm text-mute mt-2 flex-1">${esc(a.indication)}</p>
       <dl class="mt-6 grid grid-cols-2 gap-y-3 gap-x-4 rule-t pt-4">
-        <div><dt class="hud text-mute">Sample</dt><dd class="text-sm text-chalk mt-0.5">${esc(a.sample)}</dd></div>
-        <div><dt class="hud text-mute">Turnaround</dt><dd class="figure-num text-lumen text-sm mt-0.5">${esc(a.tat)}</dd></div>
-        <div><dt class="hud text-mute">Method</dt><dd class="text-sm text-chalk mt-0.5 min-h-[2.6em]">${esc(a.method)}</dd></div>
-        <div><dt class="hud text-mute">Throughput</dt><dd class="figure-num text-chalk text-sm mt-0.5">${esc(a.throughput)}</dd></div>
+        <div><dt class="datakey text-mute">Sample</dt><dd class="text-sm text-chalk mt-1">${esc(a.sample)}</dd></div>
+        <div><dt class="datakey text-mute">Turnaround</dt><dd class="${/^[\d.]/.test(a.tat) ? 'figure-num' : 'credential'} text-lumen text-sm mt-1">${esc(a.tat)}</dd></div>
+        <div><dt class="datakey text-mute">Method</dt><dd class="text-sm text-chalk mt-1 min-h-[2.6em]">${esc(a.method)}</dd></div>
+        <div><dt class="datakey text-mute">Throughput</dt><dd class="figure-num text-chalk text-sm mt-1">${esc(a.throughput)}</dd></div>
       </dl>
     </article>`).join('');
 
@@ -93,13 +93,13 @@
   $('#statGrid').innerHTML = C.validation.stats.map((s) => `
     <div class="bg-void p-6">
       <p class="figure-num text-probe text-[clamp(2rem,4.5vw,3rem)] leading-none">${esc(s.v)}<span
-         class="text-[.9rem] text-mute ml-0.5">${esc(s.u)}</span></p>
-      <p class="hud text-chalk mt-3">${esc(s.k)}</p>
-      <p class="text-xs text-mute mt-1">${esc(s.d)}</p>
+         class="figure-unit text-mute ml-1">${esc(s.u)}</span></p>
+      <p class="datakey text-chalk mt-3">${esc(s.k)}</p>
+      <p class="meta text-mute mt-1.5">${esc(s.d)}</p>
     </div>`).join('');
 
   $('#accreditations').innerHTML = C.validation.accreditations.map((a) =>
-    `<span class="hud text-mute border border-line px-3 py-1.5">${esc(a)}</span>`).join('');
+    `<span class="chip credential text-mute">${esc(a)}</span>`).join('');
 
   // workflow track
   $('#workflowTrack').innerHTML = C.workflow.steps.map((s) => `
@@ -107,7 +107,7 @@
                     flex flex-col bg-ink border border-line p-7">
       <div class="flex items-baseline justify-between">
         <span class="figure-num text-lumen text-[2.5rem] leading-none">${esc(s.n)}</span>
-        <span class="hud text-probe">${esc(s.time)}</span>
+        <span class="code text-probe">${esc(s.time)}</span>
       </div>
       <h3 class="font-display text-[1.75rem] text-chalk mt-auto pt-8">${esc(s.t)}</h3>
       <p class="text-sm text-mute mt-2">${esc(s.d)}</p>
@@ -132,14 +132,14 @@
 
   // provenance — the founder's record is the strongest thing on this page
   $('#founderCreds').innerHTML = C.provenance.founder.credentials.map((c) =>
-    `<li class="hud text-lumen border border-line px-3 py-1.5">${esc(c)}</li>`).join('');
+    `<li class="chip credential text-lumen">${esc(c)}</li>`).join('');
 
   $('#governance').innerHTML = [C.provenance.patron, ...C.provenance.advisors].map((p) => `
     <div class="gov">
       ${p.img ? `<img class="gov__face" src="${esc(p.img)}" alt="${esc(p.name)}"
                       width="446" height="520" loading="lazy" decoding="async">` : ''}
       <span class="gov__body">
-        <span class="hud text-lumen block">${esc(p.role)}</span>
+        <span class="role text-probe block">${esc(p.role)}</span>
         <span class="font-display text-[clamp(1.25rem,1.9vw,1.6rem)] leading-[1.12] text-chalk block mt-2">${esc(p.name)}</span>
       </span>
     </div>`).join('');
@@ -156,13 +156,14 @@
   teamList.innerHTML = C.provenance.team.map((t, i) => `
     <li class="team-cell">
       <button type="button" class="team-btn" data-i="${i}"
-              aria-expanded="false" aria-controls="teamBio">
+              aria-expanded="false" aria-controls="teamBio"
+              aria-label="More details about ${esc(t.name)}, ${esc(t.role)}">
         ${t.img ? `<img class="face" src="${esc(t.img)}" alt=""
                        width="446" height="520" loading="lazy" decoding="async">` : ''}
         <span class="team-name">${esc(t.name)}</span>
-        <span class="team-role hud">${esc(t.role)}</span>
+        <span class="team-role">${esc(t.role)}</span>
         <span class="team-cue hud" aria-hidden="true">
-          <span class="team-cue__x"></span>Record</span>
+          <span class="team-cue__x"></span>More details</span>
       </button>
     </li>`).join('');
 
@@ -174,6 +175,10 @@
   bioPanel.innerHTML = '<div class="team-bio__clip"><div class="team-bio__inner"></div></div>';
 
   const bioClip = bioPanel.firstElementChild;
+  // six buttons referenced #teamBio, but the panel was only inserted on the
+  // first click — an invalid IDREF for the whole pre-interaction life of the page
+  teamList.appendChild(bioPanel);
+
   let openTeam = -1;
 
   // the resolved column count, straight from the grid itself — no breakpoint
@@ -202,6 +207,24 @@
     const cells = teamCells();
     const rowEnd = (Math.floor(i / teamCols()) + 1) * teamCols();
     teamList.insertBefore(bioPanel, cells[rowEnd] || null);
+  }
+
+  /* Bring the opened record into view — but only if it is not already there.
+     The panel opens BELOW the row that was clicked, so on a face near the
+     foot of the window the record expands straight off the bottom. Scrolls
+     by the minimum needed, and never pushes the top of the record under the
+     fixed bar: if the record is taller than the window, its beginning wins. */
+  function keepRecordInView(targetH) {
+    const navH = $('.nav').offsetHeight;
+    const pad = 20;
+    const top = bioPanel.getBoundingClientRect().top;
+    const bottom = top + targetH;
+    const roomTop = top - (navH + pad);              // how far we may scroll down
+    let delta = 0;
+    if (bottom > window.innerHeight - pad) delta = Math.min(bottom - (window.innerHeight - pad), roomTop);
+    else if (roomTop < 0)                  delta = roomTop;
+    if (Math.abs(delta) < 3) return;                 // already comfortably in view
+    window.scrollBy({ top: delta, behavior: REDUCED ? 'instant' : 'smooth' });
   }
 
   function closeTeam(focusBack) {
@@ -234,7 +257,7 @@
         ${t.img ? `<img class="team-bio__face" src="${esc(t.img)}" alt="${esc(t.name)}"
                         width="446" height="520" decoding="async">` : ''}
         <div class="team-bio__body">
-          <p class="hud text-probe">${esc(t.role)}</p>
+          <p class="role text-probe">${esc(t.role)}</p>
           <h4 class="team-bio__name">${esc(t.name)}</h4>
           <p class="team-bio__text">${esc(t.bio)}</p>
         </div>
@@ -250,7 +273,14 @@
     markButtons(i);
     openTeam = i;
 
-    if (REDUCED) { clipTo('auto'); bioPanel.classList.add('is-open'); return; }
+    if (REDUCED) {
+      bioPanel.classList.add('is-open');
+      clipTo('auto');
+      // still has to be brought into view — the record opens below the row,
+      // so a face near the foot of the window expands straight off-screen
+      keepRecordInView(bioClip.getBoundingClientRect().height);
+      return;
+    }
 
     // Pin the current height as an explicit px, force the reflow, then set the
     // target. Deliberately NOT deferred to requestAnimationFrame: rAF is paused
@@ -258,7 +288,9 @@
     clipTo(bioClip.getBoundingClientRect().height + 'px');
     void bioClip.offsetHeight;
     bioPanel.classList.add('is-open');
-    clipTo(bioClip.scrollHeight + 'px');
+    const targetH = bioClip.scrollHeight;
+    clipTo(targetH + 'px');
+    keepRecordInView(targetH);
 
     const done = (e) => {
       if (e.propertyName !== 'height') return;
@@ -307,26 +339,25 @@
   // The first card leads full-width, the remaining three sit in a row.
   $('#storyGrid').innerHTML = C.stories.items.map((st, i) => `
     <article class="story${i === 0 ? ' story--lead md:col-span-3' : ''}">
-      <span class="story__mark" aria-hidden="true">&ldquo;</span>
-      <blockquote class="story__pull">${esc(st.pull)}</blockquote>
+      <p class="story__pull">${esc(st.pull)}</p>
       <div class="story__note">
         <h3 class="story__t">${esc(st.t)}</h3>
         <p class="story__d">${esc(st.d)}</p>
       </div>
       <footer class="story__foot">
-        <span class="hud text-mute">Case note · ${esc(st.place)}</span>
-        <span class="hud text-lumen border border-line px-2 py-0.5">${esc(st.cond)}</span>
+        <span class="meta text-mute">Case note · ${esc(st.place)}</span>
+        <span class="code text-lumen border border-line px-2.5 py-1">${esc(st.cond)}</span>
       </footer>
     </article>`).join('');
 
   $('#stateList').innerHTML = C.reach.states.map((n) =>
-    `<li class="hud text-chalk border border-line px-3 py-1.5">${esc(n)}</li>`).join('');
+    `<li class="chip credential text-chalk">${esc(n)}</li>`).join('');
 
   // reach
   $('#reachGrid').innerHTML = C.reach.stats.map((s) => `
     <div class="bg-void p-6">
       <p class="figure-num text-lumen text-[clamp(2rem,5vw,3.25rem)] leading-none">${esc(s.v)}</p>
-      <p class="hud text-mute mt-3">${esc(s.k)}</p>
+      <p class="datakey text-mute mt-3">${esc(s.k)}</p>
     </div>`).join('');
 
   // contact form
@@ -336,16 +367,18 @@
           .map((a) => `<option>${esc(a.name)}</option>`).join('')}<option>Not sure yet</option></select>`
       : `<input id="f-${f.n}" name="${f.n}" type="${f.t}" ${f.req ? 'required' : ''} autocomplete="on">`;
     return `<div class="field ${f.n === 'org' || f.n === 'panel' ? 'sm:col-span-2' : ''}">
-        <label class="hud block mb-1" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
+        <label class="field__label block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
         ${control}
       </div>`;
   }).join('');
 
   $('#kitForm').addEventListener('submit', (e) => {
     e.preventDefault();
+    // 🟠 SLOT-19 still needs an endpoint. The visitor is told what to do next
+    // rather than being shown the build's own to-do list.
     $('#formNote').textContent = C.contact.endpoint
       ? 'Sending…'
-      : 'Form is inert by design — SLOT-19 still needs an endpoint.';
+      : 'This form is not connected yet — please email ' + C.brand.email + ' and we will reply the same day.';
     $('#formNote').style.color = 'var(--color-deep)';
   });
 
@@ -366,7 +399,7 @@
       <legend class="hud text-mute">${esc(lab)}</legend>
       <div class="inh-opts" role="group" aria-label="${esc(lab)} genotype">
         ${INH.options.map((o) => `
-          <button type="button" class="inh-opt hud" data-p="${p}" data-g="${o.g}"
+          <button type="button" class="inh-opt" data-p="${p}" data-g="${o.g}"
                   aria-pressed="${String(o.g === parents[p])}">${esc(o.label)}</button>`).join('')}
       </div>
     </fieldset>`).join('');
@@ -377,7 +410,7 @@
 
   $('#inhOdds').innerHTML = ['AA', 'AS', 'SS'].map((k) => `
     <div class="inh-odd bg-void p-5" data-g="${k}">
-      <dt class="hud text-mute">${esc(INH.outcomeLabels[k])}</dt>
+      <dt class="credential text-mute">${esc(INH.outcomeLabels[k])}</dt>
       <dd class="inh-odd__v figure-num" id="inhPc-${k}">—</dd>
     </div>`).join('');
 
@@ -429,6 +462,132 @@
   });
 
   inhUpdate();
+
+  /* ---------- nav state ------------------------------------------------
+     `is-stuck` (the bar's own scrim) and `is-lit` (the inverted palette over
+     the closing paper section) used to be ScrollTriggers registered below the
+     reduced-motion early return — so a visitor with "reduce motion" on kept
+     the dark-ground palette over the bone contact section, where the wordmark
+     measures about 1.1:1 and the links about 2:1. They are plain observers now,
+     which also removes a GSAP dependency from something purely presentational.
+     ------------------------------------------------------------------- */
+  const navBar = $('.nav');
+  const hasIO = 'IntersectionObserver' in window;
+
+  // `is-stuck` rides a 40px sentinel at the top of the document rather than a
+  // per-frame scroll listener
+  if (hasIO) {
+    const sentinel = el('div');
+    sentinel.setAttribute('aria-hidden', 'true');
+    sentinel.style.cssText = 'position:absolute;top:0;left:0;width:1px;height:40px;pointer-events:none';
+    document.body.prepend(sentinel);
+    new IntersectionObserver(
+      ([e]) => navBar.classList.toggle('is-stuck', !e.isIntersecting),
+      { threshold: 0 }
+    ).observe(sentinel);
+  } else {
+    const onScrollNav = () => navBar.classList.toggle('is-stuck', window.scrollY > 40);
+    onScrollNav();
+    window.addEventListener('scroll', onScrollNav, { passive: true });
+  }
+
+  // `is-lit` flips the whole bar's palette once the paper section reaches it
+  const litSection = $('#contact');
+  if (litSection && hasIO) {
+    new IntersectionObserver(
+      ([e]) => document.body.classList.toggle('is-lit', e.isIntersecting),
+      { rootMargin: '-35% 0px 0px 0px', threshold: 0 }
+    ).observe(litSection);
+  }
+
+  /* ---------- in-page navigation --------------------------------------
+     Anchor jumps were landing short or long. Two causes, both about the
+     document changing height WHILE the smooth scroll is in flight:
+
+       · webfonts swap in (Fraunces and Plex are display=swap), which
+         re-flows every heading on the page, and
+       · lazy images below the fold decode as you pass them.
+
+     Either one moves the target after the browser has already committed to
+     a destination. So the jump is computed against a MEASURED nav height
+     rather than a hard-coded 7.5rem, and then re-verified once the scroll
+     settles, correcting silently if the target has drifted.
+     ------------------------------------------------------------------- */
+  const navEl = $('.nav');
+  const docEl = document.documentElement;
+
+  const syncNavH = () => docEl.style.setProperty('--nav-h', navEl.offsetHeight + 'px');
+  syncNavH();
+  window.addEventListener('resize', syncNavH);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(syncNavH);
+
+  // the gap left between the bar and whatever you jumped to
+  const anchorGap = () => navEl.offsetHeight + 24;
+  const maxScroll = () => Math.max(0, docEl.scrollHeight - window.innerHeight);
+  const targetY = (el) =>
+    Math.min(maxScroll(), Math.max(0,
+      Math.round(el.getBoundingClientRect().top + window.scrollY - anchorGap())));
+
+  // up to three instant nudges after the smooth scroll has stopped
+  function settleOn(el) {
+    let tries = 0;
+    const check = () => {
+      const drift = Math.round(el.getBoundingClientRect().top - anchorGap());
+      // a target pinned against either end of the document can never reach
+      // zero drift; retrying it just burns frames
+      const clamped = (window.scrollY <= 0 && drift < 0) ||
+                      (window.scrollY >= maxScroll() - 1 && drift > 0);
+      if (Math.abs(drift) > 2 && !clamped && tries++ < 3) {
+        window.scrollTo({ top: targetY(el), behavior: 'instant' });
+        setTimeout(check, 80);
+      }
+    };
+    setTimeout(check, 60);
+  }
+
+  function goToSection(el, smooth) {
+    window.scrollTo({ top: targetY(el), behavior: smooth ? 'smooth' : 'instant' });
+    if (!smooth) { settleOn(el); return; }
+    let fired = false;
+    const done = () => {
+      if (fired) return;
+      fired = true;
+      window.removeEventListener('scrollend', done);
+      clearTimeout(fallback);
+      settleOn(el);
+    };
+    window.addEventListener('scrollend', done);          // Chrome/Firefox
+    const fallback = setTimeout(done, 900);              // everywhere else
+  }
+
+  document.addEventListener('click', (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a || a.hasAttribute('download') || a.target === '_blank') return;
+    const id = a.getAttribute('href').slice(1);
+    if (!id) return;
+    const el = document.getElementById(id) || (id === 'top' ? $('#top') : null);
+    if (!el) return;
+    e.preventDefault();
+    goToSection(el, !REDUCED);
+    if (location.hash.slice(1) !== id) history.pushState(null, '', '#' + id);
+  });
+
+  // a URL that arrives WITH a hash gets the same treatment: the browser's own
+  // jump happens before the fonts have swapped, so it is always short
+  const initialHash = location.hash.slice(1);
+  if (initialHash) {
+    const el = document.getElementById(initialHash);
+    if (el) {
+      const reposition = () => goToSection(el, false);
+      window.addEventListener('load', reposition);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(reposition);
+      setTimeout(reposition, 300);
+    }
+  }
+  window.addEventListener('hashchange', () => {
+    const el = document.getElementById(location.hash.slice(1));
+    if (el) goToSection(el, !REDUCED);
+  });
 
   /* ---------- 3 · build the 3D geometry ------------------------------ */
 
@@ -550,6 +709,10 @@
     deck.insertBefore(ply, deck.firstChild);
   }
 
+  // deliberately near-illegible instrument texture (see DESIGN.md), so it is
+  // hidden from assistive tech rather than exposed as 6.7px text at 1.8:1
+  $('#plateCols').setAttribute('aria-hidden', 'true');
+  $('#plateRows').setAttribute('aria-hidden', 'true');
   $('#plateCols').innerHTML =
     Array.from({ length: COLS }, (_, i) => `<span>${i + 1}</span>`).join('');
   $('#plateRows').innerHTML =
@@ -644,12 +807,6 @@
       onToggle(self) { if (self.isActive) scaleRead.textContent = label; }
     });
   });
-
-  const nav = $('.nav');
-  ScrollTrigger.create({ start: 40, end: 'max',
-    onToggle: (s) => nav.classList.toggle('is-stuck', s.isActive) });
-  ScrollTrigger.create({ trigger: '#contact', start: 'top 60%', end: 'bottom top',
-    onToggle: (s) => document.body.classList.toggle('is-lit', s.isActive) });
 
   const scrub = (trigger, extra) => Object.assign({
     trigger, start: 'top top', end: 'bottom bottom', scrub: 0.6

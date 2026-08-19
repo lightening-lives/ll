@@ -173,6 +173,13 @@ plus two entries in the `SCALES` array — nothing else depends on the order.
 
 ## Impact — testimonial weight, without inventing speech
 
+> **Correction, after review.** The first build of this component broke the very rule
+> stated below: it wrapped the pulled sentence in a `<blockquote>` and hung a 4.5rem gold
+> open-quote over it. A reader — and a screen reader, which announces "blockquote" —
+> takes that as a patient speaking. It is a `<p>` with a short gold rule now. The rule
+> was right; the implementation contradicted it.
+
+
 These are **case notes the company wrote in the third person**, not patient quotes, and
 they must never be dressed as quotes: putting words in a patient's mouth is not a style
 choice for a diagnostics company. So the card lifts the *outcome sentence* out of the
@@ -229,14 +236,75 @@ fluorophore. `serum` is structural only — it fails contrast as text, so `alarm
 **Type** — two voices, because the company has two.
 - **Fraunces** (variable, low WONK) — the human voice. Mission lines, section leads. Warm
   high-contrast serif; chosen over Bodoni because the warmth matters more than the hauteur.
-- **IBM Plex Mono** — the data voice. HUD, specimen IDs, specs, table heads, eyebrows.
-  **Data only.** The page had drifted into setting *claims* in it — "No venipuncture",
-  the capability sub-items, the collaborator taglines — all mono, uppercase, 10–11px.
-  That made the page's assertions read as instrument chrome and sat badly under the
-  Fraunces headings they belonged to. Those are now the `claim` utility (Plex Sans 600,
-  15px, sentence case); mono kept only where the content really is machine-read.
-  Tracking also came down from `.18em` to `.15em`, which is more legible at 11px.
-- **IBM Plex Sans** — body. Humanist, holds up small, wide language coverage.
+- **IBM Plex Mono** — the data voice. **Machine-read only**: the HUD rail readout,
+  datakeys, codes, figures.
+- **IBM Plex Sans** — body, and every small human-read role below.
+- **IBM Plex Sans Condensed** — the *chrome* voice: nav, section eyebrows, buttons.
+
+### Why the chrome left the mono voice
+
+The chrome was IBM Plex Mono at 12px / .14em, and it was the page's weakest type: a
+seven-item nav in wide monospace, and section eyebrows that are editorial phrases set as
+though a machine printed them. Nine treatments were rendered side by side on the real
+ground — mono heavier and tighter, Plex Sans, Fraunces uppercase, Archivo, Space Grotesk,
+Archivo Narrow, and sentence-case variants of each.
+
+**IBM Plex Sans Condensed at 14px/600 won on three counts.** It is the most legible of
+the set. It is the only candidate already inside the Plex superfamily, so it adds a role
+rather than a fourth voice — Archivo looked marginally crisper but could not clear
+"do not introduce a family without a role it alone can perform." And its narrower set
+width buys the nav room that a 14px normal-width face would not.
+
+The **HUD rail keeps mono**, because it is the one piece of chrome that really is a live
+machine readout. That is the whole rule in one exception.
+
+*Cost:* one extra font request. The nav is also fluid now — `clamp()` on size and gap,
+and the link count steps 7 → 6 → 4 → 0 across xl/lg/md/mobile. At a flat 14px the bar
+overflowed its own box by 73px at 1024 and 101px at 768.
+
+### The small-type role scale
+
+One 11px uppercase mono utility (`hud`) had ended up carrying **ten different jobs**:
+section eyebrows, nav, a person's title, an award, an accreditation, a table head, a
+specimen code, a button, a form label and a footnote. Everything small therefore looked
+identical, nothing small was comfortable to read, and — worst of it — *names were being
+set as though they were part numbers*. "Sir J.C. Bose Fellowship", "Patron · Founder,
+AIG Hospitals" and "Madhya Pradesh" all rendered as 11px uppercase monospace.
+
+The split is by **voice**, not by size. Mono means a machine reads it back: a code, a
+key, a measurement. Sans means a person reads it: a name, a title, an award, a place.
+
+| Role | Face | Size | Case | Tracking | Carries |
+|---|---|---|---|---|---|
+| `hud` / `eyebrow` | **Condensed** | 14px | UPPER | .10em | eyebrows, nav, buttons |
+| `datakey` | Mono | 11.5px | UPPER | .12em | definition-list and spec-column heads |
+| `code` | Mono | 12.5px | as-set | .04em | `LL-SCA-01`, `DMD`, `SCM / 294609`, `Day 0` |
+| `role` | Sans 600 | 13px | Sentence | .005em | a person's title |
+| `credential` | Sans 500 | 13px | Sentence | 0 | an award, an accreditation, a state |
+| `claim` | Sans 600 | 15px | Sentence | −.004em | an assertion — "No venipuncture" |
+| `meta` | Sans 400 | 12.5px | Sentence | .01em | attributions and footnotes |
+
+Light-on-dark is compensated on all three perceptual axes, so each role runs slightly
+larger, slightly looser in leading, and one step heavier than the same role would be on
+paper. `.chip` is the one shared container for `credential` pills, so an award, an
+accreditation and a place name are the same object everywhere on the page.
+
+Form labels are the one place the table above does **not** apply: a person fills a form
+in, so `.field__label` is sans 600 / 13px, not the mono chrome voice.
+
+Two exceptions worth stating, because both look like violations:
+- `#inhOdds` is a `<dl>`, so its `<dt>`s "should" be `datakey`. They are `credential`
+  instead, because the same three words — Unaffected / Carrier / Affected — appear as
+  captions on the well tiles two inches away. Matching the neighbour beats obeying the
+  rule literally; one word must not render two ways on one screen.
+- Section eyebrows are editorial phrases in the mono voice, which reads against "mono
+  means a machine reads it back". They stay mono because the committed world defines the
+  page chrome as an instrument readout, and the eyebrow is chrome, not content. `hud` is
+  therefore better read as *the chrome voice* than as *the machine voice*.
+
+The only type below 11.5px is the **simulated print on the 3D objects** — the kit's REF,
+LOT and write-on label, and the plate skirt's row/column engraving. Those are photographs
+of objects rather than interface text, and both are now `aria-hidden`.
 
 **Motion** — scrub-linked only; nothing autoplays. Every scene is driven by scroll position
 so the visitor is the camera operator. Reduced-motion collapses all scrub to static end-states.

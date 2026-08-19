@@ -25,8 +25,12 @@
   --font-display: "Fraunces", ui-serif, Georgia, serif;
   --font-sans:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  /* the chrome voice: nav, eyebrows, buttons. Same superfamily as the body and
+     the data faces, so it belongs — but condensed, so it is unmistakably a
+     different job. Its narrower set width also buys the 7-item nav its room. */
+  --font-cond:    "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, sans-serif;
 
-  --tracking-hud: 0.15em;
+  --tracking-hud: 0.10em;
 }
 
 /* Global illumination level, 0 → 1, written by scene.js as you scroll. */
@@ -70,7 +74,9 @@
   ::selection { background: var(--color-lumen); color: var(--color-void); }
 
   /* the nav is fixed — anchor targets must not land underneath it */
-  section[id], main[id] { scroll-margin-top: 7.5rem; }
+  /* --nav-h is measured and written by scene.js; the fallback matches the
+     bar's own resting height so a no-JS jump still clears it */
+  section[id], main[id] { scroll-margin-top: calc(var(--nav-h, 4.5rem) + 1.5rem); }
 
   h1, h2, h3 {
     font-family: var(--font-display);
@@ -81,10 +87,17 @@
     text-wrap: balance;
   }
 
+  /* The gold ring measures 1.47:1 on the bone contact section — invisible
+     exactly where the form is. The ring colour follows the ground. */
   :focus-visible {
     outline: 2px solid var(--color-lumen);
     outline-offset: 3px;
     border-radius: 2px;
+  }
+  body.is-lit :focus-visible,
+  [data-lit] :focus-visible {
+    outline-color: var(--color-void);
+    outline-width: 3px;
   }
 
   /* Instrumentation, not software. Nothing rounds past 4px but the drop. */
@@ -94,12 +107,103 @@
 /* =====================================================================
    TYPE UTILITIES
    ===================================================================== */
+/* =====================================================================
+   THE SMALL-TYPE ROLE SCALE
+   ---------------------------------------------------------------------
+   One 11px uppercase mono utility was carrying ten different jobs: section
+   eyebrows, nav, a person's title, an award, an accreditation, a table head,
+   a specimen code, a button, a form label and a footnote. Everything small
+   therefore looked identical and nothing small was comfortable to read.
+
+   The split is by VOICE, not by size. Mono is machine-read — a code, a key,
+   a measurement. Sans is human-read — a name, a title, an award, a place.
+   "Sir J.C. Bose Fellowship" and "Madhya Pradesh" are names, and they were
+   being set as though they were part numbers.
+
+     hud         mono  12px    UPPER  .14em  chrome: eyebrows, nav, buttons
+     datakey     mono  11.5px  UPPER  .12em  table and definition-list heads
+     code        mono  12.5px  as-is  .04em  LL-SCA-01, DMD, SCM/294609
+     role        sans  13px    Sent.  .005em a person's title
+     credential  sans  13px    Sent.  0      an award, an accreditation, a place
+     meta        sans  12.5px  Sent.  .01em  attributions and footnotes
+
+   Light-on-dark needs compensating on all three axes, so each of these runs
+   slightly larger, slightly looser in leading, and one step heavier than the
+   same role would be on paper.
+   ===================================================================== */
+/* CHROME — nav, section eyebrows, buttons, small interface labels.
+   This was IBM Plex Mono at 12px/.14em. Nine treatments were rendered side by
+   side against the real ground (mono heavier/tighter, Plex Sans, Fraunces
+   uppercase, Archivo, Space Grotesk, Archivo Narrow, sentence-case variants);
+   Plex Sans Condensed at 14px won on all three counts that matter here — it is
+   the most legible of the set, it takes LESS width than the 12px mono it
+   replaces, and it is the only candidate already inside the Plex superfamily,
+   so it adds a role rather than a fourth voice.
+   Mono is now reserved strictly for data: the HUD rail readout, datakeys,
+   codes and figures. */
 @utility hud {
-  font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  font-weight: 500;
+  font-family: var(--font-cond);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
   letter-spacing: var(--tracking-hud);
   text-transform: uppercase;
+}
+
+/* section eyebrows — the same chrome voice, one step quieter */
+@utility eyebrow {
+  font-family: var(--font-cond);
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+/* the head of a definition list or a spec column — genuinely a machine label */
+@utility datakey {
+  font-family: var(--font-mono);
+  font-size: 0.71875rem;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+/* an identifier that is read back to a machine: keep its own casing */
+@utility code {
+  font-family: var(--font-mono);
+  font-size: 0.78125rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* a person's title. "Patron", "Founder, AIG Hospitals", "Scientific Officer" */
+@utility role {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.005em;
+}
+
+/* an award, an accreditation, a state. Proper nouns, so sentence case */
+@utility credential {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* an attribution or a footnote sitting under something else */
+@utility meta {
+  font-family: var(--font-sans);
+  font-size: 0.78125rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.01em;
 }
 
 @utility display-xl {
@@ -136,6 +240,16 @@
   font-weight: 600;
   line-height: 1.3;
   letter-spacing: -0.004em;
+}
+
+/* A unit nested inside `figure-num` inherits its -0.04em as a COMPUTED
+   ABSOLUTE length — -1.92px on a 48px figure — which jammed the % into the
+   numeral. Tracking is reset here rather than at each call site. */
+@utility figure-unit {
+  font-family: var(--font-mono);
+  font-size: 0.5em;
+  font-weight: 500;
+  letter-spacing: normal;
 }
 
 @utility rule-t { border-top: 1px solid var(--color-line); }
@@ -459,7 +573,7 @@
   background: oklch(62% 0.01 90);
 }
 .dbs__writeon-label {
-  font-family: var(--font-mono); color: oklch(58% 0.012 90);
+  font-family: var(--font-mono); color: oklch(42% 0.012 90);
   font-size: clamp(4px, 0.78vmin, 8px); letter-spacing: .06em;
 }
 /* the ISO 15223-1 regulatory block, read off the back of the physical kit */
@@ -713,9 +827,14 @@ body.is-lit .grain { mix-blend-mode: multiply; opacity: 0.05; }
   background: var(--color-lumen);
   box-shadow: 0 0 8px oklch(80% 0.15 72 / .8);
 }
+/* the one piece of chrome that is genuinely a machine readout, so it keeps
+   the mono voice while everything else around it moves to condensed */
 .hud-rail__scale {
   writing-mode: vertical-rl; transform: rotate(180deg);
   color: var(--color-mute);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
 }
 
 /* HUD inverts over the closing light section */
@@ -749,6 +868,17 @@ body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
      a transition having completed — the bar only deepens once stuck. */
   background-color: transparent;
 }
+/* Seven links plus a wordmark and a CTA have to share one row. The chrome
+   voice is sized and spaced fluidly so the bar never squeezes: at 14px flat it
+   overflowed its own box by 73px at 1024 and 101px at 768. */
+.nav__links { gap: clamp(0.7rem, 1.45vw, 1.5rem); }
+.nav__links a {
+  font-size: clamp(0.75rem, 0.48rem + 0.62vw, 0.875rem);
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+}
+.nav__cta { white-space: nowrap; font-size: clamp(0.75rem, 0.5rem + 0.55vw, 0.875rem); }
+
 .nav.is-stuck { border-color: var(--color-line);
                 background-color: oklch(13% 0.012 250 / .92);
 }
@@ -802,10 +932,57 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
   padding: .55rem 0; border-radius: 0;
   transition: border-color .25s ease;
 }
-.field input:focus, .field select:focus {
+.field input:focus-visible, .field select:focus-visible {
+  outline: 3px solid var(--color-void);
+  outline-offset: 2px;
+  border-bottom-color: var(--color-deep);
+}
+/* pointer focus keeps the quieter underline-only treatment */
+.field input:focus:not(:focus-visible),
+.field select:focus:not(:focus-visible) {
   outline: none; border-bottom-color: var(--color-deep);
 }
-.field label { color: oklch(45% 0.02 250); }
+/* a form label is read by the person filling the form in, so it is the sans
+   voice at a size you can actually read — not 12px uppercase mono */
+.field__label {
+  font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600;
+  line-height: 1.35; letter-spacing: 0.005em;
+  color: oklch(42% 0.02 250);
+}
+
+/* --- chip ---------------------------------------------------------------
+   Awards, accreditations and place names. They were 11px uppercase mono in a
+   tight box, which read as a batch of part numbers rather than as the most
+   senior credentials on the page. Sentence case, sans, and enough padding to
+   sit as an object.
+   ---------------------------------------------------------------------- */
+.chip {
+  display: inline-flex; align-items: center;
+  border: 1px solid var(--color-line);
+  padding: 0.45rem 0.8rem;
+  background: oklch(from var(--color-ink) l c h / .5);
+  transition: border-color .28s ease, color .28s ease;
+}
+li.chip { display: inline-flex; }
+.chip:hover { border-color: oklch(52% 0.08 88); }
+
+/* --- collaborator grid --------------------------------------------------
+   Flex rather than grid, so the trailing partial row CENTRES. CSS grid can
+   only centre whole tracks, which left the last three logos hanging at the
+   left edge under two full rows of five.
+   ---------------------------------------------------------------------- */
+.collab-grid {
+  --collab-cols: 2;
+  --collab-gap: 1rem;
+  display: flex; flex-wrap: wrap; justify-content: center;
+  gap: var(--collab-gap);
+}
+.collab-grid > * {
+  flex: 0 1 calc((100% - (var(--collab-cols) - 1) * var(--collab-gap)) / var(--collab-cols));
+}
+@media (min-width: 640px)  { .collab-grid { --collab-cols: 3; } }
+@media (min-width: 1024px) { .collab-grid { --collab-cols: 4; } }
+@media (min-width: 1280px) { .collab-grid { --collab-cols: 5; } }
 
 /* --- collaborator card -------------------------------------------------
    One flat grid, no category headings. The logo leads and is given real
@@ -985,20 +1162,19 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   border: 1px solid var(--color-line);
   border-top: 2px solid oklch(60% 0.10 88 / .5);
   background: linear-gradient(165deg, var(--color-ink), var(--color-void));
-  padding: 2.25rem 1.75rem 1.5rem;
+  padding: 1.9rem 1.75rem 1.5rem;
   transition: border-color .35s ease, transform .35s cubic-bezier(.22,.61,.36,1);
 }
 .story:hover { border-color: oklch(50% 0.07 88); transform: translateY(-3px); }
 @media (prefers-reduced-motion: reduce) { .story:hover { transform: none; } }
 
-/* a real typographic quote mark, sized as ornament and kept out of the
-   accessibility tree — the blockquote carries the semantics */
-.story__mark {
-  position: absolute; top: -.35rem; left: 1.4rem;
-  font-family: var(--font-display);
-  font-size: 4.5rem; line-height: 1;
-  color: var(--color-lumen); opacity: .26;
-  pointer-events: none; user-select: none;
+/* No quotation mark. DESIGN.md's own rule is that these case notes must
+   never be dressed as quotes, and a hanging 4.5rem open-quote did exactly
+   that — a reader takes the line as a patient speaking. A plain rule marks
+   the pulled sentence instead. */
+.story__pull::before {
+  content: ""; display: block; width: 2.5rem; height: 2px;
+  background: var(--color-lumen); opacity: .55; margin-bottom: 1.1rem;
 }
 .story__pull {
   font-family: var(--font-display);
@@ -1025,8 +1201,8 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   gap: .75rem; margin-top: 1.5rem;
 }
 /* the lead case note gets the room its quote deserves */
-.story--lead { padding: 2.75rem 2.25rem 1.75rem; }
-.story--lead .story__mark { font-size: 6rem; top: -.6rem; }
+.story--lead { padding: 2.25rem 2.25rem 1.75rem; }
+.story--lead .story__pull::before { width: 3.25rem; margin-bottom: 1.35rem; }
 .story--lead .story__pull { font-size: clamp(1.5rem, 3.1vw, 2.5rem); }
 @media (min-width: 768px) {
   .story--lead { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0 3rem;
@@ -1066,7 +1242,13 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   font-family: var(--font-sans); font-weight: 600;
   font-size: .875rem; line-height: 1.25; color: var(--color-chalk);
 }
-.team-role { display: block; margin-top: .25rem; color: var(--color-mute); }
+/* was sans 500 / 0 tracking — a near-miss of `role`, so "Scientific Officer"
+   rendered differently from "Founder" 400px above it */
+.team-role {
+  display: block; margin-top: .3rem; color: var(--color-mute);
+  font-family: var(--font-sans); font-size: .8125rem; font-weight: 600;
+  line-height: 1.35; text-transform: none; letter-spacing: .005em;
+}
 
 /* the affordance. Without it nothing tells a visitor these faces are live. */
 .team-cue {
@@ -1129,8 +1311,8 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   font-size: .9375rem; line-height: 1.65; color: var(--color-mute);
 }
 .team-bio__close {
-  position: absolute; top: .5rem; right: .5rem;
-  width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
+  position: absolute; top: .4rem; right: .4rem;
+  width: 2.75rem; height: 2.75rem;      /* 44px — was 36px */ display: grid; place-items: center;
   background: none; border: 1px solid transparent; cursor: pointer;
   color: var(--color-mute); font-size: 1.35rem; line-height: 1;
   transition: color .2s ease, border-color .2s ease;
@@ -1155,8 +1337,11 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 .inh-opts { display: flex; flex-wrap: wrap; gap: .5rem; }
 .inh-opt {
   background: none; cursor: pointer;
+  font-family: var(--font-sans); font-size: .875rem; font-weight: 600;
+  line-height: 1.3; letter-spacing: .003em;
+  min-height: 2.75rem;                  /* 44px — was 42.6px */
   border: 1px solid var(--color-line); color: var(--color-mute);
-  padding: .7rem 1.1rem;
+  padding: .75rem 1.15rem;
   transition: border-color .22s ease, color .22s ease, background-color .22s ease;
 }
 .inh-opt:hover { border-color: oklch(55% 0.09 88); color: var(--color-chalk); }
@@ -1212,9 +1397,11 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   margin-top: .85rem; font-size: 1.0625rem; color: var(--color-chalk);
   letter-spacing: .02em;
 }
+/* same weight as the `credential` heads in #inhOdds — this is the same word */
 .inh-child__label {
   margin-top: .2rem;
-  font-family: var(--font-sans); font-size: .8125rem; color: var(--color-mute);
+  font-family: var(--font-sans); font-size: .8125rem; font-weight: 500;
+  line-height: 1.4; color: var(--color-mute);
 }
 
 .inh-odd__v { font-size: clamp(1.6rem, 3.4vw, 2.25rem); line-height: 1.05; margin-top: .6rem; }
