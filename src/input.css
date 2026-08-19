@@ -2,6 +2,11 @@
 
 @source "../index.html";
 @source "../src/**/*.js";
+/* preview/ is a temporary ground-colour review page. Tailwind v4 auto-scans the
+   project root, and that page's prose contains strings ("border-collapse",
+   "text-wrap") that it extracts as utility candidates and emits into the shipped
+   CSS. Delete this line together with preview/. */
+@source not "../preview/**";
 
 /* =====================================================================
    DARKFIELD — design tokens

@@ -17,20 +17,31 @@ tribal and rural communities that conventional diagnostics never reaches.
 - **Framing:** the company explicitly organises itself around Sinek's Golden Circle —
   WHY, then HOW, then WHAT, in that order.
 
-## Primary audience for THIS surface  (user-confirmed)
-**Clinicians, labs and hospitals** — the people who order the assay and adopt the platform.
-They are evaluating a supplier, not reading a mission statement. They need, in order:
-what tests exist, what sample it takes, how fast the report comes back, how the logistics
-work, and whether the analytical performance holds up. Mission earns the relationship;
-specs win the evaluation.
+## Audience for THIS surface  (user-confirmed, 2026-08-19)
+Four audiences, **all of equal weight**. The page has to hold all of them at once.
 
-Secondary, un-served-by-this-page: funders/CSR, government health departments, families.
+- **Labs and hospitals** — order the assay and adopt the platform. Evaluating a supplier:
+  what tests exist, what sample it takes, report turnaround, logistics, analytical performance.
+- **Government organisations** — district and state health authorities, national programmes.
+  Evaluating legitimacy and scale: accreditation, throughput, accountability, prior deployments.
+- **NGOs** — implementation and community partners. Evaluating reach and fit: whether the
+  logistics genuinely work where they operate, and whether the mission is real.
+
+Not served by this page: families/patients directly.
+
+**What this costs the design.** Specs alone do not win the government and NGO evaluations,
+and mission alone does not win the lab evaluation — so neither voice can own the page.
+The instrument register carries the evidence; the brand's warmth carries the intent. Ground
+and chrome stay clinical, and the warmth lives in the accents, the people, the partners and
+the bone payoff.
 
 ## Primary action
 **Request a test kit.** Secondary: download the test menu, book a platform walkthrough.
 
 ## Constraints
-- Viewers include lab staff on mid-range Android hardware and uneven connectivity.
+- Viewers include lab staff, district health officials and NGO field teams on mid-range
+  Android hardware and uneven connectivity — often on 6-bit panels, often in bright rooms
+  or daylight. Very dark grounds band and wash out under exactly those conditions.
 - Assay names, performance figures, accreditations and people are PLACEHOLDER until supplied.
 
 ## Assumptions (labelled, to be confirmed)

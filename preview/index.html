@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Darkfield Ground Studies — Lightening Lives</title>
+
+<!-- =====================================================================
+     TEMPORARY — ground-colour review, 2026-08-19.
+     Self-contained on purpose: this directory has no imports from the site and
+     nothing in the site imports it. To remove after sign-off:  rm -rf preview/
+     ===================================================================== -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ===================================================================
+   CHROME — the bench the specimens sit on. Deliberately committed to a
+   single dark shell: the subject IS dark grounds, and a light chrome
+   would contaminate every judgement made against it. Every colour below
+   is painted explicitly so the page holds on either host ground.
+   =================================================================== */
+:root {
+  --bench:   #0c0e11;
+  --panel:   #14171b;
+  --panel-2: #1a1e23;
+  --rule:    #262b31;
+  --rule-lo: #1c2126;
+  --text:    #e6e9ec;
+  --mute:    #8b9197;
+  --dim:     #666c72;
+  --lumen:   #f2c02a;
+  --probe:   #65db7c;
+  --alarm:   #f08a5d;
+
+  --hud: 600 0.8125rem/1.35 "IBM Plex Sans Condensed", "IBM Plex Sans", ui-sans-serif, sans-serif;
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+  --disp: "Fraunces", ui-serif, Georgia, serif;
+
+  --maxw: 78rem;
+}
+
+* { box-sizing: border-box; }
+
+html { background: var(--bench); }
+
+body {
+  margin: 0;
+  background: var(--bench);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 1rem;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+.wrap { max-width: var(--maxw); margin-inline: auto; padding-inline: clamp(1rem, 4vw, 2.5rem); }
+
+.hud {
+  font: var(--hud);
+  letter-spacing: 0.10em;
+  text-transform: uppercase;
+}
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+
+a { color: var(--lumen); }
+:focus-visible { outline: 2px solid var(--lumen); outline-offset: 3px; border-radius: 2px; }
+
+/* ---------- masthead ---------- */
+.mast { padding-block: clamp(3rem, 8vw, 5.5rem) clamp(1.75rem, 4vw, 2.75rem); }
+.mast__eyebrow { color: var(--lumen); margin: 0 0 1.25rem; }
+.mast h1 {
+  font-family: var(--disp);
+  font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
+  font-weight: 400;
+  font-size: clamp(2.5rem, 7vw, 4.5rem);
+  line-height: 0.94;
+  letter-spacing: -0.025em;
+  margin: 0;
+  text-wrap: balance;
+}
+.mast h1 em {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 40, "WONK" 1;
+}
+.mast__lede {
+  margin: 1.5rem 0 0;
+  max-width: 56ch;
+  color: var(--mute);
+  font-size: 1.0625rem;
+}
+
+/* the finding — the one thing worth reading before the swatches */
+.finding {
+  margin-top: 2.25rem;
+  display: grid;
+  gap: 1px;
+  background: var(--rule-lo);
+  border: 1px solid var(--rule-lo);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 46rem) { .finding { grid-template-columns: 1fr 1fr; } }
+.finding > div { background: var(--panel); padding: 1.15rem 1.25rem 1.3rem; }
+.finding dt { font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase; color: var(--dim); margin-bottom: 0.55rem; }
+.finding dd { margin: 0; font-size: 0.9375rem; line-height: 1.55; color: var(--text); }
+.finding dd b { color: var(--lumen); font-weight: 600; }
+
+/* ---------- the brand reading ---------- */
+.brandread { margin-top: 2.25rem; border: 1px solid var(--rule-lo); }
+.brandread__head {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1.25rem;
+  padding: 1rem 1.25rem; background: var(--panel-2);
+  border-bottom: 1px solid var(--rule-lo);
+}
+.brandread__head h2 {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 0.75rem; color: var(--text); margin: 0;
+}
+.brandread__head p { margin: 0; color: var(--mute); font-size: 0.875rem; }
+
+.wheel { display: flex; align-items: stretch; gap: 1px; background: var(--rule-lo); }
+.wheel__band { flex: 1; min-width: 0; }
+.tblwrap { overflow-x: auto; }
+table.audit { width: 100%; border-collapse: collapse; font-size: 0.875rem; min-width: 40rem; }
+table.audit th {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 0.6875rem; color: var(--dim); text-align: left; font-weight: 600;
+  padding: 0.65rem 1rem; background: var(--panel-2);
+  border-bottom: 1px solid var(--rule-lo); white-space: nowrap;
+}
+table.audit td {
+  padding: 0.6rem 1rem; border-bottom: 1px solid var(--rule-lo);
+  background: var(--panel); vertical-align: middle;
+}
+table.audit tr:last-child td { border-bottom: 0; }
+table.audit .swcell { display: flex; align-items: center; gap: 0.6rem; white-space: nowrap; }
+table.audit .swcell i { width: 1.4rem; height: 1.4rem; border-radius: 1px; border: 1px solid rgba(255,255,255,.16); flex: none; }
+table.audit code { font-family: var(--mono); font-size: 0.78rem; color: var(--mute); white-space: nowrap; }
+.tag {
+  font: var(--hud); letter-spacing: 0.08em; text-transform: uppercase;
+  font-size: 0.6875rem; padding: 0.2rem 0.45rem; white-space: nowrap;
+}
+.tag--ok { color: var(--probe); border: 1px solid color-mix(in oklab, var(--probe) 45%, transparent); }
+.tag--off { color: var(--alarm); border: 1px solid color-mix(in oklab, var(--alarm) 55%, transparent); }
+
+/* ---------- control bar ---------- */
+.famlabel {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 0.6875rem; color: var(--dim); align-self: center;
+  padding-right: 0.15rem; white-space: nowrap;
+}
+.famgroup { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; }
+.famgroup + .famgroup { border-left: 1px solid var(--rule); padding-left: 0.7rem; margin-left: 0.35rem; }
+.controls {
+  position: sticky; top: 0; z-index: 40;
+  background: color-mix(in oklab, var(--bench) 88%, transparent);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--rule);
+  padding-block: 0.7rem;
+}
+.controls__in {
+  display: flex; flex-wrap: wrap; align-items: center;
+  gap: 0.5rem 1.25rem;
+}
+.pills { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+.pill {
+  font: var(--hud); letter-spacing: 0.08em; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  padding: 0.42rem 0.7rem 0.42rem 0.5rem;
+  background: transparent;
+  color: var(--mute);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  cursor: pointer;
+  transition: color .18s ease, border-color .18s ease, background-color .18s ease;
+  font-size: 0.75rem;
+}
+.pill:hover { color: var(--text); border-color: #3a4149; }
+.pill[aria-pressed="true"] { color: #0c0e11; background: var(--lumen); border-color: var(--lumen); }
+.pill__chip {
+  width: 0.85rem; height: 0.85rem; border-radius: 1px;
+  border: 1px solid rgba(255,255,255,.22);
+  flex: none;
+}
+.pill[aria-pressed="true"] .pill__chip { border-color: rgba(0,0,0,.35); }
+
+.slider { display: flex; align-items: center; gap: 0.7rem; margin-left: auto; }
+.slider label { font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase; font-size: 0.75rem; color: var(--dim); white-space: nowrap; }
+.slider input[type="range"] { width: clamp(7rem, 16vw, 11rem); accent-color: var(--lumen); }
+.slider output { font-family: var(--mono); font-size: 0.78125rem; color: var(--mute); min-width: 3.2ch; font-variant-numeric: tabular-nums; }
+
+/* ===================================================================
+   THE STAGE — a faithful reduction of the real hero. Same type roles,
+   same layer order (ground → plate → illum → vignette → grain → copy),
+   same accents, so a judgement made here transfers to the site.
+   =================================================================== */
+.stagewrap { padding-block: clamp(1.5rem, 4vw, 2.5rem) 0; }
+
+.stage {
+  --lumen-level: 0.10;
+  position: relative;
+  aspect-ratio: 16 / 10;
+  min-height: 26rem;
+  max-height: 78svh;
+  overflow: hidden;
+  border: 1px solid var(--rule);
+  background: linear-gradient(180deg, var(--g-top) 0%, var(--g-bot) 100%);
+  transition: background .5s ease;
+  isolation: isolate;
+  container-type: inline-size;
+}
+@media (max-width: 40rem) { .stage { aspect-ratio: 4 / 5; min-height: 30rem; } }
+
+/* --- the 96-well plate, the hero's characteristic object --- */
+.stage__world { position: absolute; inset: 0; perspective: 1000px; pointer-events: none; }
+.plate {
+  position: absolute; left: 50%; top: 30%;
+  width: 62cqw; aspect-ratio: 3 / 2;
+  translate: -50% -34%;
+  transform: rotate(-8deg) rotateX(56deg);
+  transform-style: preserve-3d;
+}
+.plate__slab {
+  position: absolute; inset: 0;
+  border: 1px solid var(--g-line);
+  border-radius: 3px 3px 3px 2.8cqw;
+  background:
+    linear-gradient(112deg, transparent 6%,
+      color-mix(in oklab, var(--g-line) 62%, transparent) 26%,
+      color-mix(in oklab, var(--g-line) 55%, transparent) 42%,
+      color-mix(in oklab, var(--g-slab) 40%, transparent) 60%, transparent 86%),
+    linear-gradient(157deg, var(--g-slab) 0%, var(--g-ink) 46%, var(--g-void) 100%);
+  transition: background .5s ease, border-color .5s ease;
+}
+.plate__grid {
+  position: absolute; inset: 14% 7% 7% 9%;
+  display: grid; grid-template-columns: repeat(12, 1fr); grid-template-rows: repeat(8, 1fr);
+}
+.well { display: grid; place-items: center; }
+.well i {
+  display: block; width: 62%; aspect-ratio: 1; border-radius: 50%;
+  background: color-mix(in oklab, var(--g-void) 78%, #000);
+  box-shadow: inset 0 0.09cqw 0 color-mix(in oklab, var(--g-line) 70%, transparent);
+  transition: background .5s ease;
+}
+.well i.lit { background: var(--lumen); box-shadow: 0 0 1.1cqw color-mix(in oklab, var(--lumen) 55%, transparent); }
+.well i.grn { background: var(--probe); box-shadow: 0 0 1.1cqw color-mix(in oklab, var(--probe) 50%, transparent); }
+
+/* --- the atmospheric stack, ported verbatim in behaviour --- */
+.illum {
+  position: absolute; inset: 0; pointer-events: none; z-index: 5;
+  background:
+    radial-gradient(72cqw 52cqw at 50% 38%,
+      oklch(83% 0.16 88 / calc(var(--lumen-level) * 0.06)) 0%, transparent 62%),
+    linear-gradient(oklch(72% 0.02 250 / calc(var(--lumen-level) * 0.05)),
+                    oklch(72% 0.02 250 / calc(var(--lumen-level) * 0.05)));
+  mix-blend-mode: screen;
+}
+.vignette {
+  position: absolute; inset: 0; pointer-events: none; z-index: 6;
+  background: radial-gradient(120cqw 85cqw at 50% 45%, transparent 20%,
+    oklch(8% 0.01 250 / calc(0.85 - var(--lumen-level) * 0.8)) 100%);
+}
+.grain {
+  position: absolute; inset: 0; pointer-events: none; z-index: 7; opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* --- the chrome and copy --- */
+.stage__nav {
+  position: absolute; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem clamp(0.9rem, 3cqw, 1.9rem);
+  border-bottom: 1px solid color-mix(in oklab, var(--g-line) 70%, transparent);
+  background: color-mix(in oklab, var(--g-void) 82%, transparent);
+  transition: background-color .5s ease, border-color .5s ease;
+}
+.stage__mark {
+  font-family: var(--disp); font-size: clamp(0.9rem, 2.1cqw, 1.2rem);
+  letter-spacing: -0.02em; color: var(--g-chalk); line-height: 1;
+  transition: color .5s ease;
+}
+.stage__links { display: none; gap: clamp(0.6rem, 1.6cqw, 1.3rem); }
+@container (min-width: 40rem) { .stage__links { display: flex; } }
+.stage__links span {
+  font: var(--hud); text-transform: uppercase; letter-spacing: 0.08em;
+  font-size: clamp(0.62rem, 1.1cqw, 0.75rem);
+  color: color-mix(in oklab, var(--g-chalk) 74%, var(--g-void));
+  transition: color .5s ease; white-space: nowrap;
+}
+.stage__cta {
+  font: var(--hud); text-transform: uppercase; letter-spacing: 0.10em;
+  font-size: clamp(0.62rem, 1.1cqw, 0.75rem);
+  background: var(--lumen); color: #0b0d10;
+  padding: 0.5rem 0.85rem; white-space: nowrap;
+}
+
+.stage__copy {
+  position: absolute; inset: auto 0 0 0; z-index: 12;
+  padding: 0 clamp(0.9rem, 3cqw, 1.9rem) clamp(1.1rem, 4cqw, 2.4rem);
+}
+.stage__eyebrow {
+  font: var(--hud); text-transform: uppercase; letter-spacing: 0.11em;
+  font-size: clamp(0.62rem, 1.05cqw, 0.8125rem);
+  color: var(--lumen); margin: 0 0 0.8rem;
+  transition: color .5s ease;
+}
+.stage__h1 {
+  font-family: var(--disp);
+  font-variation-settings: "opsz" 144, "SOFT" 20, "WONK" 0;
+  font-weight: 400; margin: 0;
+  font-size: clamp(2rem, 8.4cqw, 5.5rem);
+  line-height: 0.92; letter-spacing: -0.025em;
+  color: var(--g-chalk);
+  transition: color .5s ease;
+}
+.stage__h1 em {
+  display: block; font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 40, "WONK" 1;
+}
+.stage__stand {
+  margin: clamp(0.8rem, 2cqw, 1.4rem) 0 0; max-width: 44ch;
+  color: var(--g-mute); transition: color .5s ease;
+  font-size: clamp(0.78rem, 1.35cqw, 1.0625rem);
+  line-height: 1.55;
+}
+.stage__btns { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: clamp(0.9rem, 2.2cqw, 1.6rem); }
+.stage__btn {
+  font: var(--hud); text-transform: uppercase; letter-spacing: 0.10em;
+  font-size: clamp(0.62rem, 1.05cqw, 0.8125rem);
+  padding: 0.7rem 1.15rem;
+}
+.stage__btn--solid { background: var(--lumen); color: #0b0d10; }
+.stage__btn--ghost {
+  border: 1px solid var(--g-line); color: var(--g-chalk);
+  transition: border-color .5s ease, color .5s ease;
+}
+
+/* the spec strip — proves the ground against a panelled surface, which is
+   where a hue actually declares itself */
+.specstrip {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
+  background: var(--g-line); border: 1px solid var(--g-line);
+  margin-top: 1px;
+  transition: background-color .5s ease, border-color .5s ease;
+}
+@media (min-width: 46rem) { .specstrip { grid-template-columns: repeat(4, 1fr); } }
+.specstrip > div {
+  background: var(--g-void); padding: 0.9rem 1rem;
+  transition: background-color .5s ease;
+}
+.specstrip dt {
+  font-family: var(--mono); font-size: 0.71875rem; font-weight: 500;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--g-mute); margin-bottom: 0.4rem;
+  transition: color .5s ease;
+}
+.specstrip dd {
+  margin: 0; font-family: var(--mono); font-size: 1.05rem;
+  color: var(--g-chalk); font-variant-numeric: tabular-nums;
+  transition: color .5s ease;
+}
+
+/* ---------- verdict panel under the stage ---------- */
+.verdict {
+  margin-top: clamp(1.5rem, 4vw, 2.25rem);
+  display: grid; gap: 1px; background: var(--rule-lo);
+  border: 1px solid var(--rule-lo);
+  grid-template-columns: 1fr;
+}
+@media (min-width: 56rem) { .verdict { grid-template-columns: 1.25fr 1fr 1fr; } }
+@media (min-width: 74rem) { .verdict { grid-template-columns: 1.35fr 0.95fr 0.95fr 0.95fr; } }
+.verdict > section { background: var(--panel); padding: 1.25rem 1.35rem 1.4rem; }
+.verdict h3 {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  color: var(--dim); margin: 0 0 0.85rem; font-size: 0.75rem;
+}
+.verdict p { margin: 0; font-size: 0.9375rem; line-height: 1.6; color: var(--text); }
+.verdict p + p { margin-top: 0.7rem; }
+.aud { display: grid; gap: 0.4rem; margin-top: 0.25rem; }
+.aud__row { display: flex; align-items: center; gap: 0.55rem; }
+.aud__k { font: var(--hud); text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.72rem; color: var(--mute); min-width: 5.5ch; flex: none; }
+.aud__pips { display: flex; gap: 3px; }
+.aud__pips i { width: 1.15rem; height: 4px; background: var(--rule); }
+.aud__pips i.on { background: var(--probe); }
+.aud__pips.weak i.on { background: var(--alarm); }
+.aud__v { font-size: 0.8125rem; color: var(--text); white-space: nowrap; }
+.steps { display: flex; align-items: baseline; gap: 0.55rem; margin-top: 0.9rem; padding-top: 0.85rem; border-top: 1px solid var(--rule-lo); }
+.steps__n { font-family: var(--mono); font-size: 1.35rem; color: var(--text); font-variant-numeric: tabular-nums; line-height: 1; }
+.steps__l { font-size: 0.8125rem; color: var(--mute); }
+.srcline { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 0 0 0.85rem !important; font-size: 0.8125rem !important; color: var(--mute) !important; }
+.srcline code { font-family: var(--mono); font-size: 0.75rem; color: var(--text); }
+.risk { color: var(--alarm); }
+.risk b { font-weight: 600; }
+
+/* swatch readout */
+.swatches { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.sw {
+  display: flex; align-items: center; gap: 0.5rem;
+  border: 1px solid var(--rule); padding: 0.35rem 0.55rem 0.35rem 0.4rem;
+  font-family: var(--mono); font-size: 0.72rem; color: var(--mute);
+}
+.sw i { width: 1.15rem; height: 1.15rem; border-radius: 1px; border: 1px solid rgba(255,255,255,.14); flex: none; }
+.sw b { color: var(--text); font-weight: 500; letter-spacing: -0.01em; }
+
+/* contrast readout */
+.ratios { display: grid; gap: 0.45rem; }
+.ratio { display: flex; align-items: baseline; gap: 0.6rem; }
+.ratio__k { font: var(--hud); text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.72rem; color: var(--mute); min-width: 8.5ch; }
+.ratio__bar { flex: 1; height: 3px; background: var(--rule); position: relative; overflow: hidden; }
+.ratio__bar i { position: absolute; inset: 0 auto 0 0; background: var(--probe); transition: width .4s ease, background-color .4s ease; }
+.ratio__bar i.bad { background: var(--alarm); }
+.ratio__v { font-family: var(--mono); font-size: 0.78rem; color: var(--text); font-variant-numeric: tabular-nums; min-width: 5.4ch; text-align: right; }
+
+/* ---------- the contact sheet: all seven at once ---------- */
+.sheet { padding-block: clamp(3rem, 8vw, 5rem) 0; }
+.sheet__head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0.75rem 1.5rem; margin-bottom: 1.5rem; }
+.sheet__head h2 {
+  font-family: var(--disp); font-variation-settings: "opsz" 96, "SOFT" 20;
+  font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  letter-spacing: -0.02em; line-height: 1; margin: 0;
+}
+.sheet__head p { margin: 0; color: var(--mute); font-size: 0.9375rem; max-width: 46ch; }
+
+.grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr)); }
+.card {
+  border: 1px solid var(--rule); background: var(--panel);
+  padding: 0; text-align: left; cursor: pointer; color: inherit;
+  font: inherit; display: flex; flex-direction: column;
+  transition: border-color .18s ease, transform .18s ease;
+}
+.card:hover { border-color: #3a4149; }
+.card[aria-pressed="true"] { border-color: var(--lumen); }
+@media (prefers-reduced-motion: no-preference) { .card:hover { transform: translateY(-2px); } }
+
+.card__view {
+  --lumen-level: 0.16;
+  display: block;
+  position: relative; aspect-ratio: 16 / 10; overflow: hidden;
+  background: linear-gradient(180deg, var(--g-top) 0%, var(--g-bot) 100%);
+  container-type: inline-size;
+}
+.card__plate {
+  position: absolute; left: 50%; top: 46%; width: 66cqw; aspect-ratio: 3/2;
+  translate: -50% -50%; transform: rotate(-8deg) rotateX(52deg);
+  border: 1px solid var(--g-line);
+  border-radius: 2px 2px 2px 3cqw;
+  background: linear-gradient(157deg, var(--g-slab) 0%, var(--g-ink) 46%, var(--g-void) 100%);
+}
+.card__dot {
+  position: absolute; width: 8cqw; height: 8cqw; border-radius: 50%;
+  left: 50%; top: 42%; translate: -50% -50%;
+  background: var(--lumen); filter: blur(0.4cqw); opacity: .9;
+}
+.card__type {
+  position: absolute; left: 6cqw; bottom: 5cqw; right: 6cqw; z-index: 12;
+}
+.card__type span {
+  display: block; font: var(--hud); text-transform: uppercase;
+  letter-spacing: 0.11em; font-size: 2.6cqw; color: var(--lumen); margin-bottom: 1.4cqw;
+}
+.card__type strong {
+  display: block; font-family: var(--disp); font-weight: 400;
+  font-variation-settings: "opsz" 96, "SOFT" 20;
+  font-size: 8.6cqw; line-height: 0.94; letter-spacing: -0.025em;
+  color: var(--g-chalk);
+}
+.card__type em {
+  display: block; margin-top: 2cqw; font-style: normal;
+  font-size: 2.9cqw; line-height: 1.4; color: var(--g-mute);
+}
+.card__foot {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 0.75rem; padding: 0.7rem 0.85rem 0.75rem;
+  border-top: 1px solid var(--rule);
+}
+.card__name { font: var(--hud); text-transform: uppercase; letter-spacing: 0.09em; font-size: 0.75rem; color: var(--text); }
+.card__hex { font-family: var(--mono); font-size: 0.72rem; color: var(--dim); }
+
+/* ---------- the patch ---------- */
+.patch { padding-block: clamp(3rem, 8vw, 5rem) clamp(3.5rem, 9vw, 6rem); }
+.patch__bar { display: flex; flex-wrap: wrap; align-items: center; gap: 0.75rem 1rem; margin-bottom: 1rem; }
+.patch__bar h2 {
+  font-family: var(--disp); font-variation-settings: "opsz" 96, "SOFT" 20;
+  font-weight: 400; font-size: clamp(1.6rem, 3.6vw, 2.4rem);
+  letter-spacing: -0.02em; line-height: 1; margin: 0;
+}
+.patch__bar p { margin: 0; color: var(--mute); font-size: 0.9375rem; }
+.copybtn {
+  font: var(--hud); text-transform: uppercase; letter-spacing: 0.10em; font-size: 0.75rem;
+  background: transparent; color: var(--lumen); border: 1px solid var(--lumen);
+  padding: 0.5rem 0.9rem; cursor: pointer; margin-left: auto;
+  transition: background-color .18s ease, color .18s ease;
+}
+.copybtn:hover { background: var(--lumen); color: #0c0e11; }
+pre {
+  margin: 0; overflow-x: auto; background: var(--panel); border: 1px solid var(--rule);
+  padding: 1.1rem 1.25rem; font-family: var(--mono); font-size: 0.8125rem;
+  line-height: 1.7; color: var(--text); tab-size: 2;
+}
+pre .c { color: var(--dim); }
+pre .k { color: var(--probe); }
+pre .v { color: var(--lumen); }
+
+footer { border-top: 1px solid var(--rule); padding-block: 1.5rem 3rem; color: var(--dim); font-size: 0.8125rem; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* ---------- temporary-page banner (goes with preview/) ---------- */
+.tempbar {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 0.6rem 1rem;
+  max-width: var(--maxw); margin-inline: auto;
+  padding: 0.7rem clamp(1rem, 4vw, 2.5rem) 0;
+}
+.tempbar__tag {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 0.6875rem; color: var(--alarm);
+  border: 1px solid color-mix(in oklab, var(--alarm) 55%, transparent);
+  padding: 0.2rem 0.45rem; white-space: nowrap;
+}
+.tempbar p { margin: 0; font-size: 0.8125rem; color: var(--dim); }
+.tempbar code { font-family: var(--mono); font-size: 0.75rem; color: var(--mute); }
+.tempbar a {
+  font: var(--hud); letter-spacing: 0.10em; text-transform: uppercase;
+  font-size: 0.6875rem; color: var(--lumen); text-decoration: none;
+  border-bottom: 1px solid currentColor; padding-bottom: 1px; margin-left: auto;
+}
+.tempbar a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="tempbar">
+  <span class="tempbar__tag">Temporary</span>
+  <p>Decision aid for the ground-colour review. Not part of the site — delete
+     <code>preview/</code> once the ground is signed off.</p>
+  <a href="../index.html">Open the live site</a>
+</div>
+
+
+<div class="wrap mast">
+  <p class="hud mast__eyebrow">Ground studies · Lightening Lives</p>
+  <h1>Nine grounds<br>for one <em>darkfield.</em></h1>
+  <p class="mast__lede">
+    The site opens on a blue-black at 11% lightness. Below are eight alternatives rendered
+    against the real hero — same faces, same layer stack, same gold and green — so the ground
+    is the only variable. Four are instrument colours; <b style="color:var(--lumen);font-weight:600">four are
+    sampled from the company mark itself.</b> The page has to convince labs, hospitals, government
+    health authorities and NGOs at once, on hardware none of them chose.
+  </p>
+
+  <dl class="finding">
+    <div>
+      <dt>What the numbers say</dt>
+      <dd>Hue is <b>free</b>. Every dark option holds ≥15:1 for body text, ≥10.3:1 for gold and green.
+      Nothing in the accessibility budget forces the current blue-black — this is purely an aesthetic call.</dd>
+    </div>
+    <div>
+      <dt>What actually reads as "not black"</dt>
+      <dd>At 11% lightness every hue clips to near-black — petrol renders <span class="mono">#000f14</span>,
+      forest <span class="mono">#010f06</span>. The lever is <b>lightness, not hue</b>: the ground has to
+      reach roughly 16–20% before a colour declares itself at all.</dd>
+    </div>
+  </dl>
+
+  <section class="brandread">
+    <div class="brandread__head">
+      <h2>What the mark is actually made of</h2>
+      <p>Sampled from <span class="mono">assets/brand/mark.png</span> and converted to OKLCH, against the tokens already in <span class="mono">input.css</span>.</p>
+    </div>
+    <div class="wheel" id="wheel" aria-hidden="true"></div>
+    <div class="tblwrap">
+      <table class="audit">
+        <thead>
+          <tr><th>In the mark</th><th>OKLCH</th><th>Nearest site token</th><th>Δ</th><th></th></tr>
+        </thead>
+        <tbody id="auditBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <dl class="finding" style="margin-top:1rem">
+    <div>
+      <dt>The brand has no cool colour in it</dt>
+      <dd>Every hue in the mark falls between <b>29° and 133°</b> — oxblood, sienna, gold, yellow, leaf.
+      The site's ground sits at <b>250°</b>, the opposite side of the wheel. That is a deliberate
+      contrast, not an error — but it means nothing on the page currently shares the brand's temperature.</dd>
+    </div>
+    <div>
+      <dt>One token is genuinely off-brand</dt>
+      <dd><span class="mono">--color-probe</span> is a mint green at hue 148; the mark's leaf is an
+      olive at <b>hue 133, 17 points darker</b>. Gold and sienna match their brand counterparts almost
+      exactly — the green is the only one that drifted.</dd>
+    </div>
+  </dl>
+
+  <dl class="finding" style="margin-top:1rem">
+    <div>
+      <dt>Neither voice can own the page</dt>
+      <dd>Labs, hospitals, government health authorities and NGOs all carry equal weight, and they do
+      not want the same thing. Specs alone lose the government and NGO evaluations; mission alone loses
+      the lab one. So the ground stays <b>clinical and quiet</b>, and the brand's warmth lives in the
+      accents, the people, the partner wall and the bone payoff — where all four audiences meet it.</dd>
+    </div>
+    <div>
+      <dt>The current gradient has 5 steps in it</dt>
+      <dd>From <span class="mono">#02040b</span> to <span class="mono">#06090c</span> across the whole
+      page is <b>5 discrete 8-bit levels</b>. On the 6-bit panels a district health office or an NGO field
+      team is actually using, that either bands visibly or collapses to flat black in daylight. Lifting the
+      ground to 16–20% roughly doubles the headroom.</dd>
+    </div>
+  </dl>
+</div>
+
+<div class="controls">
+  <div class="wrap controls__in">
+    <div class="pills" id="pills" role="group" aria-label="Choose a ground"></div>
+    <div class="slider">
+      <label for="lum">Lumen level</label>
+      <input type="range" id="lum" min="0.06" max="1" step="0.01" value="0.10"
+             aria-describedby="lumout">
+      <output id="lumout" for="lum" class="mono">0.10</output>
+    </div>
+  </div>
+</div>
+
+<div class="wrap stagewrap">
+  <div class="stage" id="stage">
+    <div class="stage__world" aria-hidden="true">
+      <div class="plate">
+        <div class="plate__slab"></div>
+        <div class="plate__grid" id="plateGrid"></div>
+      </div>
+    </div>
+    <div class="illum" aria-hidden="true"></div>
+    <div class="vignette" aria-hidden="true"></div>
+    <div class="grain" aria-hidden="true"></div>
+
+    <div class="stage__nav">
+      <span class="stage__mark">Lightening&nbsp;Lives</span>
+      <div class="stage__links">
+        <span>Inheritance</span><span>Impact</span><span>Tests</span>
+        <span>Performance</span><span>Who we are</span>
+      </div>
+      <span class="stage__cta">Request a kit</span>
+    </div>
+
+    <div class="stage__copy">
+      <p class="stage__eyebrow">Genetic &amp; molecular diagnostics · Hyderabad</p>
+      <h2 class="stage__h1">One drop<br>of blood<em>is enough.</em></h2>
+      <p class="stage__stand">Dried–blood–spot screening for sickle cell anaemia, thalassaemia,
+        SMA and Duchenne muscular dystrophy.</p>
+      <div class="stage__btns">
+        <span class="stage__btn stage__btn--solid">Request a kit</span>
+        <span class="stage__btn stage__btn--ghost">See the test menu</span>
+      </div>
+    </div>
+  </div>
+
+  <dl class="specstrip" id="specstrip">
+    <div><dt>Sample volume</dt><dd>1 drop</dd></div>
+    <div><dt>Turnaround</dt><dd>72 h</dd></div>
+    <div><dt>Cold chain</dt><dd>None</dd></div>
+    <div><dt>Panel size</dt><dd>96</dd></div>
+  </dl>
+
+  <div class="verdict">
+    <section>
+      <h3>The read</h3>
+      <p class="srcline" id="vSrc"></p>
+      <p id="vRead"></p>
+      <p class="risk" id="vRisk"></p>
+    </section>
+    <section>
+      <h3>Who it convinces</h3>
+      <div class="aud" id="vAud"></div>
+      <div class="steps">
+        <span class="steps__n" id="vSteps"></span>
+        <span class="steps__l">8-bit levels across the whole gradient.<br>Below ~8 bands on a 6-bit panel.</span>
+      </div>
+    </section>
+    <section>
+      <h3>Ground family</h3>
+      <div class="swatches" id="vSwatch"></div>
+    </section>
+    <section>
+      <h3>Contrast on this ground</h3>
+      <div class="ratios" id="vRatio"></div>
+    </section>
+  </div>
+</div>
+
+<div class="wrap sheet">
+  <div class="sheet__head">
+    <h2>Contact sheet</h2>
+    <p>All nine at the same lumen level. The brand-derived four sit in the middle — they are visibly one family, which the cool options are not.</p>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="wrap patch">
+  <div class="patch__bar">
+    <h2>The patch</h2>
+    <p id="patchName"></p>
+    <button class="copybtn" id="copy" type="button">Copy tokens</button>
+  </div>
+  <pre id="patch"></pre>
+</div>
+
+<div class="wrap"><footer>
+  Rendered against the live token set from <span class="mono">src/input.css</span>.
+  Contrast figures are WCAG 2.1 ratios computed from the OKLCH values shown, against each ground's own <span class="mono">--color-void</span>.
+</footer></div>
+
+<script>
+const GROUNDS = [
+  {
+    id: 'darkfield', name: 'Darkfield', sub: 'current',
+    fam: 'instrument', src: 'Not in the mark  hue 250',
+    top: 'oklch(11% 0.020 260)', bot: 'oklch(13.6% 0.009 244)',
+    h: 250, c: 0.012, L: { void: 13, ink: 17, slab: 23, line: 33, mute: 64, chalk: 93 },
+    hex: { void: '#05080c', ink: '#0b1015', slab: '#191d22', line: '#31363b', mute: '#878d93', chalk: '#e2e9f0' },
+    r: { chalk: 16.38, mute: 5.99, lumen: 11.83, probe: 11.45 },
+    read: 'The baseline. A blue-black that reads as an unlit room rather than as "off", ' +
+          'settling to neutral graphite by the foot of the page. It is the most common ' +
+          'ground on the web for exactly the reason you raised — it disappears, and lets the gold do all the work.',
+    risk: 'Its problem is not correctness, it is anonymity: at 11% lightness the hue is invisible, so it reads as plain black.'
+  },
+  {
+    id: 'petrol', name: 'Petrol', sub: 'cyanotype',
+    fam: 'instrument', src: 'Not in the mark  hue 210',
+    top: 'oklch(15% 0.038 212)', bot: 'oklch(18.5% 0.026 206)',
+    h: 210, c: 0.030, L: { void: 16, ink: 20, slab: 26, line: 35, mute: 66, chalk: 93 },
+    hex: { void: '#001114', ink: '#031a1e', slab: '#11282c', line: '#283f43', mute: '#7e989c', chalk: '#d2eef3' },
+    r: { chalk: 15.86, mute: 6.28, lumen: 11.36, probe: 10.99 },
+    read: 'Cold storage. A deep teal-blue that carries the cyanotype and the −20°C freezer, ' +
+          'which is precisely the thing your product does not need — and can therefore claim ' +
+          'without apology. Gold at hue 88 sits almost opposite it, so the accent gets louder without being turned up.',
+    risk: 'Watch the green: probe at hue 148 sits closer to this ground than to the current one, so it loses a little separation.'
+  },
+  {
+    id: 'umber', name: 'Umber', sub: 'the wordmark',
+    fam: 'brand', src: 'Wordmark  oklch(48% 0.139 42)',
+    top: 'oklch(15% 0.036 42)', bot: 'oklch(18.5% 0.026 38)',
+    h: 42, c: 0.028, L: { void: 16, ink: 20, slab: 26, line: 35, mute: 66, chalk: 94 },
+    hex: { void: '#170905', ink: '#21120c', slab: '#302019', line: '#48362f', mute: '#a28d85', chalk: '#fde6dd' },
+    r: { chalk: 16.22, mute: 6.20, lumen: 11.46, probe: 11.09 },
+    read: 'The brand\'s own dark colour, taken down to ground lightness. "LIGHTENING LIVES" is set ' +
+          'in this sienna in the lockup — hue 42 — so this is not a colour chosen to go with the ' +
+          'brand, it is a colour lifted out of it. Gold and the bone paper section both become ' +
+          'family rather than contrast.',
+    risk: 'It is still a warm ground, so the gold accent stops reading as transmitted light. The page gains coherence and loses its central metaphor.'
+  },
+  {
+    id: 'oxblood', name: 'Oxblood', sub: 'the tagline',
+    fam: 'brand', src: 'Tagline  oklch(36% 0.148 29)',
+    top: 'oklch(14.5% 0.042 29)', bot: 'oklch(18% 0.030 26)',
+    h: 28, c: 0.032, L: { void: 16, ink: 20, slab: 26, line: 35, mute: 66, chalk: 94 },
+    hex: { void: '#190806', ink: '#23100e', slab: '#321e1b', line: '#4a3431', mute: '#a58b87', chalk: '#ffe4df' },
+    r: { chalk: 16.15, mute: 6.19, lumen: 11.48, probe: 11.11 },
+    read: '"Every Life Matters" is set in this deep red. At ground lightness it stops being blood ' +
+          'and becomes mahogany — the darkest, most serious of the warm options, and the one that ' +
+          'holds gold best of the three.',
+    risk: 'On-the-nose for a blood diagnostics company, and your own DESIGN.md restricts serum to structural use for exactly that reason. Read it at high lumen before committing.'
+  },
+  {
+    id: 'leaf', name: 'Leaf shadow', sub: 'the foliage',
+    fam: 'brand', src: 'Leaf  oklch(63% 0.161 133)',
+    top: 'oklch(15% 0.034 133)', bot: 'oklch(18% 0.024 128)',
+    h: 131, c: 0.026, L: { void: 16, ink: 20, slab: 26, line: 35, mute: 66, chalk: 93 },
+    hex: { void: '#091005', ink: '#12180c', slab: '#202719', line: '#363d2f', mute: '#8d9685', chalk: '#e2ecda' },
+    r: { chalk: 15.86, mute: 6.28, lumen: 11.38, probe: 11.02 },
+    read: 'Pulled from the foliage in the mark — the true brand green at hue 133, not the mint at ' +
+          '148 the site currently ships. A near-black olive that reads as a culture plate under low ' +
+          'light, and the only ground here that would also fix the probe token by pulling it home.',
+    risk: 'Green ground plus gold is a well-worn combination — hold the chroma at 0.026 or it drifts toward "sustainability brand".'
+  },
+  {
+    id: 'violet', name: 'Crystal violet', sub: 'Gram stain',
+    fam: 'instrument', src: 'Not in the mark  hue 315',
+    top: 'oklch(15% 0.040 318)', bot: 'oklch(19% 0.028 310)',
+    h: 315, c: 0.030, L: { void: 16, ink: 20, slab: 26, line: 36, mute: 67, chalk: 93 },
+    hex: { void: '#120916', ink: '#1b121f', slab: '#2a202e', line: '#433848', mute: '#9c90a2', chalk: '#f0e2f6' },
+    r: { chalk: 15.72, mute: 6.44, lumen: 11.47, probe: 11.10 },
+    read: 'The one with an actual citation: crystal violet is the primary stain in a Gram, ' +
+          'so this ground is a colour your own lab produces. It is the most distinctive of the ' +
+          'six by some distance, and gold on aubergine is a genuinely rich pairing.',
+    risk: 'Purple-black is also the house colour of every crypto and AI landing page — keep the chroma at 0.030 and it stays a stain, not a gradient.'
+  },
+  {
+    id: 'darkroom', name: 'Darkroom', sub: 'safelight',
+    fam: 'brand', src: 'Sun gold  oklch(84% 0.170 85)',
+    top: 'oklch(15% 0.020 55)', bot: 'oklch(18% 0.014 50)',
+    h: 52, c: 0.016, L: { void: 16, ink: 20, slab: 26, line: 35, mute: 66, chalk: 94 },
+    hex: { void: '#130b07', ink: '#1c140f', slab: '#2b221d', line: '#423833', mute: '#9b9089', chalk: '#f4e8e2' },
+    r: { chalk: 16.25, mute: 6.22, lumen: 11.44, probe: 11.07 },
+    read: 'Warm graphite sitting almost exactly under the sun gold\'s own hue. The developing ' +
+          'room, not the freezer — the only option that makes the site feel like a place with ' +
+          'people in it, and it runs straight into the bone paper section without a temperature break.',
+    risk: 'Costs you the most: gold is now native to the ground rather than foreign to it, so "transmitted light" stops reading as light. Your own notes already warn that a warm wash screens the ground to brown.'
+  },
+  {
+    id: 'slate', name: 'Lifted slate', sub: 'same hue, lights up',
+    fam: 'instrument', src: 'Not in the mark  hue 250',
+    top: 'oklch(19.5% 0.016 250)', bot: 'oklch(23.5% 0.012 244)',
+    h: 250, c: 0.014, L: { void: 20, ink: 24, slab: 30, line: 39, mute: 69, chalk: 94 },
+    hex: { void: '#11171c', ink: '#1a2026', slab: '#292e35', line: '#40464c', mute: '#959ca4', chalk: '#e4ecf4' },
+    r: { chalk: 15.19, mute: 6.53, lumen: 10.64, probe: 10.30 },
+    read: 'Not a new colour — the existing one, with the lights already partly up. Lifting ' +
+          'void from 13% to 20% is the single change that stops the page reading as black, ' +
+          'and it costs nothing: every hue decision, every panel and rule you have already tuned still holds.',
+    risk: 'It also spends part of the payoff — the descent from dark to lit has less distance to travel, so the bone contact section lands softer.'
+  },
+  {
+    id: 'bone', name: 'Bone', sub: 'inverted',
+    fam: 'inverted', src: 'Sun gold  hue 85, at 95% lightness',
+    top: 'oklch(96% 0.010 85)', bot: 'oklch(93% 0.014 80)',
+    h: 85, c: 0.012, L: { void: 95, ink: 92, slab: 88, line: 78, mute: 46, chalk: 20 },
+    hex: { void: '#f2eee6', ink: '#e8e4dc', slab: '#dbd7cf', line: '#bbb7af', mute: '#5b5851', chalk: '#191610' },
+    r: { chalk: 15.65, mute: 6.16, lumen: 1.47, probe: 1.52 },
+    read: 'The full inversion: filter paper becomes the ground — and note its hue is 85, ' +
+          'the sun gold\'s own. This is the mark\'s white field at full size. Against a wall of ' +
+          'dark 3D sites it is the actual differentiator: nobody expects depth and parallax on ' +
+          'paper, and the dried-blood spot is a paper artefact to begin with.',
+    risk: 'Structurally expensive. Gold falls to 1.47:1 and green to 1.52:1 — both become unusable as text and survive only as fills. It also inverts the whole narrative: the site is currently built on arriving at the light.'
+  }
+];
+
+/* How each ground lands with the four audiences, and how much 8-bit headroom
+   its gradient actually has. 2 = works for them, 1 = holds, 0 = works against. */
+const PROFILE = {
+  darkfield: { steps: 5,  lab: 2, gov: 1, ngo: 0, note: 'Wins the lab read and gives the mission audiences nothing. Worst banding of the nine.' },
+  petrol:    { steps: 7,  lab: 2, gov: 1, ngo: 0, note: 'The most instrument-like of all nine — and the furthest from the mark.' },
+  umber:     { steps: 9,  lab: 1, gov: 2, ngo: 2, note: 'Brand hue at instrument darkness. The only ground that does not pick a side.' },
+  oxblood:   { steps: 9,  lab: 0, gov: 1, ngo: 2, note: 'Reads mission-first. A blood-red ground in front of a lab evaluator is a hard sell.' },
+  leaf:      { steps: 8,  lab: 1, gov: 1, ngo: 2, note: 'Warm intent without the red. Weakest signal of clinical precision.' },
+  violet:    { steps: 10, lab: 1, gov: 0, ngo: 1, note: 'The most distinctive, and the wrong kind of distinctive for a government procurement read.' },
+  darkroom:  { steps: 8,  lab: 0, gov: 1, ngo: 2, note: 'Warmest of the set. Costs the gold its meaning as transmitted light.' },
+  slate:     { steps: 10, lab: 2, gov: 2, ngo: 1, note: 'Clinical, robust, unobjectionable to all four. Its brand warmth has to come from elsewhere.' },
+  bone:      { steps: 12, lab: 1, gov: 2, ngo: 2, note: 'Best on bad screens in daylight by a distance. Costs you both accent colours as text.' }
+};
+
+const $ = (s) => document.querySelector(s);
+let current = GROUNDS[0];
+
+/* --- the 96 wells, with a scattered handful reading positive --- */
+(function buildPlate() {
+  const grid = $('#plateGrid');
+  let seed = 7;
+  const rnd = () => (seed = (seed * 1103515245 + 12345) % 2147483648) / 2147483648;
+  const frag = document.createDocumentFragment();
+  for (let i = 0; i < 96; i++) {
+    const well = document.createElement('div');
+    well.className = 'well';
+    const dot = document.createElement('i');
+    const r = rnd();
+    if (r > 0.90) dot.className = 'grn';
+    else if (r > 0.74) dot.className = 'lit';
+    well.append(dot);
+    frag.append(well);
+  }
+  grid.append(frag);
+})();
+
+function vars(g) {
+  return {
+    '--g-top': g.top, '--g-bot': g.bot,
+    '--g-void': `oklch(${g.L.void}% ${g.c} ${g.h})`,
+    '--g-ink': `oklch(${g.L.ink}% ${g.c} ${g.h})`,
+    '--g-slab': `oklch(${g.L.slab}% ${g.c} ${g.h})`,
+    '--g-line': `oklch(${g.L.line}% ${g.c} ${g.h})`,
+    '--g-mute': `oklch(${g.L.mute}% ${g.c} ${g.h})`,
+    '--g-chalk': `oklch(${g.L.chalk}% ${g.c} ${g.h})`
+  };
+}
+function applyVars(el, g) {
+  const v = vars(g);
+  for (const k in v) el.style.setProperty(k, v[k]);
+}
+
+/* --- the brand audit: what the mark is made of vs what the site ships --- */
+const AUDIT = [
+  { name: 'Sun gold',   hex: '#fcc00c', ok: 'oklch(84% 0.170 85)',  tok: '--color-lumen', tokok: 'oklch(83% 0.160 88)',  d: 'Δh 3°  ΔL 1',    ver: 'ok',  vlab: 'Match' },
+  { name: 'Sun yellow', hex: '#f0e400', ok: 'oklch(90% 0.192 106)', tok: '--color-lumen', tokok: 'oklch(83% 0.160 88)',  d: 'Δh 18°  ΔL 7',   ver: 'ok',  vlab: 'Near' },
+  { name: 'Wordmark',   hex: '#9c3c0c', ok: 'oklch(48% 0.139 42)',  tok: '--color-deep',  tokok: 'oklch(48% 0.180 30)',  d: 'Δh 12°  ΔL 0',   ver: 'ok',  vlab: 'Match' },
+  { name: 'Tagline',    hex: '#780000', ok: 'oklch(36% 0.148 29)',  tok: '--color-serum', tokok: 'oklch(58% 0.170 30)',  d: 'Δh 1°  ΔL 22',   ver: 'ok',  vlab: 'Hue match' },
+  { name: 'Leaf',       hex: '#609c24', ok: 'oklch(63% 0.161 133)', tok: '--color-probe', tokok: 'oklch(80% 0.170 148)', d: 'Δh 15°  ΔL 17',  ver: 'off', vlab: 'Drifted' }
+];
+$('#auditBody').innerHTML = AUDIT.map((a) => `
+  <tr>
+    <td><span class="swcell"><i style="background:${a.hex}"></i>${a.name}</span></td>
+    <td><code>${a.ok}</code></td>
+    <td><code>${a.tok}</code><br><code style="opacity:.7">${a.tokok}</code></td>
+    <td><code>${a.d}</code></td>
+    <td><span class="tag tag--${a.ver}">${a.vlab}</span></td>
+  </tr>`).join('');
+
+/* the hue band — brand hues cluster in one arc, the ground sits outside it */
+$('#wheel').innerHTML = [
+  ['29°', '#780000'], ['42°', '#9c3c0c'], ['85°', '#fcc00c'], ['106°', '#f0e400'], ['133°', '#609c24']
+].map(([h, c]) => `<span class="wheel__band" style="background:${c};height:0.5rem" title="hue ${h}"></span>`).join('') +
+  `<span class="wheel__band" style="background:#05080c;height:0.5rem;flex:0 0 22%" title="the current ground, hue 250"></span>`;
+
+/* --- controls, grouped by where the colour comes from --- */
+const pills = $('#pills');
+const FAMS = [
+  ['instrument', 'Instrument'],
+  ['brand', 'From the mark'],
+  ['inverted', 'Inverted']
+];
+FAMS.forEach(([fam, label]) => {
+  const group = document.createElement('div');
+  group.className = 'famgroup';
+  group.innerHTML = `<span class="famlabel">${label}</span>`;
+  GROUNDS.filter((g) => g.fam === fam).forEach((g) => {
+    const b = document.createElement('button');
+    b.className = 'pill';
+    b.type = 'button';
+    b.setAttribute('aria-pressed', String(g.id === current.id));
+    b.dataset.id = g.id;
+    b.innerHTML = `<span class="pill__chip" style="background:${g.hex.void}"></span>${g.name}`;
+    b.addEventListener('click', () => select(g.id));
+    group.append(b);
+  });
+  pills.append(group);
+});
+
+/* --- the contact sheet --- */
+const grid = $('#grid');
+GROUNDS.forEach((g) => {
+  const card = document.createElement('button');
+  card.className = 'card';
+  card.type = 'button';
+  card.dataset.id = g.id;
+  card.setAttribute('aria-pressed', String(g.id === current.id));
+  card.innerHTML = `
+    <span class="card__view">
+      <span class="card__plate"></span>
+      <span class="card__dot"></span>
+      <span class="card__type">
+        <span>${g.sub}</span>
+        <strong>One drop<br>of blood</strong>
+        <em>Dried–blood–spot screening at population scale.</em>
+      </span>
+    </span>
+    <span class="card__foot">
+      <span class="card__name">${g.name}</span>
+      <span class="card__hex">${g.hex.void}</span>
+    </span>`;
+  applyVars(card.querySelector('.card__view'), g);
+  card.addEventListener('click', () => {
+    select(g.id);
+    document.querySelector('.controls').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+  grid.append(card);
+});
+
+/* --- lumen --- */
+const lum = $('#lum'), lumout = $('#lumout');
+lum.addEventListener('input', () => {
+  $('#stage').style.setProperty('--lumen-level', lum.value);
+  lumout.value = Number(lum.value).toFixed(2);
+});
+
+/* --- selection --- */
+function ratioRow(k, v, floor) {
+  const pass = v >= floor;
+  const w = Math.min(100, (v / 17) * 100);
+  return `<div class="ratio">
+      <span class="ratio__k">${k}</span>
+      <span class="ratio__bar"><i class="${pass ? '' : 'bad'}" style="width:${w}%"></i></span>
+      <span class="ratio__v">${v.toFixed(2)}</span>
+    </div>`;
+}
+
+function select(id) {
+  current = GROUNDS.find((g) => g.id === id);
+
+  document.querySelectorAll('.pill, .card').forEach((el) => {
+    el.setAttribute('aria-pressed', String(el.dataset.id === id));
+  });
+
+  applyVars($('#stage'), current);
+  applyVars($('#specstrip'), current);
+
+  $('#vSrc').innerHTML = '<span class="tag tag--' + (current.fam === 'instrument' ? 'off' : 'ok') + '">' +
+    (current.fam === 'instrument' ? 'Not in the mark' : 'From the mark') + '</span> <code>' + current.src.split('  ')[1] + '</code> ' +
+    (current.fam === 'instrument' ? '' : '— ' + current.src.split('  ')[0].toLowerCase());
+  $('#vRisk').innerHTML = '<b>Cost:</b> ' + current.risk;
+
+  const pr = PROFILE[current.id];
+  const VERDICTS = ['Works against', 'Holds', 'Convinces'];
+  const pip = (label, n) => `<div class="aud__row">
+      <span class="aud__k">${label}</span>
+      <span class="aud__pips">${[0, 1].map((i) => `<i class="${i < n ? 'on' : ''}"></i>`).join('')}</span>
+      <span class="aud__v"${n === 0 ? ' style="color:var(--alarm)"' : ''}>${VERDICTS[n]}</span>
+    </div>`;
+  $('#vAud').innerHTML =
+    pip('Labs', pr.lab) + pip('Govt', pr.gov) + pip('NGOs', pr.ngo) +
+    `<p style="margin:.55rem 0 0;font-size:.8125rem;line-height:1.5;color:var(--mute)">${pr.note}</p>`;
+  $('#vSteps').textContent = pr.steps;
+
+  $('#vSwatch').innerHTML = ['void', 'ink', 'slab', 'line', 'mute', 'chalk']
+    .map((k) => `<span class="sw"><i style="background:${current.hex[k]}"></i>${k} <b>${current.hex[k]}</b></span>`)
+    .join('');
+
+  $('#vRatio').innerHTML =
+    ratioRow('Chalk', current.r.chalk, 7) +
+    ratioRow('Mute', current.r.mute, 4.5) +
+    ratioRow('Lumen', current.r.lumen, 4.5) +
+    ratioRow('Probe', current.r.probe, 4.5);
+
+  $('#patchName').textContent = `${current.name} — drop into src/input.css`;
+  $('#patch').innerHTML = patchFor(current);
+}
+
+function patchFor(g) {
+  const t = (n) => `oklch(${g.L[n]}% ${g.c} ${g.h})`;
+  const pad = (s) => s.padEnd(12);
+  return `<span class="c">/* @theme — the ground family */</span>
+  <span class="k">--color-void:</span>  <span class="v">${pad(t('void'))}</span> <span class="c">/* ${g.hex.void} */</span>
+  <span class="k">--color-ink:</span>   <span class="v">${pad(t('ink'))}</span> <span class="c">/* ${g.hex.ink} */</span>
+  <span class="k">--color-slab:</span>  <span class="v">${pad(t('slab'))}</span> <span class="c">/* ${g.hex.slab} */</span>
+  <span class="k">--color-line:</span>  <span class="v">${pad(t('line'))}</span> <span class="c">/* ${g.hex.line} */</span>
+  <span class="k">--color-mute:</span>  <span class="v">${pad(t('mute'))}</span> <span class="c">/* ${g.hex.mute} */</span>
+  <span class="k">--color-chalk:</span> <span class="v">${pad(t('chalk'))}</span> <span class="c">/* ${g.hex.chalk} */</span>
+
+<span class="c">/* @layer base — the document ground */</span>
+html {
+  background:
+    linear-gradient(180deg,
+      <span class="v">${g.top}</span> 0,
+      <span class="v">${g.bot}</span> 100%),
+    var(--color-void);
+}
+
+<span class="c">/* the stuck nav scrim follows the ground */</span>
+.nav.is-stuck { background-color: <span class="v">oklch(${g.L.void}% ${g.c} ${g.h} / .92)</span>; }`;
+}
+
+function plainPatch(g) {
+  return $('#patch').textContent;
+}
+
+$('#copy').addEventListener('click', async () => {
+  const btn = $('#copy');
+  try {
+    await navigator.clipboard.writeText(plainPatch(current));
+    btn.textContent = 'Copied';
+  } catch {
+    const r = document.createRange();
+    r.selectNodeContents($('#patch'));
+    const s = getSelection(); s.removeAllRanges(); s.addRange(r);
+    btn.textContent = 'Selected — press ⌘C';
+  }
+  setTimeout(() => { btn.textContent = 'Copy tokens'; }, 2200);
+});
+
+select('darkfield');
+</script>
+
+</body>
+</html>
