@@ -9,8 +9,9 @@ tribal and rural communities that conventional diagnostics never reaches.
 - **Sampling:** dried blood spot ("one-drop") collection — no venipuncture, no cold chain.
 - **Core offer:** newborn screening and hereditary-disorder panels (haemoglobinopathies,
   inborn errors of metabolism), carrier screening, prenatal diagnosis.
-- **Adjacent services:** preventive/community health programmes, R&D services,
-  training & capacity building, partnerships & consultancy.
+- **Adjacent services (now on the page as "Capabilities"):** preventive & community
+  health, R&D and kit development, training & capacity building, partnerships &
+  consultancy — including diagnostic lab set-up consultancy and grants advisory.
 - **Founding thesis:** 25+ years in genetic/molecular diagnostics, with networks across
   clinicians, the national health ministry, district health authorities, NGOs and academia.
 - **Framing:** the company explicitly organises itself around Sinek's Golden Circle —

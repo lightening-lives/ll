@@ -21,6 +21,10 @@
   };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  // stand-in mark until a real logo file lands in the slot
+  const initials = (n) => n.replace(/[^A-Za-z ]/g, ' ').split(/\s+/)
+    .filter(w => w && !/^(and|the|of|for|centre|center)$/i.test(w))
+    .slice(0, 3).map(w => w[0].toUpperCase()).join('');
 
   /* ---------- 1 · bind simple text nodes ---------------------------- */
   $$('[data-ll]').forEach((node) => {
@@ -32,6 +36,10 @@
   const em = $('#cEmail'), ph = $('#cPhone');
   em.textContent = C.brand.email; em.href = 'mailto:' + C.brand.email;
   ph.textContent = C.brand.phone; ph.href = 'tel:' + C.brand.phone.replace(/\s/g, '');
+  $('#cWhats').href = C.brand.whatsapp;
+  $('#cSocial').innerHTML = C.brand.social.map((x) =>
+    `<a class="underline underline-offset-4 decoration-1" target="_blank" rel="noopener"
+        href="${esc(x.href)}">${esc(x.k)}</a>`).join('');
 
   /* ---------- 2 · render the repeating content ----------------------- */
 
@@ -99,13 +107,68 @@
       <p class="text-sm text-mute mt-2">${esc(s.d)}</p>
     </article>`).join('');
 
-  // why / how / what — stacked, cross-faded as the camera passes each ring
-  $('#ringCopy').innerHTML = C.circle.rings.map((r, i) => `
-    <div class="ring-copy absolute inset-0 flex flex-col items-center justify-center" data-i="${i}">
-      <p class="hud text-lumen mb-5">${esc(r.r)}</p>
-      <h2 class="display-lg text-chalk max-w-[18ch]">${esc(r.t)}</h2>
-      <p class="mt-5 text-mute max-w-[46ch]">${esc(r.d)}</p>
+  const fi = $('#foundersImg');
+  fi.src = C.provenance.portrait; fi.alt = C.provenance.portraitAlt;
+
+  // capabilities — the full Solutions & Services scope, which the page was missing
+  $('#pillarList').innerHTML = C.capabilities.pillars.map((p) => `
+    <article class="pillar">
+      <span class="pillar__n figure-num">${esc(p.n)}</span>
+      <div class="pillar__head">
+        <h3 class="font-display text-[clamp(1.35rem,2.4vw,1.95rem)] leading-[1.1] text-chalk">${esc(p.t)}</h3>
+        <p class="text-sm text-mute mt-2.5">${esc(p.d)}</p>
+      </div>
+      <ul class="pillar__items">
+        ${p.items.map(([t, d]) => `
+          <li><span class="pillar__t">${esc(t)}</span><span class="pillar__d">${esc(d)}</span></li>`).join('')}
+      </ul>
+    </article>`).join('');
+
+  // provenance — the founder's record is the strongest thing on this page
+  $('#founderCreds').innerHTML = C.provenance.founder.credentials.map((c) =>
+    `<li class="hud text-lumen border border-line px-3 py-1.5">${esc(c)}</li>`).join('');
+
+  $('#governance').innerHTML = [C.provenance.patron, ...C.provenance.advisors].map((p) => `
+    <div class="gov">
+      ${p.img ? `<img class="gov__face" src="${esc(p.img)}" alt="${esc(p.name)}"
+                      width="446" height="520" loading="lazy" decoding="async">` : ''}
+      <span class="gov__body">
+        <span class="hud text-lumen block">${esc(p.role)}</span>
+        <span class="font-display text-[clamp(1.25rem,1.9vw,1.6rem)] leading-[1.12] text-chalk block mt-2">${esc(p.name)}</span>
+      </span>
     </div>`).join('');
+
+  $('#teamList').innerHTML = C.provenance.team.map((t) => `
+    <li>
+      ${t.img ? `<img class="face" src="${esc(t.img)}" alt="${esc(t.name)}"
+                     width="446" height="520" loading="lazy" decoding="async">` : ''}
+      <p class="text-sm text-chalk mt-3 leading-[1.25]">${esc(t.name)}</p>
+      <p class="hud text-mute mt-1">${esc(t.role)}</p>
+    </li>`).join('');
+
+  // collaborators — one flat grid, logo leading
+  $('#collabGrid').innerHTML = C.collaborators.items.map((o) => `
+    <li class="collab" data-slot="logo: ${esc(o.n)}">
+      <span class="collab__plate">${o.logo
+        ? `<img src="${esc(o.logo)}" alt="${esc(o.n)} logo" loading="lazy" decoding="async">`
+        : `<span class="collab__mono">${esc(initials(o.n))}</span>`}</span>
+      <span class="collab__name">${esc(o.n)}</span>
+      ${o.d ? `<span class="collab__desc">${esc(o.d)}</span>` : ''}
+    </li>`).join('');
+
+  // impact — the company's own narratives
+  $('#storyGrid').innerHTML = C.stories.items.map((st) => `
+    <article class="story">
+      <div class="flex items-center justify-between gap-3">
+        <span class="hud text-probe">${esc(st.place)}</span>
+        <span class="hud text-lumen border border-line px-2 py-0.5">${esc(st.cond)}</span>
+      </div>
+      <h3 class="font-display text-[clamp(1.4rem,2.4vw,1.9rem)] leading-[1.1] text-chalk mt-5">${esc(st.t)}</h3>
+      <p class="text-sm text-mute mt-3">${esc(st.d)}</p>
+    </article>`).join('');
+
+  $('#stateList').innerHTML = C.reach.states.map((n) =>
+    `<li class="hud text-chalk border border-line px-3 py-1.5">${esc(n)}</li>`).join('');
 
   // reach
   $('#reachGrid').innerHTML = C.reach.stats.map((s) => `
@@ -143,14 +206,66 @@
   const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647; // deterministic
   for (let i = 0; i < SPECKS; i++) {
     const z = -1500 + rnd() * 1450;
-    const s = el('span', 'speck');
+    const sp = el('span', 'speck');
     const size = 1 + rnd() * 2.6;
-    s.style.cssText =
+    sp.style.cssText =
       `left:${(rnd() * 118 - 9).toFixed(2)}%;top:${(rnd() * 118 - 9).toFixed(2)}%;` +
       `width:${size}px;height:${size}px;transform:translateZ(${z.toFixed(0)}px);` +
       `opacity:${(0.14 + (1 + z / 1500) * 0.5).toFixed(2)};` +
       `background:${rnd() > 0.78 ? 'var(--color-probe)' : 'var(--color-lumen)'}`;
-    field.appendChild(s);
+    field.appendChild(sp);
+  }
+
+  // laminate the card so its edge has depth when it turns
+  const cardEl = $('#dbsCard'), PLIES = 4;
+  for (let i = 0; i < PLIES; i++) {
+    const ply = el('span', 'dbs__ply');
+    const t = (i + 1) / (PLIES + 1);                       // 0 → 1 through the stock
+    ply.style.transform = `translateZ(calc(var(--dbs-t) * ${(0.5 - t).toFixed(3)}))`;
+    cardEl.insertBefore(ply, cardEl.querySelector('.dbs__body'));
+  }
+
+  /* The assay plate — the object the whole business runs on.
+     8 × 12 wells on one tilted plane. Most carry a sample; one came back
+     positive and is lit, with a drop hanging over it. Planes foreshorten
+     correctly in CSS 3D, so the tilt reads as real depth. */
+  const grid = $('#plateGrid');
+  const PLATE_PLIES = 3, ROWS = 8, COLS = 12;
+  const INDEX_R = 2, INDEX_C = 5;              // the lit well — C6, near centre
+
+  // laminate the stock so the plate has an edge when it turns nearly side-on
+  const deck = $('#plateDeck');
+  for (let i = 1; i <= PLATE_PLIES; i++) {
+    const ply = el('div', 'plate__ply');
+    ply.style.transform = `translateZ(calc(var(--plate-t) * ${(-i / PLATE_PLIES).toFixed(3)}))`;
+    deck.insertBefore(ply, deck.firstChild);
+  }
+
+  $('#plateCols').innerHTML =
+    Array.from({ length: COLS }, (_, i) => `<span>${i + 1}</span>`).join('');
+  $('#plateRows').innerHTML =
+    Array.from({ length: ROWS }, (_, i) => `<span>${'ABCDEFGH'[i]}</span>`).join('');
+
+  for (let r = 0; r < ROWS; r++) {
+    for (let c = 0; c < COLS; c++) {
+      const isIndex = r === INDEX_R && c === INDEX_C;
+      // a real run is never a full plate: the tail columns are still empty
+      const loaded = isIndex || rnd() > 0.16 + (c / COLS) * 0.5;
+      const w = el('div', 'well' + (isIndex ? ' is-index' : loaded ? ' is-loaded' : ''));
+      w.style.setProperty('--f', rnd().toFixed(2));   // per-well fill variation
+      w.innerHTML = '<span class="well__ring"><span class="well__bore"></span></span>';
+      if (isIndex) {
+        w.insertAdjacentHTML('afterbegin', '<span class="well__pool"></span>');
+        w.insertAdjacentHTML('beforeend',
+          '<span class="well__beam"></span>' +
+          '<div class="drop-rig"><div class="drop" id="heroDrop">' +
+            '<span class="drop__halo"></span>' +
+            '<span class="drop__form"><span class="drop__lit"></span></span>' +
+            '<span class="drop__spec"></span>' +
+          '</div></div>');
+      }
+      grid.appendChild(w);
+    }
   }
 
   // the double helix — 46 base pairs, one of them the variant
@@ -183,15 +298,15 @@
   const SCALES = [
     ['hero', '10⁰ m'], ['specimen', '10⁻³ m'], ['assay', '10⁻⁹ m'],
     ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'], ['workflow', '10⁰ m'],
-    ['circle', '10³ m'], ['reach', '10⁵ m'], ['contact', '10⁰ m']
+    ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'], ['collaborators', '10³ m'],
+    ['stories', '10⁴ m'], ['reach', '10⁵ m'], ['contact', '10⁰ m']
   ];
 
   if (REDUCED) {
     // Collapse every scrub scene to a static, fully readable end-state.
     // Layout is handled by `body.no-motion` in CSS; only the values that
     // a tween would otherwise have produced are set here.
-    document.body.classList.add('no-motion');
-    root.style.setProperty('--lumen-level', 1);
+    document.body.classList.add('no-motion');   // holds --lumen-level at 0.45 in CSS
     $('#runCounter').textContent = C.validation.runValue;
     scaleRead.textContent = '10⁰ m';
     return;
@@ -229,10 +344,20 @@
 
   // ---- 1 · hero: the depth field dollies past; the type stays flat and crisp.
   // Only #heroDepth enters Z — putting type in perspective scales and crops it.
+  // The plate opens from raking to near-flat, the drop walks down to the lit
+  // well, and only then does the well ignite — cause before effect.
   gsap.timeline({ scrollTrigger: scrub('#hero') })
     .fromTo('#heroDepth', { z: 0 }, { z: 340, ease: 'none', duration: 1 }, 0)
-    .fromTo('#heroDrop', { scale: 0.88, y: 0 },
-            { scale: 1.22, y: -40, ease: 'none', duration: 1 }, 0)
+    .fromTo('#plate',
+      { '--plate-tilt': 62, '--plate-spin': -9, y: '4%', scale: 0.92 },
+      { '--plate-tilt': 36, '--plate-spin': -2.5, y: '-4%', scale: 1.14,
+        ease: 'none', duration: 1 }, 0)
+    .fromTo('#plate', { '--fall': 0 },
+      { '--fall': 1, ease: 'none', duration: 0.55 }, 0)
+    // never fully dark: the lit well IS the hero image, so it is already
+    // burning at rest and only blooms as the drop lands
+    .fromTo('#plate', { '--ignite': 0.42 },
+      { '--ignite': 1, ease: 'none', duration: 0.34 }, 0.4)
     .to('#heroType', { y: -90, opacity: 0, ease: 'none', duration: 0.38 }, 0.56);
 
   // ---- 2 · the specimen card turns to face you
@@ -240,7 +365,9 @@
     .fromTo('#dbsCard',
       { rotateY: -62, rotateX: 26, z: -420, scale: 0.92 },
       { rotateY: 16, rotateX: -7, z: 130, scale: 1, ease: 'none', duration: 1 }, 0)
-    .fromTo('#specimen .absolute.inset-0 > div > div',
+    .fromTo('#dbsFlap', { rotateX: 0, z: 4 },
+      { rotateX: -132, z: 4, ease: 'none', duration: 0.55 }, 0.30)
+    .fromTo('#specimen .scene-layer > div > div',
       { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', duration: 0.28 }, 0.05);
 
   // ---- 3 · the helix turns; the variant flares as it comes round
@@ -285,21 +412,18 @@
     });
   });
 
-  // ---- 7 · why → how → what: the camera passes through three rings
-  const ringTl = gsap.timeline({ scrollTrigger: scrub('#circle') });
-  $$('.ring').forEach((r, i) => {
-    ringTl.fromTo(r,
-      { z: -2000 + i * 240, opacity: 0 },
-      { z: 900, opacity: 1, ease: 'none', duration: 0.42 }, i * 0.29);
+  // Lazy images finish loading AFTER window.load, each one changing document
+  // height. Without this, every pinned scene keeps stale start/end positions
+  // and the whole scroll choreography drifts.
+  let refreshPending;
+  const refreshSoon = () => {
+    clearTimeout(refreshPending);
+    refreshPending = setTimeout(() => ScrollTrigger.refresh(), 120);
+  };
+  window.addEventListener('load', refreshSoon);
+  document.querySelectorAll('img').forEach((img) => {
+    if (img.complete) return;
+    img.addEventListener('load', refreshSoon, { once: true });
+    img.addEventListener('error', refreshSoon, { once: true });
   });
-  // Hand off cleanly as the camera passes each ring. The windows must NOT
-  // overlap — two sets of display type at once is unreadable.
-  const PASS = [0.32, 0.63], FADE = 0.05;
-  $$('.ring-copy').forEach((c, i) => {
-    gsap.set(c, { opacity: i === 0 ? 1 : 0 });
-    if (i > 0) ringTl.to(c, { opacity: 1, ease: 'none', duration: FADE }, PASS[i - 1]);
-    if (i < 2) ringTl.to(c, { opacity: 0, ease: 'none', duration: FADE }, PASS[i] - FADE);
-  });
-
-  window.addEventListener('load', () => ScrollTrigger.refresh());
 })();

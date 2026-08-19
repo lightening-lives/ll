@@ -15,11 +15,11 @@
   --color-mute:  oklch(64% 0.012 250);   /* secondary text on dark      */
   --color-chalk: oklch(93% 0.006 250);   /* primary text on dark        */
 
-  --color-lumen: oklch(80% 0.150 72);    /* transmitted light — PRIMARY */
+  --color-lumen: oklch(83% 0.160 88);    /* brand gold / transmitted light */
   --color-serum: oklch(58% 0.170 30);    /* whole blood — STRUCTURAL only */
   --color-alarm: oklch(70% 0.160 33);    /* warning text on dark  7.0:1  */
   --color-deep:  oklch(48% 0.180 30);    /* accent text on paper  6.2:1  */
-  --color-probe: oklch(82% 0.140 170);   /* fluorophore — data states   */
+  --color-probe: oklch(80% 0.170 148);   /* brand leaf green / fluorophore */
   --color-bone:  oklch(95% 0.012 85);    /* filter paper — the payoff   */
 
   --font-display: "Fraunces", ui-serif, Georgia, serif;
@@ -58,7 +58,7 @@
   ::selection { background: var(--color-lumen); color: var(--color-void); }
 
   /* the nav is fixed — anchor targets must not land underneath it */
-  section[id], main[id] { scroll-margin-top: 6rem; }
+  section[id], main[id] { scroll-margin-top: 7.5rem; }
 
   h1, h2, h3 {
     font-family: var(--font-display);
@@ -129,75 +129,378 @@
 .layer        { position: absolute; inset: 0; transform-style: preserve-3d; }
 .flat         { transform-style: flat; }
 
-/* --- the drop --------------------------------------------------------
-   A pendant droplet, not a sphere — a sphere always reads as a marble.
-   Drawn as SVG so the silhouette is exact: dark body, one tight specular,
-   and light TRANSMITTED through the bulb from below. Glow tracks the
-   global illumination level, so the hero really does start near-dark.
+/* --- the assay plate ---------------------------------------------------
+   The hero object is the thing the assay actually runs on: an SBS
+   microplate, 8 × 12, raking away from the camera. A plate is a PLANE, and
+   planes are what CSS 3D is genuinely good at — every well foreshortens
+   correctly, so the tilt reads as depth instead of as a stack of rings.
+
+   It also says the whole business in one image: ninety-six wells is
+   population screening; one of them is lit, and that is the child you
+   found. A single drop hangs over that well, billboarded upright.
    -------------------------------------------------------------------- */
-.drop {
+
+/* Registered so GSAP can interpolate them as numbers, and so the scene
+   still resolves to a finished composition if the script never runs. */
+@property --plate-tilt { syntax: "<number>"; inherits: true; initial-value: 50; }
+@property --ignite     { syntax: "<number>"; inherits: true; initial-value: 1; }
+@property --fall       { syntax: "<number>"; inherits: true; initial-value: 0.3; }
+@property --plate-spin { syntax: "<number>"; inherits: true; initial-value: -4; }
+
+.plate {
   position: absolute;
-  left: var(--drop-x, 50%); top: var(--drop-y, 50%);
-  width: var(--drop-size, 30vmin);
-  aspect-ratio: 100 / 140;
-  transform: translate(-50%, -50%);
-}
-.drop__svg {
-  width: 100%; height: 100%; display: block; overflow: visible;
-  filter:
-    drop-shadow(0 0 3vmin oklch(58% 0.18 34 / calc(.12 + var(--lumen-level) * .34)))
-    drop-shadow(0 0 12vmin oklch(62% 0.16 46 / calc(.05 + var(--lumen-level) * .24)));
-}
-/* the caustic the drop throws onto the ground plane below it */
-.drop::after {
-  content: ""; position: absolute; left: 50%; top: 99%;
-  width: 128%; height: 30%; transform: translateX(-50%);
-  background: radial-gradient(ellipse at 50% 10%,
-    oklch(76% 0.15 56 / calc(.05 + var(--lumen-level) * .22)) 0%, transparent 58%);
-  filter: blur(2.4vmin);
-  pointer-events: none;
+  left: var(--plate-x, 50%); top: var(--plate-y, 40%);
+  width: var(--plate-w, 54vmin);
+  aspect-ratio: 3 / 2;                     /* 127.8 × 85.5 mm, near enough */
+  margin-left: calc(var(--plate-w, 54vmin) / -2);
+  margin-top:  calc(var(--plate-w, 54vmin) / -3);
+  transform-style: preserve-3d;
+  will-change: transform;
+  --plate-t: calc(var(--plate-w, 54vmin) * 0.048);  /* stock thickness, real Z */
 }
 
+/* the deck plane. Tilt lives on a CHILD so the timeline can own .plate's
+   own transform without fighting the var. */
+.plate__deck {
+  position: absolute; inset: 0;
+  transform: rotate(calc(var(--plate-spin) * 1deg))
+             rotateX(calc(var(--plate-tilt) * 1deg));
+  transform-style: preserve-3d;
+}
+
+.plate__slab {
+  position: absolute; inset: 0;
+  border: 1px solid var(--color-line);
+  border-radius: 3px 3px 3px calc(var(--plate-w, 54vmin) * 0.045);  /* A1 chamfer */
+  background:
+    /* a raking specular across the stock — without it the deck is a hole */
+    linear-gradient(112deg,
+      transparent 6%,
+      oklch(37% 0.016 250 / 0.30) 26%,
+      oklch(34% 0.015 250 / 0.34) 42%,
+      oklch(28% 0.014 250 / 0.16) 60%,
+      transparent 86%),
+    linear-gradient(157deg,
+      oklch(29% 0.015 250) 0%,
+      oklch(21% 0.013 250) 46%,
+      oklch(15% 0.012 250) 100%);
+}
+
+/* laminated stock, so the plate has an edge when it turns nearly side-on */
+.plate__ply {
+  position: absolute; inset: 0;
+  border: 1px solid oklch(26% 0.014 250);
+  border-radius: inherit;
+  background: oklch(11% 0.010 250);
+}
+
+/* skirt engraving — A–H and 1–12. Deliberately near-illegible: at a raking
+   angle this is instrument texture, not information. */
+.plate__ticks {
+  position: absolute; display: flex; pointer-events: none;
+  font-family: var(--font-mono); font-weight: 500;
+  font-size: calc(var(--plate-w, 54vmin) * 0.021);
+  letter-spacing: 0.04em;
+  color: oklch(52% 0.012 250 / calc(0.30 + var(--lumen-level) * 0.45));
+}
+.plate__ticks--cols { left: 9%; right: 7%; top: 4.6%; justify-content: space-around; }
+.plate__ticks--rows { left: 3.4%; top: 14%; bottom: 7%; flex-direction: column;
+                      justify-content: space-around; align-items: center; }
+
+/* --- the 96 wells ---------------------------------------------------- */
+.plate__grid {
+  position: absolute; inset: 14% 7% 7% 9%;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  grid-template-rows: repeat(8, 1fr);
+  transform-style: preserve-3d;
+}
+.well { position: relative; display: grid; place-items: center; }
+.well.is-index { transform-style: preserve-3d; }
+
+/* The bore is SHADED on the deck plane, not sunk into real Z. The slab is an
+   opaque plane, so anything behind it is simply invisible — and at a raking
+   angle a near-parallel plane 10px back z-fights and prints dark dashes
+   across the wells. Real Z is kept where it actually shows: the laminate
+   edge. Depth in the well is done with light, which is what you see anyway. */
+.well__ring {
+  position: relative;
+  width: 76%; aspect-ratio: 1;
+  border-radius: 50%;
+  border: 1px solid oklch(44% 0.015 250 / 0.85);
+  /* the far wall catches the light, the near wall is in its own shadow */
+  background: radial-gradient(circle at 44% 30%,
+    oklch(26% 0.013 250) 0%,
+    oklch(14% 0.010 250) 44%,
+    oklch(8% 0.008 250) 100%);
+  box-shadow: inset 0 0.5px 0 oklch(62% 0.015 250 / 0.35);
+}
+/* what is actually in the well */
+.well__bore {
+  position: absolute; left: 50%; top: 50%;
+  width: 66%; aspect-ratio: 1; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: transparent;
+}
+/* wells carrying a sample — --f is the per-well fill, set once in JS */
+.well.is-loaded .well__bore {
+  background: radial-gradient(circle at 50% 42%,
+    oklch(48% 0.150 29 / calc(0.42 + var(--f) * 0.38)) 0%,
+    oklch(34% 0.130 27 / calc(0.36 + var(--f) * 0.30)) 60%,
+    oklch(18% 0.060 28 / 0.72) 100%);
+}
+.well.is-loaded .well__ring { border-color: oklch(50% 0.050 40 / 0.8); }
+
+/* --- the one that came back positive --------------------------------- */
+.well.is-index .well__ring {
+  border-color: oklch(86% 0.150 88 / calc(0.45 + var(--ignite) * 0.55));
+  box-shadow:
+    0 0 calc(var(--plate-w) * 0.05) oklch(83% 0.160 88 / calc(var(--ignite) * 0.8)),
+    inset 0 0 calc(var(--plate-w) * 0.014) oklch(88% 0.150 88 / calc(var(--ignite) * 0.5));
+}
+.well.is-index .well__bore {
+  background: radial-gradient(circle at 50% 44%,
+    oklch(94% 0.120 92 / calc(0.35 + var(--ignite) * 0.65)) 0%,
+    oklch(76% 0.180 58 / calc(0.28 + var(--ignite) * 0.62)) 48%,
+    oklch(50% 0.180 30 / calc(0.3 + var(--ignite) * 0.5)) 100%);
+}
+/* light pooling on the deck around it */
+.well__pool {
+  position: absolute; left: 50%; top: 50%;
+  width: 900%; aspect-ratio: 1; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: radial-gradient(circle,
+    oklch(86% 0.160 88 / calc(var(--ignite) * 0.38)) 0%,
+    oklch(80% 0.165 70 / calc(var(--ignite) * 0.20)) 22%,
+    oklch(72% 0.165 55 / calc(var(--ignite) * 0.08)) 42%,
+    transparent 68%);
+}
+/* the read: a shaft of light standing out of the well. Counter-rotated by
+   the same tilt var, so it stays upright however far the deck turns. */
+.well__beam {
+  position: absolute; left: 50%; bottom: 50%;
+  width: calc(var(--plate-w) * 0.075);
+  height: calc(var(--plate-w) * 0.30 * var(--ignite));
+  clip-path: polygon(50% 100%, 100% 0, 0 0);
+  transform: translateX(-50%)
+             rotateX(calc(var(--plate-tilt) * -1deg))
+             rotate(calc(var(--plate-spin) * -1deg));
+  transform-origin: 50% 100%;
+  pointer-events: none;
+  background: linear-gradient(to top,
+    oklch(94% 0.120 90 / 0.62) 0%,
+    oklch(85% 0.155 88 / 0.14) 38%,
+    transparent 88%);
+  opacity: var(--ignite);
+}
+
+/* the glow the whole plate sits inside */
+.plate__glow {
+  position: absolute; left: 50%; top: 55%;
+  width: 150%; aspect-ratio: 1; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: radial-gradient(circle,
+    oklch(62% 0.180 38 / calc(.07 + var(--lumen-level) * .16)) 0%,
+    oklch(66% 0.165 46 / calc(.04 + var(--lumen-level) * .11)) 24%,
+    oklch(70% 0.150 55 / calc(.02 + var(--lumen-level) * .05)) 44%,
+    transparent 72%);
+}
+
+/* --- the drop ---------------------------------------------------------
+   Lives inside the lit well, so it is always exactly over it. The rig
+   counter-rotates the deck tilt to stand the drop up; --fall walks it down
+   to the well as you scroll.
+   -------------------------------------------------------------------- */
+.drop-rig {
+  position: absolute; left: 50%; bottom: 50%;
+  width: 0; height: 0;
+  transform: translateX(-50%)
+             rotateX(calc(var(--plate-tilt) * -1deg))
+             rotate(calc(var(--plate-spin) * -1deg));
+  transform-origin: 50% 100%;
+  transform-style: preserve-3d;
+  pointer-events: none;
+}
+.drop {
+  position: absolute; left: 0; bottom: calc(var(--plate-w) * 0.012);
+  width: var(--drop-w, 9vmin);
+  height: calc(var(--drop-w, 9vmin) * 1.3);
+  transform:
+    translate(-50%, calc((1 - var(--fall)) * -105%))
+    scale(calc(1 - clamp(0, (var(--fall) - 0.55) / 0.45, 1) * 0.62));
+  opacity: calc(1 - clamp(0, (var(--fall) - 0.62) / 0.38, 1) * 0.94);
+}
+/* a real point, not a fade-out: a square with three round corners, turned
+   so the sharp one is at the top */
+.drop__form {
+  position: absolute; inset: 0 0 12% 0;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(135deg);
+  overflow: hidden;
+  background: oklch(29% 0.140 27);
+  box-shadow:
+    0 0 calc(var(--drop-w, 9vmin) * 0.5) oklch(62% 0.180 38 / 0.45),
+    inset 0 0 calc(var(--drop-w, 9vmin) * 0.22) oklch(20% 0.090 28 / 0.9);
+}
+/* counter-rotated so the light reads as coming from below-left in SCREEN
+   space, not in the drop's own turned frame */
+.drop__lit {
+  position: absolute; left: 50%; top: 50%;
+  width: 210%; aspect-ratio: 1;
+  transform: translate(-50%, -50%) rotate(-135deg);
+  background: radial-gradient(circle at 44% 66%,
+    oklch(84% 0.135 72 / calc(.34 + var(--lumen-level) * .30)) 0%,
+    oklch(60% 0.190 38 / .62) 28%,
+    oklch(40% 0.175 28 / .48) 54%,
+    transparent 76%);
+}
+.drop__spec {
+  position: absolute; left: 34%; top: 58%;
+  width: 26%; aspect-ratio: 1.5; border-radius: 50%;
+  background: radial-gradient(closest-side ellipse,
+    oklch(97% 0.040 90 / 0.55) 0%, oklch(94% 0.070 84 / 0.22) 48%, transparent 100%);
+}
+.drop__halo {
+  position: absolute; left: 50%; top: 62%;
+  width: 300%; aspect-ratio: 1; border-radius: 50%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle,
+    oklch(72% 0.170 50 / calc(.13 + var(--lumen-level) * .20)) 0%,
+    oklch(66% 0.170 42 / calc(.05 + var(--lumen-level) * .09)) 30%,
+    transparent 62%);
+}
 .speck {
   position: absolute; border-radius: 50%;
   background: var(--color-lumen);
   opacity: .5;
 }
 
-/* --- dried blood spot card ------------------------------------------- */
+/* --- the real DBS card ------------------------------------------------
+   Matched to the physical kit: a portrait fold-over card, CSIR–CCMB and
+   Lightening Lives on the flap, ONE filter-paper spot inside a dashed
+   guide ring, barcode below. The flap opens as you scroll.
+   -------------------------------------------------------------------- */
 .dbs {
   position: absolute; left: var(--dbs-x, 50%); top: var(--dbs-y, 50%);
-  width: var(--dbs-w, min(64vw, 300px)); aspect-ratio: 1.62;
-  margin-left: calc(var(--dbs-w, min(64vw, 300px)) / -2);
-  margin-top: calc(var(--dbs-w, min(64vw, 300px)) / -3.24);
+  width: var(--dbs-w, min(42vw, 210px));
+  aspect-ratio: 100 / 172;
+  margin-left: calc(var(--dbs-w, min(42vw, 210px)) / -2);
+  margin-top:  calc(var(--dbs-w, min(42vw, 210px)) * -0.86);
   transform-style: preserve-3d;
 }
-.dbs__face {
+.dbs { --dbs-t: 5px; }              /* card stock thickness */
+
+/* the printed face */
+.dbs__body {
   position: absolute; inset: 0;
+  background: linear-gradient(155deg, oklch(96% 0.004 90), oklch(89% 0.006 88));
+  border: 1px solid oklch(76% 0.012 85);
+  transform: translateZ(calc(var(--dbs-t) / 2));
+  transform-style: preserve-3d;
+}
+/* laminated plies give the card real edge thickness when it turns — cheaper
+   and far more robust than building six faces with origin maths */
+.dbs__ply {
+  position: absolute; inset: 0;
+  background: linear-gradient(155deg, oklch(88% 0.006 88), oklch(80% 0.008 86));
+  border: 1px solid oklch(72% 0.012 85);
+}
+.dbs__rear {
+  position: absolute; inset: 0;
+  transform: translateZ(calc(var(--dbs-t) / -2)) rotateY(180deg);
+  background: linear-gradient(155deg, oklch(83% 0.006 88), oklch(74% 0.008 86));
+  border: 1px solid oklch(70% 0.012 85);
+  backface-visibility: hidden;
+}
+/* a light sweep, so turning the card reads as a lit surface not a flat plane */
+.dbs__sheen {
+  position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(112deg,
+    oklch(100% 0 0 / .5) 0%, oklch(100% 0 0 / .1) 22%,
+    transparent 46%, oklch(30% 0.01 250 / .1) 78%, oklch(30% 0.01 250 / .2) 100%);
+  mix-blend-mode: soft-light;
+}
+/* contact shadow on the ground the card floats above */
+.dbs__shadow {
+  position: absolute; left: 50%; bottom: -14%;
+  width: 96%; height: 16%;
+  transform: translateX(-50%) translateZ(calc(var(--dbs-t) * -6));
+  border-radius: 50%;
+  background: radial-gradient(ellipse, oklch(0% 0 0 / .72) 0%, transparent 70%);
+  filter: blur(1.4vmin);
+  pointer-events: none;
+}
+/* the filter-paper window, revealed when the flap lifts */
+.dbs__window {
+  position: absolute; left: 9%; right: 9%; top: 10%; height: 32%;
   background:
-    repeating-linear-gradient(0deg, oklch(88% 0.012 85 / .5) 0 1px, transparent 1px 3px),
-    linear-gradient(150deg, oklch(93% 0.014 85), oklch(83% 0.016 82));
-  border: 1px solid oklch(70% 0.02 80);
-  box-shadow: 0 3vmin 8vmin oklch(0% 0 0 / .55);
-  backface-visibility: hidden;
+    repeating-linear-gradient(0deg, oklch(97% 0.003 90) 0 1px, oklch(94% 0.004 88) 1px 2.5px);
+  border: 1px solid oklch(83% 0.008 85);
+  display: grid; place-items: center;
 }
-.dbs__back {
-  position: absolute; inset: 0;
-  background: linear-gradient(150deg, oklch(66% 0.014 82), oklch(56% 0.016 80));
-  transform: translateZ(-3px) rotateY(180deg);
-  backface-visibility: hidden;
+.dbs__ring {
+  width: 62%; aspect-ratio: 1; border-radius: 50%;
+  border: 1.5px dashed oklch(38% 0.01 260);
+  display: grid; place-items: center;
 }
+/* dried blood is brown, not red — this is matched to the real card */
 .dbs__spot {
-  position: absolute; width: 15%; aspect-ratio: 1; border-radius: 50%;
-  top: 50%; transform: translateY(-50%);
-  background: radial-gradient(circle at 40% 36%,
-    oklch(48% 0.17 32), oklch(30% 0.13 28) 62%, oklch(22% 0.09 26));
-  border: 1px solid oklch(62% 0.02 80);
+  width: 74%; aspect-ratio: 1;
+  border-radius: 52% 47% 55% 45% / 48% 54% 46% 52%;
+  background: radial-gradient(circle at 42% 38%,
+    oklch(46% 0.075 32), oklch(38% 0.075 30) 52%, oklch(31% 0.065 28));
+  box-shadow: inset 0 0 1.2vmin oklch(26% 0.05 26 / .7);
 }
-.dbs__spot.is-lit {
-  background: radial-gradient(circle at 40% 36%,
-    oklch(86% 0.15 66), oklch(66% 0.18 44) 55%, oklch(44% 0.17 32));
-  box-shadow: 0 0 3vmin oklch(78% 0.16 55 / .75);
+.dbs__code {
+  position: absolute; left: 9%; right: 9%; top: 52%; height: 20%;
+  background: repeating-linear-gradient(90deg,
+    oklch(18% 0 0) 0 1.5px, transparent 1.5px 3px,
+    oklch(18% 0 0) 3px 4.5px, transparent 4.5px 8px);
+}
+.dbs__id, .dbs__marks {
+  position: absolute; left: 9%; right: 9%;
+  font-family: var(--font-mono); color: oklch(30% 0.01 260);
+  text-align: center; letter-spacing: .08em;
+}
+.dbs__id    { top: 74%; font-size: clamp(6px, 1.1vmin, 11px); }
+.dbs__marks { top: 87%; font-size: clamp(5px, 0.85vmin, 9px);
+              color: oklch(48% 0.01 260); letter-spacing: .05em; }
+
+/* the hinged flap */
+.dbs__flap {
+  position: absolute; left: 0; right: 0; top: 5%; height: 40%;
+  transform-origin: 50% 0%; transform-style: preserve-3d;
+  transform: translateZ(4px);   /* must sit in front of .dbs__body */
+  will-change: transform;
+}
+.dbs__flap-face, .dbs__flap-back {
+  position: absolute; inset: 0; backface-visibility: hidden;
+  border: 1px solid oklch(76% 0.012 85);
+}
+.dbs__flap-face {
+  background: linear-gradient(155deg, oklch(97% 0.004 90), oklch(91% 0.006 88));
+  display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 6%; padding: 6%;
+}
+.dbs__flap-back {
+  transform: rotateX(180deg);
+  background: linear-gradient(155deg, oklch(86% 0.006 88), oklch(72% 0.008 86));
+  box-shadow: inset 0 0 3vmin oklch(40% 0.01 260 / .28);
+}
+.dbs__partner, .dbs__brandline {
+  font-family: var(--font-mono); text-align: center; line-height: 1.25;
+}
+.dbs__partner   { font-size: clamp(5px, 1vmin, 10px); letter-spacing: .1em;
+                  color: oklch(38% 0.09 255); font-weight: 500; }
+.dbs__brandline { font-size: clamp(5px, 0.95vmin, 10px); letter-spacing: .06em;
+                  color: oklch(45% 0.02 60); }
+/* the brand's own sun mark, as printed on the real card */
+/* flex was stretching this to 37x48 and distorting the mark */
+.dbs__sun {
+  width: 32%; aspect-ratio: 1; height: auto;
+  flex: 0 0 auto; object-fit: contain; display: block;
 }
 
 /* --- double helix ----------------------------------------------------- */
@@ -220,17 +523,6 @@
                                box-shadow: 0 0 2.6vmin oklch(58% 0.17 30 / .95);
                                width: 1.7vmin; height: 1.7vmin; margin-top: -0.85vmin; }
 
-/* --- golden circle rings ---------------------------------------------- */
-.ring {
-  position: absolute; left: 50%; top: 50%;
-  border: 1px solid var(--color-line); border-radius: 50%;
-  transform-style: preserve-3d;
-}
-.ring::before {
-  content: ""; position: absolute; inset: 8%;
-  border: 1px solid oklch(33% 0.014 250 / .5); border-radius: 50%;
-}
-
 /* =====================================================================
    SCENE GEOMETRY PLACEMENT — mobile first, then the side-by-side desktop
    composition. Kept here (not inline) so the breakpoints can actually win.
@@ -238,11 +530,10 @@
 .scene-copy { background: none; }
 
 /* --- narrow: geometry sits in the upper third, copy below on a scrim --- */
-.drop  { --drop-x: 50%; --drop-y: 22%; --drop-size: 30vw; }
-.dbs   { --dbs-x: 50%;  --dbs-y: 24%; }
+.plate-layer { --plate-x: 50%; --plate-y: 25%; --plate-w: 86vw; --drop-w: 13vw; }
+.dbs   { --dbs-x: 50%;  --dbs-y: 25%; --dbs-w: min(38vw, 190px); }
 .helix { --helix-x: 50%; }
 .rung  { width: 44vw; margin-left: -22vw; }
-.ring  { width: 86vw; height: 86vw; margin: -43vw 0 0 -43vw; }
 
 .scene-copy {
   background: linear-gradient(to top,
@@ -254,11 +545,10 @@
 
 @media (min-width: 768px) {
   .scene-copy { background: none; padding-top: 0; }
-  .drop  { --drop-x: 71%; --drop-y: 38%; --drop-size: 29vmin; }
-  .dbs   { --dbs-x: 30%;  --dbs-y: 52%; --dbs-w: min(58vmin, 460px); }
+  .plate-layer { --plate-x: 64%; --plate-y: 40%; --plate-w: 58vmin; --drop-w: 8.2vmin; }
+  .dbs   { --dbs-x: 31%;  --dbs-y: 50%; --dbs-w: min(34vmin, 290px); }
   .helix { --helix-x: 70%; }
   .rung  { width: 30vmin; margin-left: -15vmin; }
-  .ring  { width: 62vmin; height: 62vmin; margin: -31vmin 0 0 -31vmin; }
 }
 
 /* =====================================================================
@@ -267,9 +557,16 @@
 .illum {
   position: fixed; inset: 0; pointer-events: none; z-index: 5;
   background:
-    radial-gradient(120vmax 90vmax at 50% 42%,
-      oklch(80% 0.15 72 / calc(var(--lumen-level) * 0.16)) 0%,
-      transparent 62%);
+    /* the light source itself: warm, but small and localised. A wide, strong
+       gold wash screens the whole ground into brown (#292412) rather than
+       reading as light, so it is kept deliberately tight. */
+    radial-gradient(72vmax 52vmax at 50% 38%,
+      oklch(83% 0.16 88 / calc(var(--lumen-level) * 0.06)) 0%,
+      transparent 62%),
+    /* the actual "lightening": a NEUTRAL lift of the ground, so descending
+       reads as the lights coming up, not as a sepia filter */
+    linear-gradient(oklch(72% 0.02 250 / calc(var(--lumen-level) * 0.05)),
+                    oklch(72% 0.02 250 / calc(var(--lumen-level) * 0.05)));
   mix-blend-mode: screen;
 }
 /* the darkfield stop — heavy at the top of the page, lifts as you go */
@@ -287,7 +584,7 @@
   position: fixed; left: 0; top: 0; bottom: 0; width: 4.5rem; z-index: 40;
   display: flex; flex-direction: column; align-items: center;
   justify-content: center; gap: 1rem; pointer-events: none;
-  padding: 5.75rem 0 1.75rem;   /* clear the fixed nav, and the floor */
+  padding: 7rem 0 1.75rem;   /* clear the fixed nav, and the floor */
 }
 @media (max-width: 767px) { .hud-rail { display: none; } }
 .hud-rail__track {
@@ -306,8 +603,8 @@
 /* HUD inverts over the closing light section */
 body.is-lit .hud-rail__track { background: oklch(80% 0.02 85); }
 body.is-lit .hud-rail__scale,
-body.is-lit .nav a,
-body.is-lit .nav__mark { color: oklch(25% 0.02 250); }
+body.is-lit .nav a:not(.nav__cta),
+body.is-lit .nav__mark span { color: oklch(25% 0.02 250); }
 body.is-lit .nav { border-color: oklch(82% 0.015 85); }
 /* must out-specify `body.is-lit .nav a` above, or the CTA goes dark-on-dark */
 body.is-lit .nav a.nav__cta {
@@ -318,16 +615,27 @@ body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
 /* =====================================================================
    COMPONENTS
    ===================================================================== */
+/* nav links carry their own value — --color-mute is too dim at 11px here.
+   Must exclude the CTA, whose colour comes from its own utility. */
+.nav a:not(.nav__cta):not(.nav__mark) { color: oklch(74% 0.012 250); }
+.nav a:not(.nav__cta):not(.nav__mark):hover { color: var(--color-chalk); }
+
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 50;
   display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem clamp(1rem, 4vw, 2.5rem);
+  padding: .85rem clamp(1rem, 4vw, 2.5rem);
+  transition: border-color .4s ease, background-color .4s ease, padding .38s ease;
   border-bottom: 1px solid transparent;
   backdrop-filter: blur(14px);
-  transition: border-color .4s ease, background-color .4s ease;
+  /* A scrim is present from the FIRST frame. Legibility must never depend on
+     a transition having completed — the bar only deepens once stuck. */
+  background-color: transparent;
 }
-.nav.is-stuck { border-color: var(--color-line); background: oklch(13% 0.012 250 / .72); }
-body.is-lit .nav.is-stuck { background: oklch(95% 0.012 85 / .82); }
+.nav.is-stuck { border-color: var(--color-line);
+                background-color: oklch(13% 0.012 250 / .92);
+}
+body.is-lit .nav           { background-color: transparent; }
+body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
 
 .spec-strip {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px;
@@ -381,6 +689,148 @@ body.is-lit .nav.is-stuck { background: oklch(95% 0.012 85 / .82); }
 }
 .field label { color: oklch(45% 0.02 250); }
 
+/* --- collaborator card -------------------------------------------------
+   One flat grid, no category headings. The logo leads and is given real
+   size — these are recognition marks, and at thumbnail scale they read as
+   grey smudges. Paper plate because the supplied crops sit on white.
+   -------------------------------------------------------------------- */
+.collab {
+  display: flex; flex-direction: column;
+  border: 1px solid var(--color-line);
+  background: linear-gradient(155deg, var(--color-ink), var(--color-void));
+  padding: .85rem;
+  transition: border-color .3s ease, transform .3s cubic-bezier(.22,.61,.36,1);
+}
+.collab:hover { border-color: oklch(60% 0.10 90); transform: translateY(-3px); }
+
+.collab__plate {
+  display: grid; place-items: center;
+  width: 100%; height: 7.5rem;
+  background: var(--color-bone);
+  border: 1px solid oklch(80% 0.012 85);
+  padding: .85rem;
+  margin-bottom: .9rem;
+}
+/* absolute box + contain — percentage heights do not resolve on a centred
+   grid item, which silently lets tall logos escape the plate */
+.collab__plate img {
+  width: 100%; height: 5.8rem; object-fit: contain; object-position: center;
+}
+.collab__mono {
+  font-family: var(--font-mono); font-size: 1rem; letter-spacing: .08em;
+  color: var(--color-void);
+}
+.collab__name {
+  font-size: .8125rem; color: var(--color-chalk); line-height: 1.3;
+}
+.collab__desc {
+  font-family: var(--font-mono); font-size: .5625rem; letter-spacing: .09em;
+  text-transform: uppercase; color: var(--color-mute); margin-top: .3rem;
+}
+@media (prefers-reduced-motion: reduce) { .collab:hover { transform: none; } }
+
+/* --- patron & advisory board -------------------------------------------
+   The most senior people on the page. They were rendering at a third the
+   size of the core team, which inverted the hierarchy — corrected here.
+   -------------------------------------------------------------------- */
+.gov {
+  display: flex; align-items: center; gap: 1.15rem;
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-lumen);
+  background: linear-gradient(155deg, var(--color-ink), var(--color-void));
+  padding: 1.15rem;
+  transition: border-color .3s ease;
+}
+.gov:hover { border-color: oklch(60% 0.10 90); border-top-color: var(--color-lumen); }
+.gov__face {
+  flex: 0 0 auto; width: 6.25rem; height: 7.5rem;
+  object-fit: cover; object-position: 50% 18%;
+  border: 1px solid var(--color-line);
+  /* the least processed faces on the page — these are the senior names */
+  filter: grayscale(.18) contrast(1.02) brightness(1.05);
+  transition: filter .4s ease;
+}
+.gov:hover .gov__face { filter: none; }
+.gov__body { min-width: 0; }
+@media (prefers-reduced-motion: reduce) { .gov__face { transition: none; } }
+
+/* --- portraits ---/* --- portraits ---------------------------------------------------------
+   The site's own photography, treated so it belongs on a darkfield ground:
+   desaturated and contrast-lifted at rest, full colour on hover/focus.
+   -------------------------------------------------------------------- */
+.face {
+  width: 100%; aspect-ratio: 370 / 431; object-fit: cover; object-position: 50% 22%;
+  border: 1px solid var(--color-line);
+  filter: grayscale(.42) contrast(1.03) brightness(1.04);
+  transition: filter .45s ease, border-color .45s ease;
+}
+li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); }
+
+.portrait img {
+  width: 100%; height: auto; display: block;
+  border: 1px solid var(--color-line);
+  filter: grayscale(.34) contrast(1.03) brightness(1.03);
+  transition: filter .5s ease;
+}
+.portrait:hover img { filter: none; }
+/* a warm cast so the portrait sits in the same light as the page —
+   scoped to the frame so it never bleeds over the caption */
+.portrait__frame { position: relative; display: block; }
+.portrait__frame::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(180deg, transparent 55%,
+              oklch(83% 0.16 88 / calc(var(--lumen-level) * .12)) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .face, .portrait img { transition: none; }
+}
+
+/* --- capability pillar -------------------------------------------------
+   Five rows, not five cards: the sub-items vary from two to four and a card
+   grid would either clip them or leave holes. A ruled row takes any length.
+   -------------------------------------------------------------------- */
+.pillar {
+  display: grid; gap: .35rem 2rem;
+  grid-template-columns: auto 1fr;
+  padding: 2rem 0;
+  border-top: 1px solid var(--color-line);
+}
+.pillar:last-child { border-bottom: 1px solid var(--color-line); }
+.pillar__n {
+  grid-row: 1 / span 2;
+  color: var(--color-lumen); font-size: 1rem; padding-top: .35rem;
+}
+.pillar__items {
+  grid-column: 2; display: grid; gap: .55rem 2rem; margin-top: 1.25rem;
+}
+.pillar__items li {
+  display: flex; flex-direction: column; gap: .15rem;
+  padding-left: .85rem; border-left: 1px solid var(--color-line);
+}
+.pillar__t { font-size: .8125rem; color: var(--color-chalk); }
+.pillar__d {
+  font-family: var(--font-mono); font-size: .625rem; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--color-mute); line-height: 1.5;
+}
+
+@media (min-width: 768px) {
+  .pillar { grid-template-columns: auto minmax(16rem, 22rem) 1fr; }
+  .pillar__n     { grid-row: 1; }
+  .pillar__head  { grid-column: 2; }
+  .pillar__items { grid-column: 3; margin-top: 0; grid-template-columns: repeat(2, 1fr); }
+}
+@media (min-width: 1280px) {
+  .pillar__items { grid-template-columns: repeat(2, 1fr); gap: .7rem 2.5rem; }
+}
+
+/* --- impact story panel ---------------------------------------------- */
+.story {
+  border: 1px solid var(--color-line);
+  background: linear-gradient(160deg, var(--color-ink), var(--color-void));
+  padding: 1.75rem;
+}
+
 /* =====================================================================
    HANDOFF AID — press S to outline every unfilled data slot
    ===================================================================== */
@@ -409,17 +859,22 @@ body.no-motion .world       { position: relative; height: 42svh; min-height: 280
                               overflow: hidden; }
 body.no-motion .world,
 body.no-motion .helix,
-body.no-motion .dbs,
-body.no-motion .ring        { transform: none !important; }
+body.no-motion .dbs         { transform: none !important; }
 body.no-motion .dbs         { transform: translate(-50%, -50%) !important;
                               left: 50%; top: 50%; margin: 0; }
 body.no-motion .scene-layer { position: relative; inset: auto;
                               padding: 0 0 6svh; }
 body.no-motion .scene-layer > div { height: auto; }
 body.no-motion .scene-copy  { background: none; padding-top: 0; }
-body.no-motion #ringCopy    { height: auto; }
-body.no-motion .ring-copy   { position: relative; inset: auto; opacity: 1 !important;
-                              margin-bottom: 3.5rem; }
+body.no-motion .dbs__flap   { transform: translateZ(4px) rotateX(-132deg) !important; }
+/* the plate has no runway to open across, so it is held at a readable angle
+   and the well is already lit — nothing about the scene is withheld */
+body.no-motion .plate-layer { --plate-x: 50%; --plate-y: 62%;
+                              --plate-w: min(74vw, 44vmin); --drop-w: 6.5vmin; }
+/* --fall sits higher than the scrolling start so the drop clears the top of
+   the collapsed stage, which is only 42svh tall */
+body.no-motion              { --plate-tilt: 46; --plate-spin: -4;
+                              --ignite: 1; --fall: 0.5; }
 body.no-motion #variantCallout { position: relative; left: auto; top: auto;
                               opacity: 1 !important; margin-top: 1.5rem; }
 body.no-motion #workflowTrack  { flex-wrap: wrap; transform: none !important;
@@ -429,8 +884,14 @@ body.no-motion .wf-lane     { overflow: visible; padding-top: 2rem; }
 body.no-motion .wf-lane::after { width: 100%; }
 body.no-motion .hud-rail    { display: none; }
 body.no-motion .vignette    { display: none; }
+/* without scroll there is no arc to travel, so hold a mid value rather than
+   the maximum — pinning it at 1 washed the whole page warm */
+body.no-motion              { --lumen-level: 0.45; }
 
 @media (prefers-contrast: more) {
-  :root { --lumen-level: 1; }
+  /* light text on a dark ground gains contrast as the ground DARKENS, so the
+     illumination is held low here rather than raised */
+  :root, body.no-motion { --lumen-level: 0.12 !important; }
+  .illum { display: none; }
   .vignette { display: none; }
 }

@@ -21,15 +21,21 @@
 <a href="#menu" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-lumen focus:text-void focus:px-3 focus:py-2 hud">Skip to assay menu</a>
 
 <nav class="nav">
-  <a href="#top" class="nav__mark flex items-baseline gap-2 text-chalk no-underline">
-    <span class="font-display text-[1.35rem] leading-none tracking-[-.02em]">Lightening&nbsp;Lives</span>
-    <span class="hud text-mute hidden sm:inline">LLP</span>
+  <a href="#top" class="nav__mark flex items-center gap-2.5 no-underline">
+    <img src="assets/brand/mark.png" alt="" width="256" height="256"
+         class="w-11 h-11 shrink-0" aria-hidden="true">
+    <span class="flex items-baseline gap-2">
+      <span class="font-display text-[1.35rem] leading-none tracking-[-.02em] text-chalk">Lightening&nbsp;Lives</span>
+      <span class="hud text-mute hidden lg:inline">Every Life Matters</span>
+    </span>
   </a>
   <div class="hidden md:flex items-center gap-7">
-    <a href="#menu"        class="hud text-mute hover:text-chalk transition-colors no-underline">Assays</a>
-    <a href="#performance" class="hud text-mute hover:text-chalk transition-colors no-underline">Performance</a>
-    <a href="#workflow"    class="hud text-mute hover:text-chalk transition-colors no-underline">Workflow</a>
-    <a href="#circle"      class="hud text-mute hover:text-chalk transition-colors no-underline">About</a>
+    <a href="#menu"         class="hud transition-colors no-underline">Tests</a>
+    <a href="#performance"  class="hud transition-colors no-underline">Performance</a>
+    <a href="#workflow"     class="hud transition-colors no-underline">Workflow</a>
+    <a href="#capabilities" class="hud transition-colors no-underline">Capabilities</a>
+    <a href="#provenance"   class="hud transition-colors no-underline">Who we are</a>
+    <a href="#stories"      class="hud transition-colors no-underline">Impact</a>
   </div>
   <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
 </nav>
@@ -43,47 +49,21 @@
 <main id="top">
 
 <!-- ================= 1 · HERO ================= -->
-<section class="scene" id="hero" style="height:200svh">
+<section class="scene" id="hero" style="height:170svh">
   <div class="stage" data-pin>
     <!-- DEPTH: the only thing the camera dollies through. Type never enters Z. -->
     <div class="world" id="heroDepth" aria-hidden="true">
       <div class="layer" id="speckField"></div>
-      <div class="layer" style="transform:translateZ(-260px)">
-        <div class="drop" id="heroDrop">
-          <svg class="drop__svg" viewBox="0 0 100 140" role="presentation">
-            <defs>
-              <radialGradient id="dBody" cx="38%" cy="27%" r="82%">
-                <stop offset="0%"   stop-color="#9d2418"/>
-                <stop offset="34%"  stop-color="#5d1310"/>
-                <stop offset="72%"  stop-color="#2c0806"/>
-                <stop offset="100%" stop-color="#150403"/>
-              </radialGradient>
-              <radialGradient id="dThrough" cx="52%" cy="78%" r="42%">
-                <stop offset="0%"   stop-color="#ffb264" stop-opacity=".92"/>
-                <stop offset="46%"  stop-color="#e4622a" stop-opacity=".34"/>
-                <stop offset="100%" stop-color="#e4622a" stop-opacity="0"/>
-              </radialGradient>
-              <linearGradient id="dRim" x1="0" y1="1" x2="0.4" y2="0">
-                <stop offset="0%"   stop-color="#ffc789" stop-opacity=".75"/>
-                <stop offset="55%"  stop-color="#ff8f4d" stop-opacity=".12"/>
-                <stop offset="100%" stop-color="#ff8f4d" stop-opacity="0"/>
-              </linearGradient>
-              <filter id="dSoft" x="-40%" y="-40%" width="180%" height="180%">
-                <feGaussianBlur stdDeviation="3.2"/>
-              </filter>
-              <clipPath id="dClip">
-                <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z"/>
-              </clipPath>
-            </defs>
-            <g clip-path="url(#dClip)">
-              <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z" fill="url(#dBody)"/>
-              <rect x="0" y="0" width="100" height="140" fill="url(#dThrough)" style="mix-blend-mode:screen"/>
-              <ellipse cx="35" cy="52" rx="7" ry="12" fill="#ffe4c4" opacity=".62"
-                       filter="url(#dSoft)" transform="rotate(-18 35 52)"/>
-            </g>
-            <path d="M50 3 C50 3 88 62 88 92 A38 38 0 1 1 12 92 C12 62 50 3 50 3 Z"
-                  fill="none" stroke="url(#dRim)" stroke-width="1.6"/>
-          </svg>
+      <div class="layer plate-layer" style="transform:translateZ(-260px)">
+        <!-- 96 wells, the skirt engraving and the drop are built in scene.js -->
+        <div class="plate" id="plate">
+          <span class="plate__glow"></span>
+          <div class="plate__deck" id="plateDeck">
+            <div class="plate__slab"></div>
+            <div class="plate__ticks plate__ticks--cols" id="plateCols"></div>
+            <div class="plate__ticks plate__ticks--rows" id="plateRows"></div>
+            <div class="plate__grid" id="plateGrid"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -99,7 +79,7 @@
         <p class="mt-7 max-w-[44ch] text-mute text-[1.0625rem]" data-slot="SLOT-03" data-ll="hero.standfirst"></p>
         <div class="mt-8 flex flex-wrap items-center gap-3" id="heroCta">
           <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Request a test kit</a>
-          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors" data-slot="SLOT-04">Download assay menu</a>
+          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors">See the test menu</a>
         </div>
       </div>
     </div>
@@ -112,23 +92,30 @@
 </section>
 
 <!-- ================= 2 · THE SPECIMEN ================= -->
-<section class="scene" id="specimen" style="height:260svh">
+<section class="scene" id="specimen" style="height:190svh">
   <div class="stage" data-pin>
     <div class="world" aria-hidden="true">
       <div class="layer">
         <div class="dbs" id="dbsCard">
-          <div class="dbs__face">
-            <div class="absolute inset-x-0 top-0 p-[6%] flex justify-between items-start">
-              <span class="font-mono text-[8px] tracking-[.14em] uppercase text-[oklch(38%_.02_250)]">Lightening Lives · DBS-05</span>
-              <span class="font-mono text-[8px] tracking-[.14em] text-[oklch(38%_.02_250)]">ID ▮▮▮▮▮▮</span>
+          <span class="dbs__shadow"></span>
+          <div class="dbs__rear"></div>
+          <div class="dbs__body">
+            <div class="dbs__window">
+              <span class="dbs__ring"><span class="dbs__spot"></span></span>
             </div>
-            <div class="dbs__spot" style="left:6%"></div>
-            <div class="dbs__spot" style="left:24.5%"></div>
-            <div class="dbs__spot is-lit" style="left:43%"></div>
-            <div class="dbs__spot" style="left:61.5%"></div>
-            <div class="dbs__spot" style="left:80%"></div>
+            <div class="dbs__code"></div>
+            <p class="dbs__id"><span data-ll="specimen.card.idPrefix"></span> / &#9646;&#9646;&#9646;&#9646;&#9646;&#9646;</p>
+            <p class="dbs__marks" data-ll="specimen.card.marks"></p>
+            <span class="dbs__sheen"></span>
           </div>
-          <div class="dbs__back"></div>
+          <div class="dbs__flap" id="dbsFlap">
+            <div class="dbs__flap-face">
+              <span class="dbs__partner" data-ll="specimen.card.partner"></span>
+              <img class="dbs__sun" src="assets/brand/mark.png" alt="" aria-hidden="true">
+              <span class="dbs__brandline" data-ll="specimen.card.tagline"></span>
+            </div>
+            <div class="dbs__flap-back"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -147,7 +134,7 @@
 </section>
 
 <!-- ================= 3 · THE ASSAY ================= -->
-<section class="scene" id="assay" style="height:300svh">
+<section class="scene" id="assay" style="height:170svh">
   <div class="stage" data-pin>
     <div class="world" aria-hidden="true">
       <div class="layer">
@@ -161,7 +148,7 @@
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
           <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-08" data-ll="assay.body"></p>
           <ol class="mt-7 border-t border-line" data-slot="SLOT-09" id="assayStack"></ol>
-          <p class="md:hidden mt-6 border-l-2 border-alarm pl-4" data-slot="SLOT-10">
+          <p class="md:hidden mt-6 border-l-2 border-alarm pl-4">
             <span class="figure-num text-alarm text-[1.1rem] block" data-ll="assay.variantCallout.label"></span>
             <span class="hud text-mute" data-ll="assay.variantCallout.note"></span>
           </p>
@@ -170,7 +157,7 @@
       <!-- desktop: the callout rides in beside the flared base pair -->
       <div id="variantCallout" class="opacity-0 hidden md:block absolute left-[76%] top-[62%]">
         <span class="figure-num text-alarm text-[1.35rem]" data-ll="assay.variantCallout.label"></span>
-        <p class="hud text-mute mt-1 max-w-[20ch]" data-slot="SLOT-10" data-ll="assay.variantCallout.note"></p>
+        <p class="hud text-mute mt-1 max-w-[20ch]" data-ll="assay.variantCallout.note"></p>
       </div>
     </div>
   </div>
@@ -214,7 +201,7 @@
 </section>
 
 <!-- ================= 6 · WORKFLOW ================= -->
-<section class="scene" id="workflow" style="height:340svh">
+<section class="scene" id="workflow" style="height:240svh">
   <div class="stage" data-pin>
     <div class="scene-layer absolute inset-0 flex flex-col justify-center">
       <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-10">
@@ -229,23 +216,70 @@
   </div>
 </section>
 
-<!-- ================= 7 · WHY / HOW / WHAT ================= -->
-<section class="scene" id="circle" style="height:300svh">
-  <div class="stage" data-pin>
-    <div class="world" aria-hidden="true">
-      <div class="layer">
-        <div class="ring" data-ring="0"></div>
-        <div class="ring" data-ring="1"></div>
-        <div class="ring" data-ring="2"></div>
-      </div>
+<!-- ================= 7 · CAPABILITIES ================= -->
+<section id="capabilities" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <p class="hud text-lumen mb-4" data-ll="capabilities.kicker"></p>
+    <h2 class="display-lg text-chalk max-w-[18ch]" data-ll="capabilities.head"></h2>
+    <div class="mt-14" id="pillarList"></div>
+  </div>
+</section>
+
+<!-- ================= 7 · PROVENANCE ================= -->
+<section id="provenance" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <p class="hud text-lumen mb-4" data-ll="provenance.kicker"></p>
+    <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="provenance.head"></h2>
+
+    <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(200px,270px)_1.35fr_1fr] lg:gap-14 items-start">
+      <figure class="portrait">
+        <span class="portrait__frame">
+          <img id="foundersImg" alt="" width="592" height="760" loading="lazy" decoding="async">
+        </span>
+        <figcaption class="hud text-mute mt-3">Founder &amp; Co-Founder</figcaption>
+      </figure>
+      <article class="border-t border-line pt-7">
+        <p class="hud text-probe" data-ll="provenance.founder.role"></p>
+        <h3 class="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.05] text-chalk mt-2"
+            data-ll="provenance.founder.name"></h3>
+        <p class="mt-5 text-mute text-[.9375rem]" data-ll="provenance.founder.bio"></p>
+        <ul class="mt-7 flex flex-wrap gap-2" id="founderCreds"></ul>
+      </article>
+      <article class="border-t border-line pt-7">
+        <p class="hud text-probe" data-ll="provenance.cofounder.role"></p>
+        <h3 class="font-display text-[1.5rem] leading-[1.1] text-chalk mt-2" data-ll="provenance.cofounder.name"></h3>
+        <p class="mt-5 text-mute text-[.9375rem]" data-ll="provenance.cofounder.bio"></p>
+      </article>
     </div>
-    <!-- copy lives outside .world so it is never clipped by it -->
-    <div class="scene-layer absolute inset-0">
-      <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex flex-col justify-center items-center text-center">
-        <p class="hud text-mute mb-8" data-ll="circle.kicker"></p>
-        <div class="relative w-full max-w-[42rem] h-[23rem]" data-slot="SLOT-16" id="ringCopy"></div>
-      </div>
+
+    <div class="mt-14 grid gap-4 md:grid-cols-3" id="governance"></div>
+    <div class="mt-10">
+      <p class="hud text-mute mb-6">Core team</p>
+      <ul class="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" id="teamList"></ul>
     </div>
+  </div>
+</section>
+
+<!-- ================= 8 · COLLABORATORS ================= -->
+<section id="collaborators" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <header class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="hud text-lumen mb-4" data-ll="collaborators.kicker"></p>
+        <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="collaborators.head"></h2>
+      </div>
+      <p class="hud text-mute max-w-[26ch]" data-slot="SLOT-21" data-ll="collaborators.note"></p>
+    </header>
+    <ul class="mt-12 grid gap-4 grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" id="collabGrid"></ul>
+  </div>
+</section>
+
+<!-- ================= 9 · IMPACT ================= -->
+<section id="stories" class="relative z-10 py-[12svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <p class="hud text-lumen mb-4" data-ll="stories.kicker"></p>
+    <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="stories.head"></h2>
+    <div class="mt-12 grid gap-5 md:grid-cols-2" data-slot="SLOT-18" id="storyGrid"></div>
   </div>
 </section>
 
@@ -256,19 +290,13 @@
     <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="reach.head"></h2>
     <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line"
          data-slot="SLOT-17" id="reachGrid"></div>
-    <figure class="mt-14 max-w-[52rem]" data-slot="SLOT-18">
-      <blockquote class="font-display text-[clamp(1.4rem,3vw,2.15rem)] leading-[1.25] text-chalk"
-                  style="font-variation-settings:'opsz'72,'SOFT'40,'WONK'1">
-        <span data-ll="reach.quote.text"></span>
-      </blockquote>
-      <figcaption class="hud text-mute mt-6">
-        <span data-ll="reach.quote.who"></span> · <span data-ll="reach.quote.role"></span>
-      </figcaption>
-    </figure>
-  </div>
-</section>
+    <div class="mt-12 border-t border-line pt-7">
+      <p class="hud text-mute mb-5">States named in our own impact records</p>
+      <ul class="flex flex-wrap gap-2" id="stateList"></ul>
+    </div>
+  </section>
 
-<!-- ================= 9 · CONTACT — the page resolves to light ============ -->
+<!-- ================= 11 · CONTACT — the page resolves to light ============ -->
 <section id="contact" class="relative z-10 bg-bone text-void py-[14svh]" data-lit>
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <div class="grid gap-14 lg:grid-cols-2 lg:gap-24">
@@ -281,8 +309,13 @@
                <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cEmail" href="#"></a></dd></div>
           <div><dt class="hud text-[oklch(52%_.02_250)]">Phone</dt>
                <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cPhone" href="#"></a></dd></div>
+          <div><dt class="hud text-[oklch(52%_.02_250)]">WhatsApp</dt>
+               <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cWhats"
+                  target="_blank" rel="noopener" href="#">Message us</a></dd></div>
+          <div><dt class="hud text-[oklch(52%_.02_250)]">Follow</dt>
+               <dd class="mt-1 flex gap-4" id="cSocial"></dd></div>
           <div class="sm:col-span-2"><dt class="hud text-[oklch(52%_.02_250)]">Laboratory</dt>
-               <dd class="mt-1" data-slot="SLOT-01" data-ll="brand.addressFull"></dd>
+               <dd class="mt-1" data-ll="brand.addressFull"></dd>
                <dd class="hud mt-1 text-[oklch(52%_.02_250)]"><span data-ll="brand.city"></span></dd></div>
         </dl>
       </div>
@@ -300,7 +333,9 @@
 </main>
 
 <footer class="bg-bone text-[oklch(45%_.02_250)] border-t border-[oklch(85%_.015_85)] py-10">
-  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 flex flex-wrap justify-between gap-4 hud">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 flex flex-wrap items-center justify-between gap-4 hud">
+    <img src="assets/brand/lockup-on-light.png" alt="Lightening Lives" width="209" height="260"
+         class="w-[112px] h-auto -my-3" decoding="async">
     <span>© <span id="year"></span> <span data-ll="brand.legal"></span></span>
     <span data-slot="SLOT-02">LLPIN <span data-ll="brand.cin"></span></span>
     <span>Darkfield — press <kbd class="border border-current px-1">S</kbd> to reveal data slots</span>
