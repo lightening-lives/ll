@@ -168,7 +168,7 @@
 </section>
 
 <!-- ================= 3 · THE ASSAY ================= -->
-<section class="scene" id="assay" style="height:210svh">
+<section class="scene" id="assay" style="height:100svh">
   <div class="stage" data-pin>
     <div class="world" aria-hidden="true">
       <div class="layer">
@@ -189,7 +189,15 @@
           <div class="lg:hidden mt-8" data-slot="SLOT-08b" id="variantIndexFlow"></div>
         </div>
       </div>
-      <!-- lg and up: the index rides the right gutter, keyed to the ladder -->
+      <!-- lg and up the ladder stops being a picture and becomes an object you
+           handle: a drag surface over the strand, a hit target on every locus,
+           and a readout in the gutter that only appears for the one you point
+           at. The markers are projected onto the strand by scene.js rather
+           than living inside it — the rungs themselves are 2–13px wide when
+           edge-on, and sit under .scene-frame, so they can never be hit. -->
+      <div id="helixDrag" class="hidden lg:block absolute" aria-hidden="true"></div>
+      <div id="locusLead" class="hidden lg:block absolute" aria-hidden="true"></div>
+      <div id="locusMarks" class="hidden lg:block absolute inset-0"></div>
       <div id="variantIndex" class="vidx hidden lg:block absolute" data-slot="SLOT-08b"></div>
     </div>
   </div>

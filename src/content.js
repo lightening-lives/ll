@@ -184,9 +184,13 @@ window.LL_CONTENT = {
                   neuro: 'Neuromuscular', pgx: 'Pharmacogenomic' },
     index: {
       title: 'Variant index',
-      // the affordance has to be stated: a list that looks like a legend is a
-      // legend until something tells you it is a control
-      hint: 'Select a variant to inspect it',
+      // The affordance has to be stated. Nothing about a strand of DNA says
+      // "you can turn this", and nothing about a small ring says "point at me",
+      // so the scene says both — and says the right one for the input in use.
+      hint: 'Drag to turn the strand · point at a marker to read it',
+      hintNarrow: 'Tap a variant to see what the change is',
+      listLabel: 'All seven variants',
+      listLabelOpen: 'Hide the list',
       // ✅ the sickle figure is real: HBB c.20A>T is one base of ~3.1 Gb
       note: 'One base out of three billion, a missing exon, an inverted intron, ' +
             'a gene carried twice. Four classes of change, one dried spot.',

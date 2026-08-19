@@ -301,37 +301,59 @@ one column on a phone, two from 544px.
 
 ## The ladder is a control, not a picture
 
-A list that looks like a legend *is* a legend until something tells you otherwise, so every
-index row is a real `<button>` with `aria-expanded`, and one line — *Select a variant to
-inspect it* — says so out loud. Pointer, keyboard and screen reader drive the same state.
-Two levels:
+The scene used to spend 2.1 screens of pinned scroll playing a sequence *at* the visitor:
+the strand turned because the page moved, seven loci ignited one after another, and a
+permanent seven-row index captioned all of them at once whether or not anyone cared. Both
+halves of that are gone. **The strand turns because you turn it, and it says something
+because you pointed at something.**
 
-- **Hover / focus — soft.** The ladder falls back to a trace and the one locus stays lit.
-  Nothing moves. This is what tells you the list is a control at all.
-- **Click / Enter — locked.** The ladder *swings that locus face-on and centres it*, and the
-  row opens on what the change actually is. Escape, a click outside, clicking the row again,
-  or 24px of scroll all let go.
+**Markers are projected, not embedded.** The obvious build — a hit area inside each rung —
+cannot work here, and both reasons are fatal. `.scene-layer` is `inset-0` across the whole
+stage, so it swallows every pointer event before the world sees one (measured:
+`elementFromPoint` on a locus node returns `.scene-frame`). And a rung's own box collapses
+to **2–13px** when it turns edge-on, which is not a target at any size. So scene.js reads
+each locus rung's *projected* rect and parks a real `<button>` at its centre. That centre
+is the helix axis, so it barely moves as the strand spins — a still target on a turning
+object — and real buttons mean Tab, Enter, Escape and a screen reader all work.
 
-**The hard part was making that coexist with a scroll-scrubbed camera.** The obvious route —
-disable the ScrollTrigger, take the element over, re-enable — hard-cuts on release, because
-the playhead never moved while it was off, so re-enabling snaps the helix back to where the
-scroll says it should be.
+The target is `clamp(2rem, 3.4vmin, 2.75rem)`, not a fixed 44px, and the clamp is load-
+bearing: loci sit 5–7 rungs apart, a rung is `clamp(6px, 1.15vmin, 13px)`, so on a short-
+but-wide window (1024×640) the closest pair is only ~41px apart on screen. A fixed 44px box
+would overlap there and steal its neighbour's pointer.
 
-So the two never touch the same value. The scroll timeline writes the **camera**
-(`--cam-y/z/rx/ry`); the inspector writes an **offset on top of it** (`--ins-*`); the transform
-in CSS is their sum. Both run at once, release is just an ease of the offset back to zero, and
-nothing has to be disabled, reverted or re-synced. Face-on is
-`--cam-ry + --ins-ry + --rot ≡ 0 (mod 360)`, snapped to the nearest turn so the ladder never
-spins more than half a revolution to get there.
+**Drag writes the same channel the camera does not.** `--ins-ry` was already the "how far a
+visitor has pushed it" offset, summed with the scrubbed `--cam-*` in CSS. Dragging writes it
+continuously at 0.42°/px, so scroll and hand never fight, and letting go is one tween with a
+capped throw. `touch-action: none` on the grab surface is the contract — a drag that starts
+on the strand turns it instead of scrolling the page — and the surface covers the strand's
+column *only*, so the copy stays selectable and the rest of the section scrolls normally.
 
-Isolation is one inherited number, not a class on forty-four rungs: `--dim` is registered as a
-`<number>`, every intensity in the ladder is multiplied by it, and *because* it is registered it
-transitions — the ladder fades down to the chosen locus rather than snapping.
+**Scroll now does almost nothing at all.** There is no scrub on this scene — not a short
+one, none. A single entrance fires once when the section comes into view (a short dolly and
+settle, `once: true`), and after that the camera never moves on its own again. Scrolling
+through the section leaves `--cam-*` byte-identical at both ends; verified. Every degree of
+rotation is the visitor's, through `--ins-ry`.
 
-**The swing is `lg` and up only.** Below that the scene is not pinned, so by the time you reach
-the index the ladder is halfway up the document, and swinging something you cannot see is worse
-than not swinging it. There — and under reduced motion — the row simply opens. Same state, same
-markup, same content; only the flourish is conditional.
+The resting pose is deliberately not square-on — 20° of yaw, −3° of pitch — because a few
+degrees are what make it read as an object with a far side worth turning to, rather than a
+diagram that happens to be lit. Reduced motion is placed straight into that same pose with
+no arrival, which is the whole point of no-motion: same object, same angle, no journey.
+
+**The gutter has three states**, not a permanent list: a hint at rest, the readout for
+whatever you are pointing at, and the full index if you ask for it. Nothing is captioned
+until you want it captioned.
+
+**Below `lg` the markers do not exist** — 32px targets on a 280px-tall strand overlap into
+mush — so narrow keeps the list, where each row is a disclosure that opens on what the
+change is. But the strand is still **draggable there**, and has to be: once scroll stopped
+turning it, a drag became the only thing that would. The surface takes the geometry band
+and nothing else, with `touch-action: pan-y` rather than `none` — the browser keeps
+vertical panning, so a swipe that starts on the strand still scrolls the page and only the
+horizontal component is ours. `none` would trap a thumb on a full-width band, which is the
+classic way to make a page feel broken.
+
+Reduced motion drops the markers, the grab surface and the leader: nothing to grab, nothing
+to point at, and the list carries everything.
 
 **Gene tags face the camera without any per-frame JS.** A tag is a child of a rung that is
 spinning inside a helix that is also spinning, so it cancels both: `--rot` is the rung's own
@@ -343,13 +365,16 @@ every scroll position *and* through a swing.
 ## Scroll budget
 
 Pinned scenes cost the visitor time, so each one has to earn its runway. Currently
-hero 1.7 screens, specimen 1.9, assay 2.1, workflow 2.4 — about 8.1 screens of pinned
-scrolling, down from 11. The assay was once the worst offender at 3 full screens for one
-rotating helix; a scene that shows a single idea does not need three screens to show it.
-It has bought 0.4 back since, and the trade is explicit: the ladder no longer shows one
-idea but **seven marked loci across four classes of variant**, each igniting in turn, and
-seven reveals do not fit in the runway one reveal needed. Below `lg` the scene is not
-pinned at all — it flows, and costs nothing.
+hero 1.7 screens, specimen 1.9, workflow 2.4 — about 6 screens of pinned scrolling, down
+from 11. **The assay no longer appears in this budget at all.** It was the worst offender
+in the catalogue at 3 full screens for one rotating helix, then 2.1 for seven loci igniting
+in turn, then 1.5 for a dolly-in. It is now exactly one screen with no scrub, so it has no
+pinned runway to account for.
+
+That is the clearest argument on this page for interaction over animation. The sequence the
+scene used to spend two screens *playing* is something the visitor now performs themselves,
+in whatever order they like, for as long as they like — and it costs a third of the scroll
+it used to. Below `lg` it flows, and costs nothing.
 
 ## Technical position — real DOM in real 3D, no WebGL
 All depth is CSS `transform-style: preserve-3d` with a scroll-driven camera, not three.js.

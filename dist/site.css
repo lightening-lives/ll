@@ -1569,7 +1569,7 @@
 @property --flare {
   syntax: "<number>";
   inherits: true;
-  initial-value: 0;
+  initial-value: 1;
 }
 @property --rot {
   syntax: "<number>";
@@ -2660,6 +2660,169 @@ li:hover > .face, .face:hover {
     gap: .7rem 2.5rem;
   }
 }
+#helixDrag {
+  left: 44%;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: grab;
+}
+@media (max-width: 63.99rem) {
+  #helixDrag {
+    display: block;
+    left: 0;
+    height: 42svh;
+    min-height: 280px;
+    bottom: auto;
+  }
+}
+#assay.is-dragging #helixDrag {
+  cursor: grabbing;
+}
+#locusMarks {
+  pointer-events: none;
+}
+.lmark {
+  position: absolute;
+  left: 0;
+  top: 0;
+  --lm: clamp(2rem, 3.4vmin, 2.75rem);
+  width: var(--lm);
+  height: var(--lm);
+  margin: calc(var(--lm) / -2) 0 0 calc(var(--lm) / -2);
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: 0;
+  pointer-events: auto;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+.lmark__ring {
+  width: 1.05rem;
+  height: 1.05rem;
+  border-radius: 50%;
+  border: 1px solid var(--vc);
+  opacity: .72;
+  background: radial-gradient(closest-side, var(--vcs), transparent 72%);
+  transition: opacity .2s ease, transform .2s ease, box-shadow .2s ease;
+}
+#assay.is-inspecting .lmark:not(.is-sel) .lmark__ring {
+  opacity: .28;
+}
+.lmark__key {
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translate(.15rem, -50%);
+  font-size: .5625rem;
+  color: var(--color-mute);
+  opacity: 0;
+  transition: opacity .2s ease;
+  pointer-events: none;
+}
+.lmark:hover .lmark__ring, .lmark:focus-visible .lmark__ring, .lmark.is-sel .lmark__ring {
+  opacity: 1;
+  transform: scale(1.25);
+  box-shadow: 0 0 .8rem var(--vcs), inset 0 0 0 .18rem var(--vcs);
+}
+.lmark:hover .lmark__key, .lmark:focus-visible .lmark__key, .lmark.is-sel .lmark__key {
+  opacity: 1;
+}
+.lmark:focus-visible {
+  outline: 2px solid var(--vc);
+  outline-offset: 2px;
+  border-radius: 50%;
+}
+.lmark[data-kind="del"] .lmark__ring {
+  border-style: dashed;
+}
+.lmark[data-kind="inv"] .lmark__ring {
+  border-radius: 2px;
+}
+.lmark[data-kind="dup"] .lmark__ring {
+  box-shadow: .3rem .3rem 0 -.06rem var(--vc);
+}
+#locusLead {
+  left: 0;
+  top: 0;
+  height: 1px;
+  pointer-events: none;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--vc, var(--color-line)) 15%, var(--vc, var(--color-line)) 100%);
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+#locusLead[data-on] {
+  opacity: .5;
+}
+.lc {
+  position: relative;
+  padding-left: .9rem;
+  border-left: 1px solid var(--vc);
+}
+.lc__key {
+  font-size: .625rem;
+  color: var(--color-mute);
+}
+.lc__gene {
+  color: var(--vc);
+  font-size: .8125rem;
+  margin-top: .15rem;
+}
+.lc__cond {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  line-height: 1.05;
+  color: var(--color-chalk);
+  margin-top: .3rem;
+  letter-spacing: -.01em;
+}
+.lc__class {
+  font-family: var(--font-cond);
+  font-weight: 500;
+  font-size: .59375rem;
+  letter-spacing: var(--tracking-hud);
+  text-transform: uppercase;
+  color: var(--color-mute);
+  margin-top: .4rem;
+}
+.lc__what {
+  font-size: .78125rem;
+  line-height: 1.5;
+  color: var(--color-mute);
+  margin-top: .65rem;
+}
+.vidx__toggle {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: 0;
+  padding: .5rem 0 0;
+  margin-top: .35rem;
+  color: var(--color-mute);
+  cursor: pointer;
+  text-align: left;
+  font-size: .625rem;
+  border-top: 1px solid var(--color-line);
+  width: 100%;
+  transition: color .2s ease;
+}
+.vidx__toggle:hover {
+  color: var(--color-lumen);
+}
+.vidx__toggle:focus-visible {
+  outline: 2px solid var(--color-lumen);
+  outline-offset: 2px;
+}
+.vidx__panel {
+  overflow: hidden;
+}
 .vidx {
   right: clamp(1.25rem, 3vw, 3rem);
   left: auto;
@@ -2668,9 +2831,6 @@ li:hover > .face, .face:hover {
   width: min(27ch, 24vw);
   max-height: calc(100svh - var(--nav-h, 4.5rem) - 2rem);
   overflow-y: auto;
-}
-#assay.is-inspecting .vidx__note {
-  display: none;
 }
 .vidx__hint {
   color: var(--color-mute);
@@ -2702,7 +2862,7 @@ li:hover > .face, .face:hover {
   gap: .5rem;
   padding: .4rem .5rem .45rem;
   border: 0;
-  background: oklch(17% 0.014 250 / calc(var(--flare) * .55));
+  background: transparent;
   transition: background-color .2s ease;
 }
 .vidx__row:hover, .vidx__item.is-sel > .vidx__row {
@@ -3359,6 +3519,9 @@ body.no-motion #variantIndex {
 body.no-motion #variantIndexFlow {
   display: block;
 }
+body.no-motion #locusMarks, body.no-motion #helixDrag, body.no-motion #locusLead {
+  display: none;
+}
 body.no-motion #assay .scene-copy {
   width: 100%;
   max-width: 44rem;
@@ -3567,7 +3730,7 @@ body.no-motion {
       --ignite: 1;
       --fall: 0.3;
       --plate-spin: -4;
-      --flare: 0;
+      --flare: 1;
       --rot: 0;
       --dim: 1;
       --rung-step: 10px;

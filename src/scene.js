@@ -894,20 +894,59 @@
     helix.appendChild(r);
   }
 
-  /* The keyed index — and the instrument's control surface.
+  /* =====================================================================
+     THE LADDER, AS AN OBJECT YOU HANDLE
+     ---------------------------------------------------------------------
+     The scene used to spend two screens of scroll playing a sequence AT the
+     visitor: the strand turned because the page moved, and every locus was
+     captioned all the time in a permanent index. Both are now gone. The
+     strand turns because you turn it, and it says something because you
+     pointed at something.
 
-     A list that looks like a legend IS a legend until something tells you
-     otherwise, so every row is a real <button>: pointer, keyboard and screen
-     reader all drive the same state. Rendered twice — once for the right
-     gutter at lg and up, once inline under the copy below that — but only ever
-     ONE is in the accessibility tree, because the utility hiding the other
-     uses `display: none`. Ids are prefixed per copy so the two renders cannot
-     collide on `aria-controls`. */
+     Three parts:
+
+     1 · MARKERS ARE PROJECTED, NOT EMBEDDED. The obvious build — a hit area
+         inside each rung — cannot work here, and both reasons are fatal.
+         `.scene-layer` is `inset-0` over the whole stage, so it swallows
+         every pointer event before the world sees one; and a rung's own box
+         collapses to 2–13px when it turns edge-on, which is not a target.
+         So scene.js reads each locus rung's PROJECTED rect and parks a real
+         44px <button> at its centre. That centre is the helix axis, so it
+         barely moves as the strand spins — a still target on a turning
+         object. Real buttons also mean Tab, Enter and a screen reader work.
+
+     2 · DRAG WRITES THE SAME OFFSET THE INSPECTOR DID. `--ins-ry` was already
+         the "how far a visitor has pushed the camera" channel, summed with
+         the scrubbed `--cam-*` in CSS. Dragging just writes it continuously,
+         so scroll and hand never fight, and momentum is one tween on release.
+
+     3 · THE GUTTER HAS THREE STATES, not a permanent list: a hint at rest,
+         the readout for whatever you are pointing at, and the full index if
+         you ask for it. Nothing is captioned until you want it captioned.
+
+     Below lg none of this exists. The scene is not pinned there, the strand
+     sits in a 42svh band at a third of the size, and 44px targets on a
+     280px-tall object overlap into mush — so narrow keeps the list, which
+     already works by tap. Same content, same state, addressed differently.
+     ===================================================================== */
   const IDX = C.assay.index;
-  const idxRow = (pre) => (L, i) => `
+  const assayEl  = $('#assay');
+  const marksEl  = $('#locusMarks');
+  const leadEl   = $('#locusLead');
+  const dragEl   = $('#helixDrag');
+  const gutterEl = $('#variantIndex');
+  const wide     = window.matchMedia('(min-width: 64rem)');
+
+  /* ---- the gutter: hint · readout · full index ---------------------- */
+  /* Two renders of the same row, because the two contexts answer differently.
+     In the gutter (lg) the readout card above the list already says what the
+     change is, so a row only has to drive it. Below lg there IS no gutter, so
+     the row carries the detail itself and opens as a disclosure — which is
+     also the only way a touch device ever reads it. */
+  const idxRow = (withDetail) => (L, i) => `
     <li class="vidx__item" data-fam="${esc(L.fam)}" data-kind="${esc(L.kind)}">
       <button type="button" class="vidx__row" data-locus="${i}"
-              id="${pre}-b${i}" aria-expanded="false" aria-controls="${pre}-d${i}">
+              ${withDetail ? `aria-expanded="false" aria-controls="vf-d${i}"` : ''}>
         <span class="vidx__mark" aria-hidden="true"></span>
         <span class="vidx__text">
           <span class="vidx__gene code"><span
@@ -915,162 +954,251 @@
           <span class="vidx__cond">${esc(L.condition)}</span>
           <span class="vidx__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</span>
         </span>
-        <span class="vidx__chev" aria-hidden="true"></span>
+        ${withDetail ? '<span class="vidx__chev" aria-hidden="true"></span>' : ''}
       </button>
-      <div class="vidx__detail" id="${pre}-d${i}" role="region"
-           aria-labelledby="${pre}-b${i}" hidden>
+      ${withDetail ? `
+      <div class="vidx__detail" id="vf-d${i}" role="region" hidden>
         <div class="vidx__detail-in">
           <p class="vidx__what">${esc(L.what)}</p>
           <a class="vidx__link hud" href="${esc(IDX.menuHref)}"><span
              class="code">${esc(L.menu)}</span> ${esc(IDX.menuLabel)}</a>
         </div>
-      </div>
+      </div>` : ''}
     </li>`;
-  const idxHTML = (pre) =>
+
+  const readout = (L, i) => `
+    <p class="lc__key code">${String(i + 1).padStart(2, '0')}</p>
+    <p class="lc__gene code">${esc(L.gene)}&nbsp;${esc(L.variant)}</p>
+    <p class="lc__cond">${esc(L.condition)}</p>
+    <p class="lc__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</p>
+    <p class="lc__what">${esc(L.what)}</p>
+    <a class="vidx__link hud" href="${esc(IDX.menuHref)}"><span
+       class="code">${esc(L.menu)}</span> ${esc(IDX.menuLabel)}</a>`;
+
+  gutterEl.innerHTML =
+    `<div class="lc" id="locusCard" hidden aria-live="polite"></div>` +
+    `<p class="vidx__hint meta" id="locusHint">${esc(IDX.hint)}</p>` +
+    `<button type="button" class="vidx__toggle hud" id="vidxToggle"
+             aria-expanded="false" aria-controls="vidxList">${esc(IDX.listLabel)}</button>` +
+    `<div class="vidx__panel" id="vidxList" hidden>` +
+      `<ul class="vidx__list">${LOCI.map(idxRow(false)).join('')}</ul>` +
+      `<p class="vidx__note meta text-mute">${esc(IDX.note)}</p></div>`;
+
+  // below lg the same list runs inline under the copy, always open
+  $('#variantIndexFlow').innerHTML =
     `<p class="eyebrow text-probe">${esc(IDX.title)}</p>` +
-    `<p class="vidx__hint meta">${esc(IDX.hint)}</p>` +
-    `<ul class="vidx__list">${LOCI.map(idxRow(pre)).join('')}</ul>` +
+    `<p class="vidx__hint meta">${esc(IDX.hintNarrow)}</p>` +
+    `<ul class="vidx__list">${LOCI.map(idxRow(true)).join('')}</ul>` +
     `<p class="vidx__note meta text-mute max-w-[46ch]">${esc(IDX.note)}</p>`;
-  $('#variantIndex').innerHTML = idxHTML('vg');
-  $('#variantIndexFlow').innerHTML = idxHTML('vf');
 
-  /* ---------- the inspector -------------------------------------------
-     Selecting a locus has to coexist with a scroll-scrubbed camera, and the
-     usual way — disable the ScrollTrigger, take the element over, re-enable —
-     hard-cuts on release, because the playhead never moved while it was off.
+  const lcEl = $('#locusCard'), hintEl = $('#locusHint'),
+        listEl = $('#vidxList'), toggleEl = $('#vidxToggle');
 
-     So the two never touch the same value. The scroll timeline writes the
-     CAMERA (`--cam-*`); the inspector writes an OFFSET on top of it
-     (`--ins-*`); the transform in input.css is the sum. Both can run at once,
-     release is just an ease of the offset back to zero, and nothing has to be
-     disabled, reverted or re-synced.
+  /* ---- one hit target per locus, parked on the projected axis ------- */
+  LOCI.forEach((L, i) => {
+    const b = el('button', 'lmark');
+    b.type = 'button';
+    b.dataset.locus = i;
+    b.dataset.fam = L.fam;
+    b.dataset.kind = L.kind;
+    // the accessible name has to carry what the marker cannot draw
+    b.setAttribute('aria-label',
+      `${L.gene} ${L.variant} — ${L.condition}. ` +
+      `${C.assay.famLabels[L.fam]}, ${C.assay.kindLabels[L.kind]}.`);
+    b.innerHTML = '<span class="lmark__ring" aria-hidden="true"></span>' +
+                  '<span class="lmark__key code" aria-hidden="true">' +
+                  String(i + 1).padStart(2, '0') + '</span>';
+    marksEl.appendChild(b);
+  });
+  const markEls = $$('.lmark', marksEl);
 
-     Two levels of selection:
-       hover / focus  soft — the ladder dims to the one locus, nothing moves.
-                      Cheap enough to fire on every mouse move, and it is what
-                      tells you the list is a control at all.
-       click / Enter  locked — the ladder swings that locus face-on and centres
-                      it, and the row opens on what the change actually is.
+  /* Reading 7 rects is one forced layout per frame, so it only runs while the
+     section is on screen AND something is actually moving it. */
+  let placeQueued = false;
+  const placeMarks = () => {
+    placeQueued = false;
+    if (!wide.matches) return;
+    const host = marksEl.getBoundingClientRect();
+    markEls.forEach((b, i) => {
+      const rs = locusRungs[i];
+      const r = rs[(rs.length - 1) >> 1].getBoundingClientRect();   // middle rung of the run
+      b.style.transform =
+        `translate3d(${(r.left + r.width / 2 - host.left).toFixed(1)}px,` +
+        `${(r.top + r.height / 2 - host.top).toFixed(1)}px, 0)`;
+    });
+    if (active != null) placeLead();
+  };
+  const queuePlace = () => { if (!placeQueued) { placeQueued = true; requestAnimationFrame(placeMarks); } };
 
-     The swing is lg-and-up only. Below that the scene is not pinned, so the
-     ladder is halfway up the document by the time you reach the list, and
-     swinging something you cannot see is worse than not swinging it — there
-     the row simply opens. Reduced motion gets the same treatment.
-     -------------------------------------------------------------------- */
-  const assayEl = $('#assay');
-  const wide = window.matchMedia('(min-width: 64rem)');
-  const rowsFor = (i) => $$('.vidx__row[data-locus="' + i + '"]');
-  const INSPECT_Z = 150;
-  let hovered = null, locked = null, lockedAt = 0;
+  // the leader rule, drawn from the live marker to the readout's edge
+  const placeLead = () => {
+    if (active == null || !wide.matches) return leadEl.removeAttribute('data-on');
+    const host = marksEl.getBoundingClientRect();
+    const m = markEls[active].getBoundingClientRect();
+    const g = gutterEl.getBoundingClientRect();
+    const x = m.right - host.left - 4, y = m.top + m.height / 2 - host.top;
+    const w = (g.left - host.left) - x;
+    if (w < 8) return leadEl.removeAttribute('data-on');
+    leadEl.setAttribute('data-on', '');
+    leadEl.dataset.fam = LOCI[active].fam;      // the rule takes the family's colour
+    leadEl.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0)`;
+    leadEl.style.width = w.toFixed(1) + 'px';
+  };
 
-  const camVar = (k) => parseFloat(getComputedStyle(helix).getPropertyValue(k)) || 0;
+  /* ---- selection ---------------------------------------------------- */
+  let active = null, pinned = null, listOpen = false;
 
   const paint = () => {
-    const on = locked != null ? locked : hovered;
-    assayEl.classList.toggle('is-inspecting', on != null);
-    locusRungs.forEach((rs, i) => rs.forEach((r) => r.classList.toggle('is-sel', i === on)));
+    assayEl.classList.toggle('is-inspecting', active != null);
+    locusRungs.forEach((rs, i) => rs.forEach((r) => r.classList.toggle('is-sel', i === active)));
+    markEls.forEach((b, i) => b.classList.toggle('is-sel', i === active));
     $$('.vidx__item').forEach((li) => {
       const i = +li.querySelector('.vidx__row').dataset.locus;
-      li.classList.toggle('is-sel', i === on);
-      li.classList.toggle('is-open', i === locked);
+      li.classList.toggle('is-sel', i === active);
     });
+    if (active == null) {
+      lcEl.hidden = true;
+      hintEl.hidden = listOpen;
+      leadEl.removeAttribute('data-on');
+    } else {
+      lcEl.innerHTML = readout(LOCI[active], active);
+      lcEl.dataset.fam = LOCI[active].fam;
+      lcEl.hidden = false;
+      hintEl.hidden = true;
+      if (!REDUCED) gsap.fromTo(lcEl, { opacity: 0, x: 6 },
+        { opacity: 1, x: 0, duration: 0.22, ease: 'power2.out' });
+      placeLead();
+    }
   };
 
+  // only the flow rows carry a detail; the gutter list drives the readout card
   const setDetail = (i, open) => {
-    rowsFor(i).forEach((b) => {
-      b.setAttribute('aria-expanded', String(open));
-      const d = document.getElementById(b.getAttribute('aria-controls'));
-      if (!d) return;
-      gsap.killTweensOf(d);
-      if (open) {
-        d.hidden = false;
-        gsap.fromTo(d, { height: 0, opacity: 0 },
-          { height: 'auto', opacity: 1, duration: REDUCED ? 0 : 0.34, ease: 'power2.out' });
-      } else {
-        gsap.to(d, { height: 0, opacity: 0, duration: REDUCED ? 0 : 0.24, ease: 'power2.in',
-          onComplete() { d.hidden = true; gsap.set(d, { clearProps: 'height,opacity' }); } });
-      }
-    });
+    const btn = $(`#variantIndexFlow .vidx__row[data-locus="${i}"]`);
+    if (!btn || !btn.hasAttribute('aria-controls')) return;
+    btn.setAttribute('aria-expanded', String(open));
+    btn.closest('.vidx__item').classList.toggle('is-open', open);
+    const d = document.getElementById(btn.getAttribute('aria-controls'));
+    if (!d) return;
+    gsap.killTweensOf(d);
+    if (open) {
+      d.hidden = false;
+      gsap.fromTo(d, { height: 0, opacity: 0 },
+        { height: 'auto', opacity: 1, duration: REDUCED ? 0 : 0.34, ease: 'power2.out' });
+    } else {
+      gsap.to(d, { height: 0, opacity: 0, duration: REDUCED ? 0 : 0.24, ease: 'power2.in',
+        onComplete() { d.hidden = true; gsap.set(d, { clearProps: 'height,opacity' }); } });
+    }
   };
 
-  const swing = (i) => {
-    if (REDUCED || !wide.matches) return;
-    const L = LOCI[i];
-    const rot = parseFloat(locusRungs[i][0].style.getPropertyValue('--rot')) || 0;
-    // --rung-step is registered as a <length>, so it computes to real px here
-    const step = parseFloat(getComputedStyle(helix).getPropertyValue('--rung-step')) || 10;
-    // the locus is face-on when camera + rung twist lands on a whole turn; take
-    // the nearest one, so the ladder never spins more than half a revolution
-    const total = camVar('--cam-ry') + rot;
-    gsap.to(helix, {
-      '--ins-ry': Math.round(total / 360) * 360 - total,
-      '--ins-rx': -camVar('--cam-rx'),
-      '--ins-z':  INSPECT_Z - camVar('--cam-z'),
-      // and slide it so the locus itself, not the middle of the ladder, is centred
-      '--ins-y':  -camVar('--cam-y') - (L.at + (L.span - 1) / 2 - (RUNGS - 1) / 2) * step,
-      duration: 0.85, ease: 'power3.inOut', overwrite: true
-    });
-  };
-
-  const unswing = () => {
-    if (REDUCED) return;
-    gsap.to(helix, { '--ins-ry': 0, '--ins-rx': 0, '--ins-z': 0, '--ins-y': 0,
-      duration: 0.55, ease: 'power2.inOut', overwrite: true });
-  };
-
-  const release = () => {
-    if (locked == null) return;
-    const i = locked;
-    locked = null;
-    setDetail(i, false);
-    unswing();
+  const show = (i) => { if (active === i) return; active = i; paint(); };
+  const clear = () => { if (pinned != null || active == null) return; active = null; paint(); };
+  const pin = (i) => {
+    if (pinned != null && pinned !== i) setDetail(pinned, false);
+    pinned = (pinned === i) ? null : i;
+    setDetail(i, pinned === i);
+    active = pinned != null ? pinned : i;
     paint();
   };
 
-  const lock = (i) => {
-    if (locked === i) { release(); return; }
-    if (locked != null) setDetail(locked, false);
-    locked = i;
-    lockedAt = window.scrollY;
-    setDetail(i, true);
-    swing(i);
-    paint();
-  };
-
-  $$('.vidx__row').forEach((btn) => {
-    const i = +btn.dataset.locus;
-    btn.addEventListener('click', () => lock(i));
-    btn.addEventListener('pointerenter', (e) => {
-      if (e.pointerType === 'touch') return;      // a tap is a click, not a hover
-      hovered = i; paint();
+  /* ---- pointer, keyboard ------------------------------------------- */
+  const bindLocus = (node) => {
+    const i = +node.dataset.locus;
+    node.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'touch' && pinned == null) show(i);
     });
-    btn.addEventListener('pointerleave', () => { hovered = null; paint(); });
-    btn.addEventListener('focus', () => { hovered = i; paint(); });
-    btn.addEventListener('blur',  () => { hovered = null; paint(); });
-    // the list is one widget: arrows walk it, Home/End jump, Escape lets go
-    btn.addEventListener('keydown', (e) => {
+    node.addEventListener('pointerleave', () => { if (pinned == null) clear(); });
+    node.addEventListener('focus', () => { if (pinned == null) show(i); });
+    node.addEventListener('blur',  () => { if (pinned == null) clear(); });
+    node.addEventListener('click', () => pin(i));
+    node.addEventListener('keydown', (e) => {
+      const peers = $$(node.classList.contains('lmark') ? '.lmark' : '.vidx__row',
+                       node.closest('.vidx__list') || marksEl);
       const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
-      const peers = $$('.vidx__row', btn.closest('.vidx__list'));
       let to = null;
       if (step) to = peers[(i + step + peers.length) % peers.length];
       else if (e.key === 'Home') to = peers[0];
       else if (e.key === 'End') to = peers[peers.length - 1];
-      else if (e.key === 'Escape') { release(); return; }
+      else if (e.key === 'Escape') { if (pinned != null) setDetail(pinned, false);
+                                     pinned = null; active = null; paint(); return; }
       if (!to) return;
-      e.preventDefault();
-      to.focus();
+      e.preventDefault(); to.focus();
     });
+  };
+  markEls.forEach(bindLocus);
+  $$('.vidx__row').forEach(bindLocus);
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && active != null) {
+      if (pinned != null) setDetail(pinned, false);
+      pinned = null; active = null; paint();
+    }
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (pinned != null && !e.target.closest('.lmark, .vidx, #variantIndexFlow')) {
+      setDetail(pinned, false); pinned = null; clear();
+    }
   });
 
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') release(); });
-  document.addEventListener('pointerdown', (e) => {
-    if (locked != null && !e.target.closest('.vidx')) release();
+  /* ---- the full index, on request ----------------------------------- */
+  toggleEl.addEventListener('click', () => {
+    listOpen = !listOpen;
+    toggleEl.setAttribute('aria-expanded', String(listOpen));
+    toggleEl.textContent = listOpen ? IDX.listLabelOpen : IDX.listLabel;
+    hintEl.hidden = listOpen || active != null;
+    gsap.killTweensOf(listEl);
+    if (listOpen) {
+      listEl.hidden = false;
+      gsap.fromTo(listEl, { height: 0, opacity: 0 },
+        { height: 'auto', opacity: 1, duration: REDUCED ? 0 : 0.3, ease: 'power2.out' });
+    } else {
+      gsap.to(listEl, { height: 0, opacity: 0, duration: REDUCED ? 0 : 0.22,
+        onComplete() { listEl.hidden = true; gsap.set(listEl, { clearProps: 'height,opacity' }); } });
+    }
   });
-  // scrolling is the other way of saying "done" — and it is the only one that
-  // matters on a phone, where there is no outside to click
-  window.addEventListener('scroll', () => {
-    if (locked != null && Math.abs(window.scrollY - lockedAt) > 24) release();
-  }, { passive: true });
+
+  /* ---- drag to turn -------------------------------------------------
+     `touch-action: none` on the surface, so a drag on the strand turns it
+     instead of scrolling the page — which is the whole contract of a thing
+     you can grab. Everywhere else on the section scrolls as normal. */
+  const insRy = () => parseFloat(getComputedStyle(helix).getPropertyValue('--ins-ry')) || 0;
+  let dragging = false, lastX = 0, lastT = 0, vel = 0;
+  const DEG_PER_PX = 0.42;
+
+  dragEl.addEventListener('pointerdown', (e) => {
+    if (REDUCED) return;          // narrow can drag too; only the markers are lg-only
+    dragging = true; lastX = e.clientX; lastT = e.timeStamp; vel = 0;
+    gsap.killTweensOf(helix);
+    dragEl.setPointerCapture(e.pointerId);
+    assayEl.classList.add('is-dragging');
+  });
+  dragEl.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, dt = Math.max(1, e.timeStamp - lastT);
+    gsap.set(helix, { '--ins-ry': insRy() + dx * DEG_PER_PX });
+    vel = (dx * DEG_PER_PX) / dt;                    // deg per ms
+    lastX = e.clientX; lastT = e.timeStamp;
+    queuePlace();
+  });
+  const endDrag = () => {
+    if (!dragging) return;
+    dragging = false;
+    assayEl.classList.remove('is-dragging');
+    // let go and it keeps turning, then settles — a strand with mass
+    const throwDeg = Math.max(-260, Math.min(260, vel * 260));
+    if (Math.abs(throwDeg) > 2) {
+      gsap.to(helix, { '--ins-ry': insRy() + throwDeg, duration: 1.1,
+        ease: 'power2.out', onUpdate: queuePlace });
+    }
+  };
+  dragEl.addEventListener('pointerup', endDrag);
+  dragEl.addEventListener('pointercancel', endDrag);
+
+  window.addEventListener('resize', queuePlace);
+  // queuePlace goes through rAF, which is suspended while the tab is hidden. If
+  // a visitor leaves the tab parked on this section and comes back, the markers
+  // would still be sitting where they were told to go before the freeze — so
+  // coming back re-parks them synchronously rather than waiting for a scroll.
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) placeMarks(); });
+  window.addEventListener('load', placeMarks);
 
   /* ---------- 4 · handoff aid: press S to reveal data slots ---------- */
   document.addEventListener('keydown', (e) => {
@@ -1104,10 +1232,12 @@
     // body.no-motion is already set at the top; CSS holds --lumen-level at 0.45
     $('#runCounter').textContent = C.validation.runValue;
     scaleRead.textContent = '10⁰ m';
-    // the camera tween never runs here, so the ladder is parked square-on —
-    // every locus readable, nothing withheld. --cam-* default to 0 anyway;
-    // this only leans it enough to read as an object rather than a diagram.
-    helix.style.setProperty('--cam-rx', '-4');
+    // The entrance never runs here, so the strand is placed straight into its
+    // resting pose rather than left at the --cam-* defaults of zero. Same
+    // object, same angle, no arrival — which is the whole point of no-motion.
+    helix.style.setProperty('--cam-ry', '20');
+    helix.style.setProperty('--cam-rx', '-3');
+    helix.style.setProperty('--cam-z',  '90');
     return;
   }
 
@@ -1171,53 +1301,41 @@
     .fromTo('#specimen .scene-layer > div > div',
       { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', duration: 0.28 }, 0.05);
 
-  /* ---- 3 · the ladder turns, and each locus ignites as it comes round.
+  /* ---- 3 · the ladder arrives once, and then it is simply there.
 
-     Two camera moves, not one. Below lg the ladder lives in a 42svh band with
-     a 280px floor, so the wide travel (220px of Y and 730px of Z) would swing
-     half the loci straight out of a clipped box; the narrow move is scaled to
-     the band it is actually inside. gsap.matchMedia owns both, so a rotate or
-     a devtools resize rebuilds the right one and reverts the other. */
-  const assayCamera = {
-    wide:   { rotateY: [-30, 430], rotateX: [12, -4], z: [-560, 170], y: [120, -100],
-              // pinned, so the ladder is on screen for the whole scrub and the
-              // loci can ignite one at a time right across it
-              flare: [0.10, 0.62] },
-    narrow: { rotateY: [-24, 392], rotateX: [10, -3], z: [-300,  80], y: [ 56,  -56],
-              // flowed, the band scrolls out of view around 70% of the runway.
-              // The flares are pulled into the front third so every locus lights
-              // while its rung is still visible; by the time the reader reaches
-              // the index under the copy, the whole ladder is already read.
-              flare: [0.04, 0.34] }
-  };
+     This scene has now given up its scroll budget entirely. It began at three
+     screens of pinned scrub for one rotating helix, went to 2.1 for seven loci
+     igniting in turn, then 1.5 for a dolly-in — and it is now ONE screen, with
+     no scrub at all.
 
-  gsap.matchMedia().add(
-    { wide: '(min-width: 64rem)', narrow: '(max-width: 63.99rem)' },
-    (ctx) => {
-      const cam = ctx.conditions.wide ? assayCamera.wide : assayCamera.narrow;
-      const tl = gsap.timeline({ scrollTrigger: scrub('#assay') });
-      // the CAMERA only — never the transform itself. input.css sums it with
-      // the inspector's --ins-* offset, which is what lets a visitor take hold
-      // of the ladder mid-scrub without either side having to be switched off
-      tl.fromTo('#helix',
-        { '--cam-ry': cam.rotateY[0], '--cam-rx': cam.rotateX[0],
-          '--cam-z': cam.z[0], '--cam-y': cam.y[0] },
-        { '--cam-ry': cam.rotateY[1], '--cam-rx': cam.rotateX[1],
-          '--cam-z': cam.z[1], '--cam-y': cam.y[1],
-          ease: 'none', duration: 1 }, 0);
+     What is left is a single entrance that fires once when the section comes
+     into view: a short dolly and settle, not tied to scroll position, so it
+     cannot be scrubbed back and forth and cannot be half-played. After that
+     the camera never moves again on its own. Every degree of rotation from
+     that point is the visitor's, through --ins-ry.
 
-      // one flare per locus, evenly spaced down the runway. The rungs and the
-      // index row share a single tween because they share the same --flare —
-      // the geometry and its legend cannot drift out of step.
-      const [flareAt, flareSpan] = cam.flare;
-      const gap = flareSpan / Math.max(1, LOCI.length - 1);
-      LOCI.forEach((L, i) => {
-        const targets = locusRungs[i].concat($$('[data-locus="' + i + '"]'));
-        tl.fromTo(targets, { '--flare': 0 },
-          { '--flare': 1, ease: 'none', duration: Math.min(0.1, gap) },
-          flareAt + i * gap);
-      });
-    });
+     The resting pose is deliberately NOT square-on: a few degrees of yaw and a
+     little negative pitch are what make it read as an object with a far side
+     worth turning to, rather than as a diagram that happens to be lit. */
+  const REST = { ry: 20, rx: -3, z: 90, y: 0 };
+
+  gsap.fromTo('#helix',
+    { '--cam-ry': REST.ry - 22, '--cam-rx': REST.rx + 5,
+      '--cam-z': REST.z - 210, '--cam-y': REST.y + 26, opacity: 0 },
+    { '--cam-ry': REST.ry, '--cam-rx': REST.rx, '--cam-z': REST.z, '--cam-y': REST.y,
+      opacity: 1, duration: REDUCED ? 0 : 1.15, ease: 'power3.out',
+      onUpdate: queuePlace, onComplete: queuePlace,
+      scrollTrigger: { trigger: '#assay', start: 'top 72%', once: true } });
+
+  // The markers are parked on the strand's projected axis. Nothing scroll-driven
+  // moves the strand any more, but the section can still be scrolled while a
+  // drag's momentum is settling, so a cheap re-park on scroll stays worth it.
+  ScrollTrigger.create({
+    trigger: '#assay', start: 'top bottom', end: 'bottom top',
+    onUpdate: queuePlace,
+    onToggle(self) { if (self.isActive) queuePlace(); }
+  });
+  queuePlace();
 
   // ---- 4 · catalogue cards tilt up into place
   gsap.utils.toArray('.assay-card').forEach((card, i) => {
