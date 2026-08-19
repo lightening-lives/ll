@@ -17,6 +17,7 @@
 <!-- ============ instrument chrome ============ -->
 <div class="illum" aria-hidden="true"></div>
 <div class="vignette" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
 
 <a href="#menu" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-lumen focus:text-void focus:px-3 focus:py-2 hud">Skip to assay menu</a>
 
@@ -29,13 +30,14 @@
       <span class="hud text-mute hidden lg:inline">Every Life Matters</span>
     </span>
   </a>
-  <div class="hidden md:flex items-center gap-7">
+  <div class="hidden md:flex items-center gap-5 lg:gap-6">
+    <a href="#inheritance"  class="hud transition-colors no-underline hidden lg:inline">Inheritance</a>
+    <a href="#stories"      class="hud transition-colors no-underline">Impact</a>
     <a href="#menu"         class="hud transition-colors no-underline">Tests</a>
     <a href="#performance"  class="hud transition-colors no-underline">Performance</a>
     <a href="#workflow"     class="hud transition-colors no-underline">Workflow</a>
     <a href="#capabilities" class="hud transition-colors no-underline">Capabilities</a>
     <a href="#provenance"   class="hud transition-colors no-underline">Who we are</a>
-    <a href="#stories"      class="hud transition-colors no-underline">Impact</a>
   </div>
   <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
 </nav>
@@ -96,22 +98,36 @@
   <div class="stage" data-pin>
     <div class="world" aria-hidden="true">
       <div class="layer">
+        <!-- Geometry and print matched to the physical kit in ref_images/:
+             flap on top carrying the sun mark, filter-paper window with a
+             dashed guide ring under it, real Code 128 barcode on the body below.
+             The barcode bars and the regulatory glyph row are built in scene.js. -->
         <div class="dbs" id="dbsCard">
           <span class="dbs__shadow"></span>
-          <div class="dbs__rear"></div>
+          <!-- the back of the card: the regulatory row. The real card also carries a
+               handwritten patient name and date — deliberately NOT reproduced. -->
+          <div class="dbs__rear">
+            <div class="dbs__writeon"><span class="dbs__writeon-rule"></span>
+              <span class="dbs__writeon-label" data-ll="specimen.card.writeOnLabel"></span></div>
+            <div class="dbs__reg" id="dbsReg"></div>
+          </div>
           <div class="dbs__body">
             <div class="dbs__window">
-              <span class="dbs__ring"><span class="dbs__spot"></span></span>
+              <span class="dbs__paper"></span>
+              <svg class="dbs__ring" viewBox="0 0 100 100" aria-hidden="true">
+                <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor"
+                        stroke-width="3.4" stroke-dasharray="9 7.5" stroke-linecap="butt"/>
+              </svg>
+              <span class="dbs__spot"></span>
             </div>
-            <div class="dbs__code"></div>
-            <p class="dbs__id"><span data-ll="specimen.card.idPrefix"></span> / &#9646;&#9646;&#9646;&#9646;&#9646;&#9646;</p>
-            <p class="dbs__marks" data-ll="specimen.card.marks"></p>
+            <div class="dbs__code" id="dbsCode"></div>
+            <p class="dbs__id" id="dbsId"></p>
             <span class="dbs__sheen"></span>
           </div>
           <div class="dbs__flap" id="dbsFlap">
             <div class="dbs__flap-face">
-              <span class="dbs__partner" data-ll="specimen.card.partner"></span>
               <img class="dbs__sun" src="assets/brand/mark.png" alt="" aria-hidden="true">
+              <span class="dbs__wordmark" data-ll="specimen.card.brand"></span>
               <span class="dbs__brandline" data-ll="specimen.card.tagline"></span>
             </div>
             <div class="dbs__flap-back"></div>
@@ -163,7 +179,61 @@
   </div>
 </section>
 
-<!-- ================= 4 · ASSAY MENU ================= -->
+<!-- ================= 4 · THE INHERITANCE MACHINE ================
+     Interactive. Ported from direction 15 of the design catalogue and
+     rebuilt in the Darkfield vocabulary: the four possible children are
+     shown as WELLS on a plate, which is the page's own hero object.
+     ============================================================= -->
+<section id="inheritance" class="relative z-10 py-[13svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <p class="hud text-probe mb-4"><span data-ll="inheritance.scale"></span> ·
+       <span data-ll="inheritance.kicker"></span></p>
+    <h2 class="display-lg text-chalk max-w-[19ch]" data-ll="inheritance.head"></h2>
+    <p class="mt-6 max-w-[60ch] text-mute text-[.9375rem]" data-ll="inheritance.body"></p>
+
+    <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 items-start">
+      <div>
+        <div id="inhControls"></div>
+
+        <div class="inh-readout mt-10 rule-t pt-7" role="status" aria-live="polite">
+          <p id="inhHeadline" class="font-display text-[clamp(1.3rem,2.3vw,1.85rem)] leading-[1.08] text-chalk"></p>
+          <p id="inhBody" class="mt-3.5 text-mute text-[.9375rem] max-w-[46ch]"></p>
+        </div>
+
+        <a id="inhCta" class="inline-block mt-9 hud bg-lumen text-void px-6 py-3.5
+                              no-underline hover:bg-chalk transition-colors"></a>
+      </div>
+
+      <div>
+        <p class="hud text-mute mb-5" data-ll="inheritance.childrenLabel"></p>
+        <ul id="inhChildren" class="inh-children"></ul>
+        <dl id="inhOdds" class="mt-10 grid grid-cols-3 gap-px bg-line border border-line"></dl>
+        <p class="mt-7 text-[.8125rem] leading-relaxed text-mute max-w-[58ch]"
+           data-ll="inheritance.disclaimer"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 5 · IMPACT ================================
+     Moved up from near the foot of the page: the science, then what it
+     means for your own children, then the families it happened to, is
+     one continuous argument. See DESIGN.md.
+     ============================================================= -->
+<section id="stories" class="relative z-10 py-[13svh] border-t border-line">
+  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
+    <header class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="hud text-lumen mb-4" data-ll="stories.kicker"></p>
+        <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="stories.head"></h2>
+      </div>
+      <p class="hud text-mute max-w-[28ch]" data-slot="SLOT-18" data-ll="stories.note"></p>
+    </header>
+    <div class="mt-14 grid gap-5 md:grid-cols-3" id="storyGrid"></div>
+  </div>
+</section>
+
+<!-- ================= 6 · ASSAY MENU ================= -->
 <section id="menu" class="relative z-10 py-[14svh]">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6 pb-8 border-b border-line">
@@ -177,7 +247,7 @@
   </div>
 </section>
 
-<!-- ================= 5 · PERFORMANCE ================= -->
+<!-- ================= 7 · PERFORMANCE ================= -->
 <section id="performance" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <div class="grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-20 items-start">
@@ -200,7 +270,7 @@
   </div>
 </section>
 
-<!-- ================= 6 · WORKFLOW ================= -->
+<!-- ================= 8 · WORKFLOW ================= -->
 <section class="scene" id="workflow" style="height:240svh">
   <div class="stage" data-pin>
     <div class="scene-layer absolute inset-0 flex flex-col justify-center">
@@ -216,7 +286,7 @@
   </div>
 </section>
 
-<!-- ================= 7 · CAPABILITIES ================= -->
+<!-- ================= 9 · CAPABILITIES ================= -->
 <section id="capabilities" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="hud text-lumen mb-4" data-ll="capabilities.kicker"></p>
@@ -225,7 +295,7 @@
   </div>
 </section>
 
-<!-- ================= 7 · PROVENANCE ================= -->
+<!-- ================= 10 · PROVENANCE ================= -->
 <section id="provenance" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="hud text-lumen mb-4" data-ll="provenance.kicker"></p>
@@ -254,13 +324,14 @@
 
     <div class="mt-14 grid gap-4 md:grid-cols-3" id="governance"></div>
     <div class="mt-10">
-      <p class="hud text-mute mb-6">Core team</p>
-      <ul class="grid gap-5 grid-cols-2 sm:grid-cols-3 lg:grid-cols-6" id="teamList"></ul>
+      <p class="hud text-mute mb-2">Core team</p>
+      <p class="text-sm text-mute mb-6">Select anyone to read their record.</p>
+      <ul class="team-grid" id="teamList"></ul>
     </div>
   </div>
 </section>
 
-<!-- ================= 8 · COLLABORATORS ================= -->
+<!-- ================= 11 · COLLABORATORS ================= -->
 <section id="collaborators" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6">
@@ -274,16 +345,7 @@
   </div>
 </section>
 
-<!-- ================= 9 · IMPACT ================= -->
-<section id="stories" class="relative z-10 py-[12svh] border-t border-line">
-  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <p class="hud text-lumen mb-4" data-ll="stories.kicker"></p>
-    <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="stories.head"></h2>
-    <div class="mt-12 grid gap-5 md:grid-cols-2" data-slot="SLOT-18" id="storyGrid"></div>
-  </div>
-</section>
-
-<!-- ================= 8 · REACH ================= -->
+<!-- ================= 12 · REACH ================= -->
 <section id="reach" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="hud text-lumen mb-4" data-ll="reach.kicker"></p>
@@ -294,7 +356,8 @@
       <p class="hud text-mute mb-5">States named in our own impact records</p>
       <ul class="flex flex-wrap gap-2" id="stateList"></ul>
     </div>
-  </section>
+  </div>
+</section>
 
 <!-- ================= 11 · CONTACT — the page resolves to light ============ -->
 <section id="contact" class="relative z-10 bg-bone text-void py-[14svh]" data-lit>

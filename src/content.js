@@ -70,13 +70,25 @@ window.LL_CONTENT = {
       { t: 'Ordinary post',   d: 'Ships in a paper mailer under exempt-specimen rules.' },
       { t: 'Barcoded',        d: 'Every card carries its own specimen ID. No names travel.' }
     ],
-    // ✅ all of this is printed on the real kit
+    // ✅ every value below is read off the physical kit in ref_images/.
+    // The barcode is a REAL Code 128-B encoding of `barcode` — scene.js encodes
+    // it properly rather than faking bars with a repeating gradient.
     card: {
-      partner: 'CSIR–CCMB',
+      // The CSIR–CCMB co-brand is no longer printed on the kit — confirmed by
+      // the client. The flap now carries the sun mark and the brand alone.
       brand: 'Lightening Lives',
       tagline: 'Every Life Matters',
       idPrefix: 'SCM',
-      marks: 'CE · IVD · REF 10538018'
+      serial: '294609',                 // ✅ the serial printed under the barcode
+      barcode: 'SCM/294609',            // ✅ what the bars actually encode
+      // ✅ the regulatory row printed on the BACK of the real card
+      ref: '10538018',
+      lot: '18231173',
+      expiry: '2029-12',
+      // The back of the real card also carries a HANDWRITTEN patient name, age and
+      // collection date. That is identifying patient data and is deliberately NOT
+      // reproduced — the card renders a blank ruled write-on area instead.
+      writeOnLabel: 'Name / Age / Sex · Date'
     }
   },
 
@@ -99,6 +111,49 @@ window.LL_CONTENT = {
       label: 'HBB c.20A>T',
       note: 'The sickle variant. One base out of three billion.'
     }
+  },
+
+  /* --- 4 · THE INHERITANCE MACHINE  (interactive) --------------------
+     Ported from direction 15 of the design catalogue on `chores/designs`.
+     Autosomal-recessive Punnett odds, made playable. The four outcomes are
+     computed in scene.js from the two selected parent genotypes — nothing
+     here is a lookup table of pre-written results.
+     ------------------------------------------------------------------- */
+  inheritance: {
+    scale: '10⁰ m',
+    kicker: 'What a carrier result means',
+    head: 'Two carriers who never knew. Four possible children.',
+    body: 'Set both parents and the odds redraw. This is the conversation a genetic ' +
+          'counsellor has with a family — and the reason a test before conception ' +
+          'matters more than a diagnosis after.',
+    parentLabels: ['Parent 1', 'Parent 2'],
+    options: [                                   // ✅ standard AR genotype language
+      { g: 'AA', label: 'Not a carrier' },
+      { g: 'AS', label: 'Carrier' },
+      { g: 'SS', label: 'Affected' }
+    ],
+    outcomeLabels: { AA: 'Unaffected', AS: 'Carrier', SS: 'Affected' },
+    childrenLabel: 'Each child, independently',
+    // ✅ clinically accurate for autosomal recessive inheritance
+    readouts: {
+      none: { h: 'No child inherits the variant.',
+              b: 'Neither parent carries it, so it cannot be passed on.' },
+      carriersOnly: {
+        h: 'No child is affected — but the variant travels on.',
+        b: 'Carriers are healthy and usually never find out. That is how a condition ' +
+           'stays hidden in a family for generations, until two carriers meet.' },
+      all: { h: 'Every child is affected.',
+             b: 'Both parents have two copies, so every child inherits two. Screening ' +
+                'before conception is the only point at which this changes.' },
+      mixed: {
+        b: 'Each pregnancy carries these same odds independently — a healthy first ' +
+           'child changes nothing about the second. This is the case a carrier test ' +
+           'finds before anyone is pregnant.' }
+    },
+    cta: { label: 'Talk to us about screening', href: '#contact' },
+    disclaimer: 'Autosomal recessive inheritance, as in sickle cell anaemia, beta ' +
+                'thalassaemia and spinal muscular atrophy. Illustrative — not a ' +
+                'substitute for genetic counselling.'
   },
 
   /* --- 4 · WHAT WE TEST FOR ----------------------------------------- */
@@ -261,19 +316,72 @@ window.LL_CONTENT = {
     // 🟠 SLOT-22 Dr. Vivek Sharma, Chief Business & Strategy Advisor, exists on the
     // live team page but is COMMENTED OUT there, so he is left off. Say the word
     // and he goes back in — his photo is already at assets/people/ if you want it.
-    team: [                                              // ✅ names, roles and photos
+    // His bio is captured verbatim here so re-enabling him is a one-line change:
+    //   { name: 'Dr. Vivek Sharma', role: 'Chief Business & Strategy Advisor',
+    //     img: 'assets/people/vivek-sharma.jpg', bio:
+    //       'Dr. Vivek Sharma is a social scientist and marketing strategist with over ' +
+    //       '27 years of experience in public health. He blends demographic research with ' +
+    //       'social marketing to drive the total market approach across health sectors ' +
+    //       'including reproductive health, child health, sanitation, non-communicable ' +
+    //       'disease, TB and HIV/AIDS. He holds a PhD in Demography from IIPS, Mumbai.' },
+    //
+    // ✅ names, roles, photos AND bios — every bio below is verbatim from the
+    // company's own -details.php page for that person, lightly trimmed for length.
+    team: [
       { name: 'Mr. Abhishek Chandak',    role: 'Head, Finance',
-        img: 'assets/people/abhishek-chandak.jpg' },
+        img: 'assets/people/abhishek-chandak.jpg',
+        bio: 'Abhishek is a seasoned, award-winning finance leader with over 20 years ' +
+             'of diversified experience across multinational organisations including ' +
+             'PwC, GE, Wipro, SenecaGlobal and Fourth Frontier. He has held leadership ' +
+             'positions spanning audit & assurance, manufacturing, and industrial ' +
+             'IT & ITES sectors, as well as start-ups. He was adjudged MSME CFO of the ' +
+             'Year by CII – Southern Region in 2021, in recognition of his contributions ' +
+             'at SenecaGlobal IT Services.' },
+
       { name: 'Ms. Manisha Arumalla',    role: 'Scientific Officer',
-        img: 'assets/people/manisha-arumalla.jpg' },
+        img: 'assets/people/manisha-arumalla.jpg',
+        bio: 'Manisha is a molecular and cell biologist with an MSc in Human Genetics ' +
+             'and Genomics from the University of Barcelona. Her expertise spans a wide ' +
+             'range of molecular and cell biology techniques, with a strong background ' +
+             'in protein engineering. She spent over seven years at CSIR–CCMB working ' +
+             'closely with Dr. G.R. Chandak on genomic research into complex diseases, ' +
+             'and developed her expertise in experimental design, project planning and ' +
+             'team management.' },
+
       { name: 'Ms. Punyasri PSKDB',      role: 'Technical Officer',
-        img: 'assets/people/punyasri-pskdb.jpg' },
-      { name: 'Mr. Jyothi Vislavath',    role: 'Technical Officer',
-        img: 'assets/people/jyothi-vislavath.jpg' },
-      { name: 'Ms. Mehraj Begum',        role: 'Admin & Operations',
-        img: 'assets/people/mehraj-begum.jpg' },
+        img: 'assets/people/punyasri-pskdb.jpg',
+        bio: 'Punyasri holds a BSc in Microbiology, Genetics and Chemistry, and an MSc ' +
+             'in Nutrition — a scientific foundation that drives her work in genetic ' +
+             'screening, in organising awareness campaigns and field activities, and in ' +
+             'setting up and running experiments with exceptional accuracy, precision ' +
+             'and consistency. With over 7 years in the field, she plays a key role in ' +
+             'keeping the diagnostic processes at Lightening Lives reliable and efficient.' },
+
+      // ✅ corrected: the live site's own bio reads "Ms. Jyothi Vislavath"
+      { name: 'Ms. Jyothi Vislavath',    role: 'Technical Officer',
+        img: 'assets/people/jyothi-vislavath.jpg',
+        bio: 'Jyothi is a Biotechnology graduate with over 9 years of experience in ' +
+             'molecular diagnostics, specialising in patient counselling, genetic ' +
+             'testing and clinical reporting. She has worked across both government and ' +
+             'private healthcare, contributing to affordable, robust diagnostic methods ' +
+             'for haemoglobinopathies and musculopathies. Her near-zero error rate in ' +
+             'testing is one of her defining professional strengths.' },
+
+      { name: 'Ms. Mehraj Begum',        role: 'Admin & Operations Executive',
+        img: 'assets/people/mehraj-begum.jpg',
+        bio: 'Mehraj holds a degree in commerce and manages the company’s administrative ' +
+             'operations. She ensures the smooth and efficient management of company ' +
+             'resources, and oversees critical areas such as keeping materials available ' +
+             'for experiments, social media, and organising investor and stakeholder ' +
+             'meetings — a vital role in maintaining operational efficiency.' },
+
       { name: 'Mr. Pruthvi Bellamkonda', role: 'Accounts Executive',
-        img: 'assets/people/pruthvi-bellamkonda.jpg' }
+        img: 'assets/people/pruthvi-bellamkonda.jpg',
+        bio: 'Pruthvi oversees day-to-day financial operations to keep workflows smooth ' +
+             'and uninterrupted. He holds an MBA specialising in Finance and HR from ' +
+             'SK University, Anantapur — a combination that fuels both an analytical ' +
+             'approach to numbers and a people-first mindset. He focuses on maintaining ' +
+             'strong working relationships to keep projects moving efficiently.' }
     ]
   },
 
@@ -321,34 +429,49 @@ window.LL_CONTENT = {
   stories: {
     kicker: 'Impact',
     head: 'What early detection actually changes.',
+    note: 'Four case notes from our own records. De-identified, published with consent.',
     // ✅ All four narratives are the company's own, from the Impact Stories page.
+    //
+    // These are NOT quotes. They are case notes the company wrote in the third
+    // person, so nothing here is presented as a patient's own speech. The `pull`
+    // line on each is the OUTCOME sentence lifted VERBATIM out of that same
+    // narrative and set large — testimonial weight, nothing invented. `d` carries
+    // the remaining setup, with the pulled sentence removed so it never repeats.
+    //
     // 🟠 SLOT-18 confirm consent and de-identification before publishing.
     items: [
       { place: 'Madhya Pradesh', cond: 'DMD',
         t: 'Early diagnosis changed a child’s life',
+        pull: 'Timely diagnosis let the family start supportive therapy early, ' +
+              'and join patient support groups.',
         d: 'A 3-year-old boy in a tribal village showed muscle weakness. His family ' +
            'had no access to specialist hospitals and assumed it was nutritional. ' +
            'Through an NGO they reached an affordable molecular test, and he was ' +
-           'diagnosed with Duchenne muscular dystrophy. Timely diagnosis let the ' +
-           'family start supportive therapy early and join patient support groups.' },
+           'diagnosed with Duchenne muscular dystrophy.' },
+
       { place: 'Chhattisgarh', cond: 'SMA',
         t: 'Protecting the future of a family',
+        pull: 'With genetic counselling they made an informed decision that ' +
+              'prevented recurrence. Today they have a healthy child.',
         d: 'A tribal couple lost their first child to spinal muscular atrophy without ' +
            'ever knowing the cause. During a second pregnancy, carrier testing showed ' +
-           'both parents carried the SMA mutation. With genetic counselling they made ' +
-           'an informed decision that prevented recurrence. Today they have a healthy child.' },
+           'both parents carried the SMA mutation.' },
+
       { place: 'Odisha', cond: 'SCA',
         t: 'Breaking the cycle of silent carriers',
+        pull: 'Testing revealed both were carriers of sickle cell anaemia — breaking ' +
+              'a generational cycle the community thought was fate.',
         d: 'A young couple came to us after seeing breathing difficulty, muscle ' +
-           'weakness, severe anaemia and repeated infections in two children in their ' +
-           'extended family. Testing revealed both were carriers of sickle cell ' +
-           'anaemia — breaking a generational cycle the community thought was fate.' },
+           'weakness, severe anaemia and repeated infections in two children in ' +
+           'their extended family.' },
+
       { place: 'Jharkhand', cond: 'DMD',
         t: 'Knowledge at the right time',
+        pull: 'The family received counselling, and could make informed choices ' +
+              'for future pregnancies.',
         d: 'A mother brought her 6-year-old daughter to a local health camp. The girl ' +
            'was diagnosed with DMD at an early stage, and the mother’s carrier ' +
-           'testing was positive. The family received counselling and could make ' +
-           'informed choices for future pregnancies.' }
+           'testing was positive.' }
     ]
   },
 

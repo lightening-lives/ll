@@ -26,7 +26,7 @@
   --font-sans:    "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono:    "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 
-  --tracking-hud: 0.18em;
+  --tracking-hud: 0.15em;
 }
 
 /* Global illumination level, 0 → 1, written by scene.js as you scroll. */
@@ -38,14 +38,26 @@
 @layer base {
   * { -webkit-tap-highlight-color: transparent; }
 
+  /* The ground is no longer one flat black. It opens cool — a blue-black that
+     reads as an unlit room rather than as "off" — and settles to a neutral
+     graphite by the foot of the page. Deliberately LOW chroma: DESIGN.md
+     records that a warm wash screens the whole ground to brown, so the
+     temperature travels through blue, never through gold. The gradient is on
+     `html`, so its stops resolve against the whole document, not the viewport. */
   html {
     scroll-behavior: smooth;
-    background: var(--color-void);
+    background:
+      linear-gradient(180deg,
+        oklch(11.0% 0.020 260) 0,
+        oklch(12.4% 0.014 254) 210svh,
+        oklch(13.2% 0.011 248) 640svh,
+        oklch(13.6% 0.009 244) 100%),
+      var(--color-void);
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
   body {
-    background: var(--color-void);
+    background: transparent;              /* the ground lives on `html` now */
     color: var(--color-chalk);
     font-family: var(--font-sans);
     font-size: 1rem;
@@ -112,6 +124,18 @@
   font-weight: 500;
   font-variant-numeric: tabular-nums;
   letter-spacing: -0.04em;
+}
+
+/* A CLAIM is a statement — "No venipuncture" — not a machine label. It was
+   being set in the mono HUD voice, which made the page's assertions read as
+   instrument chrome and sat oddly against the Fraunces headings above them.
+   Mono is reserved for data: IDs, specs, table heads, eyebrows, figures. */
+@utility claim {
+  font-family: var(--font-sans);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.004em;
 }
 
 @utility rule-t { border-top: 1px solid var(--color-line); }
@@ -392,27 +416,72 @@
 }
 .dbs { --dbs-t: 5px; }              /* card stock thickness */
 
-/* the printed face */
+/* the printed face. The real stock is bright white, not cream — the earlier
+   values read as manila and made the card look like a coupon. */
 .dbs__body {
   position: absolute; inset: 0;
-  background: linear-gradient(155deg, oklch(96% 0.004 90), oklch(89% 0.006 88));
-  border: 1px solid oklch(76% 0.012 85);
+  background: linear-gradient(155deg, oklch(98.5% 0.002 95), oklch(94% 0.004 92));
+  border: 1px solid oklch(80% 0.008 90);
   transform: translateZ(calc(var(--dbs-t) / 2));
   transform-style: preserve-3d;
+  overflow: hidden;
+}
+/* the tooth of coated card stock, at a scale that survives the card's own size */
+.dbs__body::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .5;
+  background-image:
+    radial-gradient(circle at 30% 30%, oklch(60% 0.01 90 / .07) .4px, transparent .5px),
+    radial-gradient(circle at 70% 65%, oklch(60% 0.01 90 / .05) .4px, transparent .5px);
+  background-size: 4px 4px, 6px 6px;
 }
 /* laminated plies give the card real edge thickness when it turns — cheaper
    and far more robust than building six faces with origin maths */
 .dbs__ply {
   position: absolute; inset: 0;
-  background: linear-gradient(155deg, oklch(88% 0.006 88), oklch(80% 0.008 86));
-  border: 1px solid oklch(72% 0.012 85);
+  background: linear-gradient(155deg, oklch(90% 0.005 90), oklch(82% 0.007 88));
+  border: 1px solid oklch(75% 0.010 88);
 }
 .dbs__rear {
   position: absolute; inset: 0;
   transform: translateZ(calc(var(--dbs-t) / -2)) rotateY(180deg);
-  background: linear-gradient(155deg, oklch(83% 0.006 88), oklch(74% 0.008 86));
-  border: 1px solid oklch(70% 0.012 85);
+  background: linear-gradient(155deg, oklch(95% 0.003 92), oklch(88% 0.005 90));
+  border: 1px solid oklch(76% 0.010 88);
   backface-visibility: hidden;
+  display: flex; flex-direction: column; justify-content: space-between;
+  padding: 7% 8%;
+}
+/* The real card carries a HANDWRITTEN patient name, age and collection date
+   here. That is identifying patient data, so it is deliberately not
+   reproduced — the card shows the blank write-on area instead. */
+.dbs__writeon { display: flex; flex-direction: column; gap: .35em; }
+.dbs__writeon-rule {
+  display: block; height: 1px; width: 100%;
+  background: oklch(62% 0.01 90);
+}
+.dbs__writeon-label {
+  font-family: var(--font-mono); color: oklch(58% 0.012 90);
+  font-size: clamp(4px, 0.78vmin, 8px); letter-spacing: .06em;
+}
+/* the ISO 15223-1 regulatory block, read off the back of the physical kit */
+.dbs__reg {
+  display: flex; flex-direction: column; align-items: flex-end; gap: .25em;
+  font-family: var(--font-mono); color: oklch(32% 0.01 90);
+  font-size: clamp(4px, 0.8vmin, 8.5px); letter-spacing: .02em;
+}
+.dbs__reg-row { display: flex; align-items: center; gap: .45em; }
+.dbs__reg-key {
+  border: 1px solid currentColor; padding: 0 .3em; line-height: 1.35;
+  font-weight: 500;
+}
+.dbs__reg-val { font-variant-numeric: tabular-nums; }
+.dbs__reg-marks { display: flex; align-items: center; gap: .45em; margin-top: .3em; }
+.dbs__glyph { width: 1.5em; height: 1.5em; }
+.dbs__ce {
+  font-family: var(--font-sans); font-weight: 600; font-size: 1.15em;
+  letter-spacing: -.06em;
+}
+.dbs__ivd {
+  border: 1px solid currentColor; padding: 0 .3em; font-weight: 500; line-height: 1.35;
 }
 /* a light sweep, so turning the card reads as a lit surface not a flat plane */
 .dbs__sheen {
@@ -434,72 +503,97 @@
 }
 /* the filter-paper window, revealed when the flap lifts */
 .dbs__window {
-  position: absolute; left: 9%; right: 9%; top: 10%; height: 32%;
-  background:
-    repeating-linear-gradient(0deg, oklch(97% 0.003 90) 0 1px, oklch(94% 0.004 88) 1px 2.5px);
-  border: 1px solid oklch(83% 0.008 85);
-  display: grid; place-items: center;
+  position: absolute; left: 9%; right: 9%; top: 9.5%; height: 32%;
+  background: oklch(97% 0.006 92);
+  border: 1px solid oklch(84% 0.008 88);
+  box-shadow: inset 0 1px 3px oklch(60% 0.01 90 / .3);
+  overflow: hidden;
+}
+/* absorbent matte paper, not the coated stock around it — the fibre is what
+   tells you this square is a different material */
+.dbs__paper {
+  position: absolute; inset: 0;
+  background-image:
+    repeating-linear-gradient(94deg,  oklch(99% 0.004 92) 0 1px, oklch(96% 0.007 90) 1px 2.5px),
+    repeating-linear-gradient(4deg,   oklch(0% 0 0 / .022) 0 1px, transparent 1px 3px);
 }
 .dbs__ring {
-  width: 62%; aspect-ratio: 1; border-radius: 50%;
-  border: 1.5px dashed oklch(38% 0.01 260);
-  display: grid; place-items: center;
+  position: absolute; left: 50%; top: 50%;
+  height: 78%; width: auto; aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  color: oklch(26% 0.008 260);
+  overflow: visible;
 }
-/* dried blood is brown, not red — this is matched to the real card */
+/* Dried blood is brown, not red, and it dries with a darker chromatographic
+   rim where the front stopped. Matched to the spot in ref_images/IMG_4108. */
 .dbs__spot {
-  width: 74%; aspect-ratio: 1;
-  border-radius: 52% 47% 55% 45% / 48% 54% 46% 52%;
-  background: radial-gradient(circle at 42% 38%,
-    oklch(46% 0.075 32), oklch(38% 0.075 30) 52%, oklch(31% 0.065 28));
-  box-shadow: inset 0 0 1.2vmin oklch(26% 0.05 26 / .7);
+  position: absolute; left: 46.5%; top: 51%;
+  height: 41%; aspect-ratio: 1.07;
+  transform: translate(-50%, -50%) rotate(-7deg);
+  /* deliberately lopsided — a blood spot is not a disc */
+  border-radius: 63% 37% 52% 48% / 43% 57% 43% 57%;
+  background:
+    radial-gradient(ellipse 66% 62% at 54% 44%,
+      oklch(43% 0.062 33) 0%,  oklch(42% 0.064 32) 55%,
+      oklch(38% 0.061 31) 78%, oklch(34% 0.054 29) 100%);
+  box-shadow:
+    inset 0 0 0 1.5px oklch(30% 0.050 27 / .5),     /* the dried rim */
+    0 0 .3vmin oklch(40% 0.05 30 / .3);             /* wick into the fibre */
 }
+/* the barcode. scene.js writes a REAL Code 128-B symbol in here as SVG —
+   the old repeating-gradient gave every bar the same width, which is the one
+   thing a barcode never does. */
 .dbs__code {
-  position: absolute; left: 9%; right: 9%; top: 52%; height: 20%;
-  background: repeating-linear-gradient(90deg,
-    oklch(18% 0 0) 0 1.5px, transparent 1.5px 3px,
-    oklch(18% 0 0) 3px 4.5px, transparent 4.5px 8px);
+  position: absolute; left: 9%; right: 9%; top: 50%; height: 17%;
+  background: #fff;
+  padding: 3% 0;
 }
-.dbs__id, .dbs__marks {
-  position: absolute; left: 9%; right: 9%;
-  font-family: var(--font-mono); color: oklch(30% 0.01 260);
-  text-align: center; letter-spacing: .08em;
+.dbs__code svg { display: block; width: 100%; height: 100%; }
+
+.dbs__id {
+  position: absolute; left: 9%; right: 9%; top: 69.5%;
+  font-family: var(--font-mono); font-weight: 500;
+  color: oklch(20% 0.008 260);
+  text-align: center; letter-spacing: .04em;
+  font-size: clamp(7px, 1.55vmin, 15px);
+  font-variant-numeric: tabular-nums;
 }
-.dbs__id    { top: 74%; font-size: clamp(6px, 1.1vmin, 11px); }
-.dbs__marks { top: 87%; font-size: clamp(5px, 0.85vmin, 9px);
-              color: oklch(48% 0.01 260); letter-spacing: .05em; }
 
 /* the hinged flap */
 .dbs__flap {
-  position: absolute; left: 0; right: 0; top: 5%; height: 40%;
+  position: absolute; left: 0; right: 0; top: 4.5%; height: 40%;
   transform-origin: 50% 0%; transform-style: preserve-3d;
   transform: translateZ(4px);   /* must sit in front of .dbs__body */
   will-change: transform;
 }
 .dbs__flap-face, .dbs__flap-back {
   position: absolute; inset: 0; backface-visibility: hidden;
-  border: 1px solid oklch(76% 0.012 85);
+  border: 1px solid oklch(80% 0.008 90);
 }
 .dbs__flap-face {
-  background: linear-gradient(155deg, oklch(97% 0.004 90), oklch(91% 0.006 88));
+  background: linear-gradient(155deg, oklch(99% 0.002 95), oklch(95% 0.004 92));
   display: flex; flex-direction: column; align-items: center;
-  justify-content: center; gap: 6%; padding: 6%;
+  justify-content: center; gap: 5%; padding: 5% 6%;
 }
 .dbs__flap-back {
   transform: rotateX(180deg);
-  background: linear-gradient(155deg, oklch(86% 0.006 88), oklch(72% 0.008 86));
+  background: linear-gradient(155deg, oklch(90% 0.005 90), oklch(78% 0.007 88));
   box-shadow: inset 0 0 3vmin oklch(40% 0.01 260 / .28);
 }
-.dbs__partner, .dbs__brandline {
-  font-family: var(--font-mono); text-align: center; line-height: 1.25;
+.dbs__wordmark {
+  font-family: var(--font-display); text-align: center; line-height: 1;
+  color: oklch(28% 0.010 60); letter-spacing: -.015em;
+  font-size: clamp(7px, 1.55vmin, 15px);
 }
-.dbs__partner   { font-size: clamp(5px, 1vmin, 10px); letter-spacing: .1em;
-                  color: oklch(38% 0.09 255); font-weight: 500; }
-.dbs__brandline { font-size: clamp(5px, 0.95vmin, 10px); letter-spacing: .06em;
-                  color: oklch(45% 0.02 60); }
+.dbs__brandline {
+  font-family: var(--font-sans); font-weight: 500; text-align: center;
+  line-height: 1.2; color: oklch(30% 0.012 60);
+  font-size: clamp(5px, 1.05vmin, 10px); letter-spacing: .01em;
+}
 /* the brand's own sun mark, as printed on the real card */
 /* flex was stretching this to 37x48 and distorting the mark */
 .dbs__sun {
-  width: 32%; aspect-ratio: 1; height: auto;
+  width: 42%; aspect-ratio: 1; height: auto;
   flex: 0 0 auto; object-fit: contain; display: block;
 }
 
@@ -546,10 +640,13 @@
 @media (min-width: 768px) {
   .scene-copy { background: none; padding-top: 0; }
   .plate-layer { --plate-x: 64%; --plate-y: 40%; --plate-w: 58vmin; --drop-w: 8.2vmin; }
-  .dbs   { --dbs-x: 31%;  --dbs-y: 50%; --dbs-w: min(34vmin, 290px); }
-  .helix { --helix-x: 70%; }
+  .dbs   { --dbs-x: 30%;  --dbs-y: 52%; --dbs-w: min(37vmin, 330px); }
+  /* pulled left of the old 70%: the callout needs a gutter it can never be
+     pushed out of, and the helix scales up ~1.17x as it travels to z:170 */
+  .helix { --helix-x: 64%; }
   .rung  { width: 30vmin; margin-left: -15vmin; }
 }
+@media (min-width: 1280px) { .helix { --helix-x: 66%; } }
 
 /* =====================================================================
    ILLUMINATION — the page lightens as you descend
@@ -576,6 +673,27 @@
     transparent 20%,
     oklch(8% 0.01 250 / calc(0.85 - var(--lumen-level) * 0.8)) 100%);
 }
+
+/* Film grain. A flat black field reads as an empty div; a grained one reads
+   as an exposure. Fixed, and deliberately NOT inside any preserve-3d chain —
+   DESIGN.md records that rasterised layers clip to a hard rectangle in 3D.
+   Kept under 4% so it never touches measured text contrast. */
+.grain {
+  position: fixed; inset: 0; z-index: 7; pointer-events: none;
+  opacity: 0.035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+/* over the closing paper section the grain has to subtract, not add */
+body.is-lit .grain { mix-blend-mode: multiply; opacity: 0.05; }
+
+/* Section grounds. Translucent by contract — an opaque band would occlude
+   .illum and kill the lightening mechanic the whole page is built on. */
+#specimen, #assay          { background: oklch(38% 0.055 264 / .055); }
+#inheritance               { background: oklch(38% 0.045 260 / .040); }
+#stories                   { background: oklch(38% 0.030 256 / .028); }
+#performance, #capabilities { background: oklch(40% 0.020 252 / .022); }
+#collaborators             { background: oklch(40% 0.016 250 / .018); }
 
 /* =====================================================================
    HUD — the instrument chrome
@@ -721,11 +839,12 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
   color: var(--color-void);
 }
 .collab__name {
+  font-family: var(--font-sans); font-weight: 600;
   font-size: .8125rem; color: var(--color-chalk); line-height: 1.3;
 }
 .collab__desc {
-  font-family: var(--font-mono); font-size: .5625rem; letter-spacing: .09em;
-  text-transform: uppercase; color: var(--color-mute); margin-top: .3rem;
+  font-family: var(--font-sans); font-size: .75rem; line-height: 1.35;
+  color: var(--color-mute); margin-top: .3rem;
 }
 @media (prefers-reduced-motion: reduce) { .collab:hover { transform: none; } }
 
@@ -808,10 +927,16 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   display: flex; flex-direction: column; gap: .15rem;
   padding-left: .85rem; border-left: 1px solid var(--color-line);
 }
-.pillar__t { font-size: .8125rem; color: var(--color-chalk); }
+/* These were mono, uppercase, 10px — a descriptive sentence set as if it were
+   a machine label. Same misuse as the specimen claims; same correction. */
+.pillar__t {
+  font-family: var(--font-sans); font-weight: 600;
+  font-size: .875rem; line-height: 1.3; letter-spacing: -.004em;
+  color: var(--color-chalk);
+}
 .pillar__d {
-  font-family: var(--font-mono); font-size: .625rem; letter-spacing: .06em;
-  text-transform: uppercase; color: var(--color-mute); line-height: 1.5;
+  font-family: var(--font-sans); font-size: .8125rem;
+  color: var(--color-mute); line-height: 1.5; margin-top: .15rem;
 }
 
 @media (min-width: 768px) {
@@ -824,11 +949,281 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   .pillar__items { grid-template-columns: repeat(2, 1fr); gap: .7rem 2.5rem; }
 }
 
-/* --- impact story panel ---------------------------------------------- */
+/* --- the variant callout ---------------------------------------------
+   It was pinned at left:76%, which sits INSIDE the helix: the rungs are
+   30vmin wide about --helix-x, and the scene travels to z:170px, which
+   perspective-scales them a further ~1.17x. The label was printing over
+   the base pairs it was supposed to be annotating.
+
+   It is now anchored to the right margin with a reserved gutter, and given
+   a leader rule so it reads as an annotation pointing AT the variant rather
+   than as a caption that happens to be nearby.
+   -------------------------------------------------------------------- */
+#variantCallout {
+  right: clamp(1.25rem, 3.5vw, 3rem);
+  left: auto;
+  top: 44%;                    /* level with the flared variant rung */
+  width: min(21ch, 26vw);
+  padding-left: 1rem;
+  border-left: 1px solid oklch(70% 0.16 33 / .45);
+}
+#variantCallout::before {
+  content: ""; position: absolute; left: -3.25rem; top: .72rem;
+  width: 3.25rem; height: 1px;
+  background: linear-gradient(90deg, transparent, oklch(70% 0.16 33 / .55));
+}
+
+/* --- impact, given testimonial weight ---------------------------------
+   These are case notes the company wrote, not patient speech. The OUTCOME
+   sentence is lifted verbatim out of the note and set large in the human
+   voice; the setup follows in the body voice underneath. That buys the
+   weight of a testimonial without putting a word in anyone's mouth.
+   -------------------------------------------------------------------- */
 .story {
+  position: relative;
+  display: flex; flex-direction: column;
   border: 1px solid var(--color-line);
-  background: linear-gradient(160deg, var(--color-ink), var(--color-void));
+  border-top: 2px solid oklch(60% 0.10 88 / .5);
+  background: linear-gradient(165deg, var(--color-ink), var(--color-void));
+  padding: 2.25rem 1.75rem 1.5rem;
+  transition: border-color .35s ease, transform .35s cubic-bezier(.22,.61,.36,1);
+}
+.story:hover { border-color: oklch(50% 0.07 88); transform: translateY(-3px); }
+@media (prefers-reduced-motion: reduce) { .story:hover { transform: none; } }
+
+/* a real typographic quote mark, sized as ornament and kept out of the
+   accessibility tree — the blockquote carries the semantics */
+.story__mark {
+  position: absolute; top: -.35rem; left: 1.4rem;
+  font-family: var(--font-display);
+  font-size: 4.5rem; line-height: 1;
+  color: var(--color-lumen); opacity: .26;
+  pointer-events: none; user-select: none;
+}
+.story__pull {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 72, "SOFT" 30, "WONK" 0;
+  font-size: clamp(1.25rem, 2vw, 1.6rem);
+  line-height: 1.18; letter-spacing: -.018em;
+  color: var(--color-chalk);
+  text-wrap: pretty;
+  margin: 0;
+}
+.story__note {
+  margin-top: 1.5rem; padding-top: 1.25rem;
+  border-top: 1px solid var(--color-line);
+  flex: 1;
+}
+.story__t {
+  font-family: var(--font-sans); font-weight: 600;
+  font-size: .875rem; line-height: 1.35; letter-spacing: -.004em;
+  color: var(--color-chalk);
+}
+.story__d { font-size: .875rem; line-height: 1.6; color: var(--color-mute); margin-top: .5rem; }
+.story__foot {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: .75rem; margin-top: 1.5rem;
+}
+/* the lead case note gets the room its quote deserves */
+.story--lead { padding: 2.75rem 2.25rem 1.75rem; }
+.story--lead .story__mark { font-size: 6rem; top: -.6rem; }
+.story--lead .story__pull { font-size: clamp(1.5rem, 3.1vw, 2.5rem); }
+@media (min-width: 768px) {
+  .story--lead { display: grid; grid-template-columns: 1.15fr 1fr; gap: 0 3rem;
+                 align-items: start; }
+  .story--lead .story__pull { grid-column: 1; padding-top: .5rem; }
+  .story--lead .story__note { grid-column: 2; grid-row: 1 / span 2;
+                              margin-top: 0; padding-top: 0;
+                              border-top: 0; border-left: 1px solid var(--color-line);
+                              padding-left: 2.5rem; }
+  .story--lead .story__foot { grid-column: 1; margin-top: 1.75rem;
+                              justify-content: flex-start; gap: 1.25rem; }
+}
+
+/* --- core team, and the record that opens under it ---------------------
+   The bio panel is a grid item spanning every column, slotted in at the end
+   of the clicked face's OWN row. Nothing overlays the page, nothing shifts
+   sideways, and at one column the same markup is simply an accordion.
+   -------------------------------------------------------------------- */
+.team-grid {
+  display: grid; gap: 1.25rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px)  { .team-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px) { .team-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+.team-cell { display: flex; }
+.team-btn {
+  display: flex; flex-direction: column; width: 100%; height: 100%;
+  text-align: left;
+  background: none; border: 0; padding: 0; cursor: pointer;
+  border-radius: 0;
+}
+/* a two-line role must not drop its cue below the rest of the row */
+.team-cue { margin-top: auto; padding-top: .55rem; }
+.team-name {
+  display: block; margin-top: .75rem;
+  font-family: var(--font-sans); font-weight: 600;
+  font-size: .875rem; line-height: 1.25; color: var(--color-chalk);
+}
+.team-role { display: block; margin-top: .25rem; color: var(--color-mute); }
+
+/* the affordance. Without it nothing tells a visitor these faces are live. */
+.team-cue {
+  display: inline-flex; align-items: center; align-self: flex-start; gap: .4rem;
+  color: var(--color-lumen);
+  opacity: .62; transition: opacity .25s ease;
+}
+.team-cue__x {
+  width: .55rem; height: .55rem; position: relative; flex: 0 0 auto;
+}
+.team-cue__x::before, .team-cue__x::after {
+  content: ""; position: absolute; background: currentColor;
+  transition: transform .3s cubic-bezier(.22,.61,.36,1);
+}
+.team-cue__x::before { left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; }
+.team-cue__x::after  { top: 0; bottom: 0; left: 50%; width: 1px; margin-left: -.5px; }
+.team-cell.is-open .team-cue__x::after { transform: scaleY(0); }
+.team-btn:hover .team-cue,
+.team-btn:focus-visible .team-cue,
+.team-cell.is-open .team-cue { opacity: 1; }
+.team-btn:hover .face,
+.team-btn:focus-visible .face { filter: none; border-color: oklch(58% 0.09 90); }
+.team-cell.is-open .face { filter: none; border-color: var(--color-lumen); }
+
+.team-bio { grid-column: 1 / -1; }
+/* Height is driven from JS against the measured content. The 0fr → 1fr grid
+   trick was resolving the fr against a zero free-space container here (the
+   panel is itself a grid item of a nested grid) and settling at ~3px. */
+.team-bio__clip {
+  height: 0; overflow: hidden;
+  transition: height .45s cubic-bezier(.22,.61,.36,1);
+}
+.team-bio__grid {
+  position: relative;
+  display: grid; gap: 1.5rem;
+  border: 1px solid var(--color-line);
+  border-top: 2px solid var(--color-lumen);
+  background: linear-gradient(165deg, var(--color-ink), var(--color-void));
   padding: 1.75rem;
+  margin-top: .35rem;
+  opacity: 0; transform: translateY(-6px);
+  transition: opacity .4s ease .1s, transform .4s ease .1s;
+}
+.team-bio.is-open .team-bio__grid { opacity: 1; transform: none; }
+@media (min-width: 640px) {
+  .team-bio__grid { grid-template-columns: 9rem minmax(0, 1fr); gap: 2rem; padding: 2rem; }
+}
+.team-bio__face {
+  width: 100%; max-width: 9rem; aspect-ratio: 370 / 431;
+  object-fit: cover; object-position: 50% 22%;
+  border: 1px solid var(--color-line);
+}
+.team-bio__name {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 2.3vw, 1.85rem); line-height: 1.08;
+  letter-spacing: -.02em; color: var(--color-chalk); margin-top: .5rem;
+}
+.team-bio__text {
+  margin-top: 1rem; max-width: 62ch;
+  font-size: .9375rem; line-height: 1.65; color: var(--color-mute);
+}
+.team-bio__close {
+  position: absolute; top: .5rem; right: .5rem;
+  width: 2.25rem; height: 2.25rem; display: grid; place-items: center;
+  background: none; border: 1px solid transparent; cursor: pointer;
+  color: var(--color-mute); font-size: 1.35rem; line-height: 1;
+  transition: color .2s ease, border-color .2s ease;
+}
+.team-bio__close:hover { color: var(--color-chalk); border-color: var(--color-line); }
+
+@media (prefers-reduced-motion: reduce) {
+  .team-bio__clip, .team-bio__grid, .team-cue__x::before, .team-cue__x::after {
+    transition: none;
+  }
+  .team-bio__grid { opacity: 1; transform: none; }
+}
+
+/* --- the inheritance machine ------------------------------------------
+   Direction 15 of the catalogue, rebuilt in this page's vocabulary: the
+   four possible children are WELLS, which is the hero object of the site.
+   Colour is never the only channel — each outcome also states its genotype
+   and its name, and the rings differ in KIND (dashed / half / solid).
+   -------------------------------------------------------------------- */
+.inh-set { border: 0; padding: 0; margin: 0 0 1.75rem; }
+.inh-set legend { padding: 0; margin-bottom: .75rem; }
+.inh-opts { display: flex; flex-wrap: wrap; gap: .5rem; }
+.inh-opt {
+  background: none; cursor: pointer;
+  border: 1px solid var(--color-line); color: var(--color-mute);
+  padding: .7rem 1.1rem;
+  transition: border-color .22s ease, color .22s ease, background-color .22s ease;
+}
+.inh-opt:hover { border-color: oklch(55% 0.09 88); color: var(--color-chalk); }
+.inh-opt[aria-pressed="true"] {
+  background: var(--color-lumen); border-color: var(--color-lumen);
+  color: var(--color-void);
+}
+
+.inh-children {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem;
+}
+@media (min-width: 640px) { .inh-children { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.inh-child {
+  display: flex; flex-direction: column; align-items: center; text-align: center;
+  border: 1px solid var(--color-line);
+  background: linear-gradient(165deg, var(--color-ink), var(--color-void));
+  padding: 1.25rem .75rem 1rem;
+  opacity: 0; transform: translateY(10px);
+  transition: opacity .42s ease, transform .42s cubic-bezier(.22,.61,.36,1);
+  transition-delay: calc(var(--i) * 70ms);
+}
+.inh-children.is-in .inh-child { opacity: 1; transform: none; }
+
+/* the well itself, borrowed straight off the hero plate */
+.inh-well {
+  position: relative; width: 3.25rem; aspect-ratio: 1; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 2px solid var(--color-line);
+}
+.inh-well__bore {
+  width: 62%; aspect-ratio: 1; border-radius: 50%;
+  background: oklch(9% 0.01 250);
+  box-shadow: inset 0 1px 2px oklch(0% 0 0 / .7);
+}
+/* unaffected — an empty, unlit well, ring drawn as a dashed outline */
+.inh-child[data-g="AA"] .inh-well {
+  border-style: dashed; border-color: oklch(60% 0.14 148);
+}
+/* carrier — one copy: the well is half charged */
+.inh-child[data-g="AS"] .inh-well { border-color: var(--color-lumen); }
+.inh-child[data-g="AS"] .inh-well__bore {
+  background: linear-gradient(90deg, oklch(72% 0.15 88) 0 50%, oklch(9% 0.01 250) 50% 100%);
+}
+/* affected — two copies: fully loaded, and lit */
+.inh-child[data-g="SS"] .inh-well {
+  border-color: var(--color-alarm);
+  box-shadow: 0 0 1.1rem oklch(70% 0.16 33 / .35);
+}
+.inh-child[data-g="SS"] .inh-well__bore { background: var(--color-alarm); }
+
+.inh-child__geno {
+  margin-top: .85rem; font-size: 1.0625rem; color: var(--color-chalk);
+  letter-spacing: .02em;
+}
+.inh-child__label {
+  margin-top: .2rem;
+  font-family: var(--font-sans); font-size: .8125rem; color: var(--color-mute);
+}
+
+.inh-odd__v { font-size: clamp(1.6rem, 3.4vw, 2.25rem); line-height: 1.05; margin-top: .6rem; }
+.inh-odd[data-g="AA"] .inh-odd__v { color: var(--color-probe); }
+.inh-odd[data-g="AS"] .inh-odd__v { color: var(--color-lumen); }
+.inh-odd[data-g="SS"] .inh-odd__v { color: var(--color-alarm); }
+
+@media (prefers-reduced-motion: reduce) {
+  .inh-child { transition: none; opacity: 1; transform: none; }
 }
 
 /* =====================================================================
@@ -876,7 +1271,13 @@ body.no-motion .plate-layer { --plate-x: 50%; --plate-y: 62%;
 body.no-motion              { --plate-tilt: 46; --plate-spin: -4;
                               --ignite: 1; --fall: 0.5; }
 body.no-motion #variantCallout { position: relative; left: auto; top: auto;
+                              right: auto; width: auto; max-width: 34ch;
                               opacity: 1 !important; margin-top: 1.5rem; }
+body.no-motion #variantCallout::before { display: none; }
+/* the two new sections need no static fallback of their own — both are plain
+   flow layout — but the child tiles must not sit at opacity 0 if the class
+   that reveals them is never applied */
+body.no-motion .inh-child { opacity: 1; transform: none; }
 body.no-motion #workflowTrack  { flex-wrap: wrap; transform: none !important;
                               gap: 1rem; padding-right: 1.5rem; }
 body.no-motion .wf-step     { width: 100%; min-height: 0; }

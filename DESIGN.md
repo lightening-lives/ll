@@ -40,7 +40,19 @@ reads as "the lights coming up". A **small, localised** gold radial sits on top 
 light source itself. An earlier version did the whole lift with wide gold at 16% and the
 ground screened to `#292412` — unmistakably brown. Warmth has to be the source, not the
 filter; the ground itself must stay neutral or the page reads as sepia, not as light.
-Measured: secondary text holds 5.94:1 at the top and 5.21:1 at the bottom.
+The ground is also no longer one flat value. It travels **cool → neutral graphite**
+down the document — `oklch(11.0% .020 260)` at the top settling to `oklch(13.6% .009 244)`
+at the foot — carried on `html` so the gradient stops resolve against the whole document
+rather than the viewport. The temperature moves through *blue*, never through gold: the
+sepia failure above is what happens when warmth becomes the filter instead of the source.
+On top of that sits **film grain** at 3.5% — a flat black field reads as an empty div, a
+grained one reads as an exposure — and a set of translucent per-section grounds so the
+page has rhythm instead of reading as one sheet. The section tints must stay translucent:
+an opaque band would occlude `.illum` and kill the lightening mechanic outright.
+
+Measured, worst case (lightest ground + full illumination lift + grain at its cap):
+secondary text holds **5.44:1** at the top and **5.25:1** at the foot; primary text is
+above 14:1 throughout. Both clear the 4.5:1 AA floor.
 
 ## The hero — the plate, and one well on it
 
@@ -92,6 +104,97 @@ Everything the timeline drives is a registered `@property` number — `--plate-t
 `--plate-spin`, `--fall`, `--ignite` — with initial values that resolve to a *finished*
 composition. If the script never runs, the hero is still a lit plate with a drop over it.
 
+## The specimen card — matched to the physical kit
+
+Everything printed on the card is now read off the photographs in `ref_images/`.
+
+- **The barcode is a real one.** It was a `repeating-linear-gradient`: every bar the same
+  width, which is the single thing a barcode never is — it read as hatching. `scene.js`
+  now carries the standard Code 128 pattern table and encodes the specimen ID properly
+  (Start B, data, modulo-103 check digit, Stop) into SVG bars. `SCM/294609` renders as a
+  symbol that would actually scan, and it re-encodes if the ID in `content.js` changes.
+- **The print is legible.** The specimen ID was clamped to 11px at a card width of
+  290px. The card is wider now and the ID is set at up to 15px in near-black — on the
+  real kit it is the most prominent thing on the front, and it should be here too.
+- **The stock is white.** The old values were cream and read as a manila coupon.
+- **The window is a different material.** The filter paper is matte and fibrous against
+  the coated stock around it, the guide ring is a proper SVG dashed circle rather than a
+  CSS border, and the dried spot is flat and lopsided with a darker chromatographic rim —
+  it was a glossy sphere, which is not what a dried stain looks like.
+- **The regulatory row is on the back**, where it is on the real card: REF, LOT, expiry,
+  CE, IVD and the do-not-reuse mark, as ISO 15223-1 symbols.
+
+Two deliberate omissions. The real card's back carries a **handwritten patient name, age
+and collection date**; that is identifying patient data and is not reproduced — the card
+shows the blank write-on area instead. And the **CSIR–CCMB co-brand is no longer printed
+on the kit** (confirmed by the client), so the flap carries the sun mark and the brand
+alone. CCMB remains where it belongs, in Collaborations.
+
+## Core team — the record opens in place
+
+Six real bios, verbatim from the company's own `-details.php` pages, behind a click.
+The panel is a grid item spanning every column, slotted in at the end of the clicked
+face's *own row*: nothing overlays the page, no neighbour shifts sideways, and at one or
+two columns the same markup is simply an accordion. The column count is read back off
+`grid-template-columns` at runtime rather than duplicated as a breakpoint list in JS.
+
+Height is animated against the **measured** content. The fashionable `0fr → 1fr`
+grid-rows trick was tried first and fails here: the panel is itself a grid item of a
+nested grid, so the `fr` resolves against zero free space and the row settles at ~3px.
+The reveal is also **not** deferred to `requestAnimationFrame` — rAF is paused in a
+background tab, which would leave the record stuck shut.
+
+## The order, and why Impact moved
+
+Impact used to sit near the foot of the page, after the collaborators. It now runs
+directly after the assay scene, with the Inheritance Machine between them:
+
+> …the variant (10⁻⁹) → **what that variant means for your children** (10⁰) →
+> **the families it happened to** (10⁰) → the test menu (10⁻⁶) → performance…
+
+Three reasons this is better than where it was, and better than moving Impact alone:
+
+1. **It completes the loop the site already claims.** The descent bottoms out at the
+   base pair, and the shortest possible way back up is to a family. Bottoming out and
+   then going to a price list is an anticlimax.
+2. **The interactive earns the emotional turn.** "We read the variant" is a capability
+   claim. Setting two parents to *carrier* and watching one well in four light up is the
+   consequence of that claim, performed by the reader rather than asserted at them. The
+   case notes then land on a reader who has just worked out the odds themselves.
+3. **It costs the commercial spine one section, not its position.** The test menu and
+   the performance figures still sit in the top half, still above the workflow. A lab
+   director scrolling for the menu passes two sections instead of none — and both are
+   short, unpinned, and skimmable.
+
+The trade to be aware of: a visitor who came only for the catalogue now meets two
+human-facing sections first. If that proves wrong for the audience, moving Impact and
+the Inheritance Machine to sit *after* Performance is a two-block cut in `index.html`
+plus two entries in the `SCALES` array — nothing else depends on the order.
+
+## Impact — testimonial weight, without inventing speech
+
+These are **case notes the company wrote in the third person**, not patient quotes, and
+they must never be dressed as quotes: putting words in a patient's mouth is not a style
+choice for a diagnostics company. So the card lifts the *outcome sentence* out of the
+note verbatim and sets it large in Fraunces, with the setup following underneath in the
+body voice and a `CASE NOTE · MADHYA PRADESH` attribution line. Every word on the card is
+the company's own. The first note leads full-width; the other three sit in a row.
+
+If real consented quotes ever arrive, they drop into the same `pull` field and the
+component needs no change.
+
+## The Inheritance Machine
+
+Ported from direction 15 of the catalogue on `chores/designs` and rebuilt in this page's
+vocabulary rather than pasted in. The catalogue version drew the four possible children
+as flat SVG squares. Here they are **wells** — the hero object of the whole site — so the
+interactive reads as part of the instrument instead of as a widget someone bolted on.
+
+Colour is never the only channel: each outcome carries its genotype (`A/S`), its name
+(*Carrier*), and a ring that differs in *kind* — dashed for unaffected, half-charged for
+carrier, solid and lit for affected. The odds are computed from the two selected parent
+genotypes, not looked up, and the readout is `aria-live="polite"`.
+
 ## Scroll budget
 
 Pinned scenes cost the visitor time, so each one has to earn its runway. Currently
@@ -127,6 +230,12 @@ fluorophore. `serum` is structural only — it fails contrast as text, so `alarm
 - **Fraunces** (variable, low WONK) — the human voice. Mission lines, section leads. Warm
   high-contrast serif; chosen over Bodoni because the warmth matters more than the hauteur.
 - **IBM Plex Mono** — the data voice. HUD, specimen IDs, specs, table heads, eyebrows.
+  **Data only.** The page had drifted into setting *claims* in it — "No venipuncture",
+  the capability sub-items, the collaborator taglines — all mono, uppercase, 10–11px.
+  That made the page's assertions read as instrument chrome and sat badly under the
+  Fraunces headings they belonged to. Those are now the `claim` utility (Plex Sans 600,
+  15px, sentence case); mono kept only where the content really is machine-read.
+  Tracking also came down from `.18em` to `.15em`, which is more legible at 11px.
 - **IBM Plex Sans** — body. Humanist, holds up small, wide language coverage.
 
 **Motion** — scrub-linked only; nothing autoplays. Every scene is driven by scroll position
@@ -144,7 +253,8 @@ so the visitor is the camera operator. Reduced-motion collapses all scrub to sta
   recognition mark reads as a grey smudge and does no work.
 - **Lorem Ipsum.** The live "Free home sampling" card still ships placeholder Latin.
 - **The three short testimonials.** Dropped in favour of the four full impact narratives,
-  which are specific, clinical, and far more persuasive.
+  which are specific, clinical, and far more persuasive. Those narratives now *carry*
+  testimonial weight without pretending to be quotes — see **Impact** below.
 
 ## Hierarchy of faces
 

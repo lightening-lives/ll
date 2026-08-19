@@ -10,6 +10,10 @@
   // ?motion=off forces the reduced-motion path so it can be QA'd on any machine
   const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
                   /(^|[?&])motion=off(&|$)/.test(location.search);
+  // Flagged BEFORE anything renders. Set later (in the scroll section) it would
+  // land after the reveal transitions had already been started from opacity 0,
+  // so the static fallback briefly animated the very thing it exists to avoid.
+  if (REDUCED) document.body.classList.add('no-motion');
   const $  = (s, r) => (r || document).querySelector(s);
   const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
   const get = (path) => path.split('.').reduce((o, k) => (o == null ? o : o[k]), C);
@@ -51,11 +55,13 @@
          class="text-lumen text-[.8rem] ml-1 align-baseline">${esc(s.u)}</span></p>
     </div>`).join('');
 
-  // specimen claims
+  // Specimen claims. "No venipuncture" is a STATEMENT, not a machine label, so
+  // it is set in the sans voice (`.claim`) rather than the mono HUD. DESIGN.md
+  // reserves IBM Plex Mono for data: IDs, specs, table heads, eyebrows.
   $('#specimenPoints').innerHTML = C.specimen.points.map((p) => `
-    <div class="bg-void p-4">
-      <dt class="hud text-lumen">${esc(p.t)}</dt>
-      <dd class="text-sm text-mute mt-1.5">${esc(p.d)}</dd>
+    <div class="bg-void p-5">
+      <dt class="claim text-chalk">${esc(p.t)}</dt>
+      <dd class="text-sm text-mute mt-2">${esc(p.d)}</dd>
     </div>`).join('');
 
   // assay pipeline
@@ -138,13 +144,152 @@
       </span>
     </div>`).join('');
 
-  $('#teamList').innerHTML = C.provenance.team.map((t) => `
-    <li>
-      ${t.img ? `<img class="face" src="${esc(t.img)}" alt="${esc(t.name)}"
-                     width="446" height="520" loading="lazy" decoding="async">` : ''}
-      <p class="text-sm text-chalk mt-3 leading-[1.25]">${esc(t.name)}</p>
-      <p class="hud text-mute mt-1">${esc(t.role)}</p>
+  /* --- core team, with an expanding record row -----------------------
+     Each face is a real <button>. Selecting one opens a full-width panel
+     directly beneath ITS OWN ROW of the grid, so nothing is covered, the
+     neighbours do not move sideways, and on a narrow screen the same code
+     degrades to a plain accordion. Bios are verbatim from the company's
+     own -details.php pages.
+     ------------------------------------------------------------------ */
+  const teamList = $('#teamList');
+
+  teamList.innerHTML = C.provenance.team.map((t, i) => `
+    <li class="team-cell">
+      <button type="button" class="team-btn" data-i="${i}"
+              aria-expanded="false" aria-controls="teamBio">
+        ${t.img ? `<img class="face" src="${esc(t.img)}" alt=""
+                       width="446" height="520" loading="lazy" decoding="async">` : ''}
+        <span class="team-name">${esc(t.name)}</span>
+        <span class="team-role hud">${esc(t.role)}</span>
+        <span class="team-cue hud" aria-hidden="true">
+          <span class="team-cue__x"></span>Record</span>
+      </button>
     </li>`).join('');
+
+  const bioPanel = el('li', 'team-bio');
+  bioPanel.id = 'teamBio';
+  bioPanel.hidden = true;
+  bioPanel.setAttribute('role', 'region');
+  bioPanel.setAttribute('tabindex', '-1');
+  bioPanel.innerHTML = '<div class="team-bio__clip"><div class="team-bio__inner"></div></div>';
+
+  const bioClip = bioPanel.firstElementChild;
+  let openTeam = -1;
+
+  // the resolved column count, straight from the grid itself — no breakpoint
+  // list to keep in sync with the CSS
+  const teamCols = () =>
+    getComputedStyle(teamList).gridTemplateColumns.split(' ').filter(Boolean).length || 1;
+
+  const teamBtns  = () => $$('.team-btn', teamList);
+  const teamCells = () => $$('.team-cell', teamList);
+
+  // Height is animated against the MEASURED content rather than with the
+  // 0fr → 1fr grid trick: this panel is itself a grid item of a nested grid,
+  // where the fr resolves against zero free space and collapses to ~3px.
+  const clipTo = (px) => { bioClip.style.height = px; };
+
+  function markButtons(i) {
+    teamBtns().forEach((b, j) => {
+      b.setAttribute('aria-expanded', String(j === i));
+      b.closest('.team-cell').classList.toggle('is-open', j === i);
+    });
+  }
+
+  // slot the panel in at the END OF THAT PERSON'S ROW, so the record opens
+  // underneath the face rather than shunting the neighbours sideways
+  function slotPanel(i) {
+    const cells = teamCells();
+    const rowEnd = (Math.floor(i / teamCols()) + 1) * teamCols();
+    teamList.insertBefore(bioPanel, cells[rowEnd] || null);
+  }
+
+  function closeTeam(focusBack) {
+    if (openTeam < 0) return;
+    const btn = teamBtns()[openTeam];
+    if (btn && focusBack) btn.focus();
+    openTeam = -1;
+    markButtons(-1);
+    bioPanel.classList.remove('is-open');
+
+    if (REDUCED) { clipTo('0px'); bioPanel.hidden = true; return; }
+    clipTo(bioClip.scrollHeight + 'px');       // pin the current height first
+    void bioClip.offsetHeight;
+    clipTo('0px');
+    const done = (e) => {
+      if (e.propertyName !== 'height') return;
+      bioClip.removeEventListener('transitionend', done);
+      if (openTeam < 0) bioPanel.hidden = true;
+    };
+    bioClip.addEventListener('transitionend', done);
+  }
+
+  function openTeamAt(i) {
+    const t = C.provenance.team[i];
+    if (!t) return;
+    const swapping = openTeam > -1;
+
+    bioPanel.querySelector('.team-bio__inner').innerHTML = `
+      <div class="team-bio__grid">
+        ${t.img ? `<img class="team-bio__face" src="${esc(t.img)}" alt="${esc(t.name)}"
+                        width="446" height="520" decoding="async">` : ''}
+        <div class="team-bio__body">
+          <p class="hud text-probe">${esc(t.role)}</p>
+          <h4 class="team-bio__name">${esc(t.name)}</h4>
+          <p class="team-bio__text">${esc(t.bio)}</p>
+        </div>
+        <button type="button" class="team-bio__close" aria-label="Close record">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>`;
+
+    bioPanel.setAttribute('aria-label', t.name + ' — record');
+    bioPanel.hidden = false;
+    if (!swapping) clipTo('0px');
+    slotPanel(i);
+    markButtons(i);
+    openTeam = i;
+
+    if (REDUCED) { clipTo('auto'); bioPanel.classList.add('is-open'); return; }
+
+    // Pin the current height as an explicit px, force the reflow, then set the
+    // target. Deliberately NOT deferred to requestAnimationFrame: rAF is paused
+    // in a background tab, which would leave the record stuck shut.
+    clipTo(bioClip.getBoundingClientRect().height + 'px');
+    void bioClip.offsetHeight;
+    bioPanel.classList.add('is-open');
+    clipTo(bioClip.scrollHeight + 'px');
+
+    const done = (e) => {
+      if (e.propertyName !== 'height') return;
+      bioClip.removeEventListener('transitionend', done);
+      // release to auto so a resize or a font swap cannot clip the record
+      if (openTeam > -1) clipTo('auto');
+    };
+    bioClip.addEventListener('transitionend', done);
+  }
+
+  teamList.addEventListener('click', (e) => {
+    const close = e.target.closest('.team-bio__close');
+    if (close) { closeTeam(true); return; }
+    const btn = e.target.closest('.team-btn');
+    if (!btn) return;
+    const i = Number(btn.dataset.i);
+    if (i === openTeam) closeTeam(true); else openTeamAt(i);
+  });
+
+  teamList.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && openTeam > -1) { e.stopPropagation(); closeTeam(true); }
+  });
+
+  // the column count changes at every breakpoint, so an open panel has to be
+  // re-slotted or it ends up stranded mid-row
+  let teamResize;
+  window.addEventListener('resize', () => {
+    if (openTeam < 0) return;
+    clearTimeout(teamResize);
+    teamResize = setTimeout(() => slotPanel(openTeam), 140);
+  });
 
   // collaborators — one flat grid, logo leading
   $('#collabGrid').innerHTML = C.collaborators.items.map((o) => `
@@ -156,15 +301,22 @@
       ${o.d ? `<span class="collab__desc">${esc(o.d)}</span>` : ''}
     </li>`).join('');
 
-  // impact — the company's own narratives
-  $('#storyGrid').innerHTML = C.stories.items.map((st) => `
-    <article class="story">
-      <div class="flex items-center justify-between gap-3">
-        <span class="hud text-probe">${esc(st.place)}</span>
-        <span class="hud text-lumen border border-line px-2 py-0.5">${esc(st.cond)}</span>
+  // Impact — given testimonial weight. The `pull` line is the outcome sentence
+  // lifted verbatim from the company's own case note and set large; the setup
+  // follows underneath. Nothing is presented as a patient's own speech.
+  // The first card leads full-width, the remaining three sit in a row.
+  $('#storyGrid').innerHTML = C.stories.items.map((st, i) => `
+    <article class="story${i === 0 ? ' story--lead md:col-span-3' : ''}">
+      <span class="story__mark" aria-hidden="true">&ldquo;</span>
+      <blockquote class="story__pull">${esc(st.pull)}</blockquote>
+      <div class="story__note">
+        <h3 class="story__t">${esc(st.t)}</h3>
+        <p class="story__d">${esc(st.d)}</p>
       </div>
-      <h3 class="font-display text-[clamp(1.4rem,2.4vw,1.9rem)] leading-[1.1] text-chalk mt-5">${esc(st.t)}</h3>
-      <p class="text-sm text-mute mt-3">${esc(st.d)}</p>
+      <footer class="story__foot">
+        <span class="hud text-mute">Case note · ${esc(st.place)}</span>
+        <span class="hud text-lumen border border-line px-2 py-0.5">${esc(st.cond)}</span>
+      </footer>
     </article>`).join('');
 
   $('#stateList').innerHTML = C.reach.states.map((n) =>
@@ -197,6 +349,87 @@
     $('#formNote').style.color = 'var(--color-deep)';
   });
 
+  /* --- the inheritance machine (interactive) --------------------------
+     Direction 15 of the design catalogue, rebuilt in this page's own
+     vocabulary: the four possible children are WELLS on a plate, which is
+     the hero object of the whole site. Colour is never the only channel —
+     each outcome also carries its genotype and a written label, and the
+     rings differ in kind (dashed / half / solid), not just in hue.
+     ------------------------------------------------------------------- */
+  const INH = C.inheritance;
+  const ALLELES = { AA: ['A', 'A'], AS: ['A', 'S'], SS: ['S', 'S'] };
+  const GENO_TEXT = { AA: 'A/A', AS: 'A/S', SS: 'S/S' };
+  const parents = ['AS', 'AS'];                     // two carriers, the case that matters
+
+  $('#inhControls').innerHTML = INH.parentLabels.map((lab, p) => `
+    <fieldset class="inh-set">
+      <legend class="hud text-mute">${esc(lab)}</legend>
+      <div class="inh-opts" role="group" aria-label="${esc(lab)} genotype">
+        ${INH.options.map((o) => `
+          <button type="button" class="inh-opt hud" data-p="${p}" data-g="${o.g}"
+                  aria-pressed="${String(o.g === parents[p])}">${esc(o.label)}</button>`).join('')}
+      </div>
+    </fieldset>`).join('');
+
+  const inhCta = $('#inhCta');
+  inhCta.textContent = INH.cta.label;
+  inhCta.href = INH.cta.href;
+
+  $('#inhOdds').innerHTML = ['AA', 'AS', 'SS'].map((k) => `
+    <div class="inh-odd bg-void p-5" data-g="${k}">
+      <dt class="hud text-mute">${esc(INH.outcomeLabels[k])}</dt>
+      <dd class="inh-odd__v figure-num" id="inhPc-${k}">—</dd>
+    </div>`).join('');
+
+  const inhKids = $('#inhChildren');
+  const inhHead = $('#inhHeadline'), inhBody = $('#inhBody');
+
+  function inhUpdate() {
+    const a = ALLELES[parents[0]], b = ALLELES[parents[1]];
+    const kids = [], count = { AA: 0, AS: 0, SS: 0 };
+    a.forEach((x) => b.forEach((y) => {
+      const g = (x === 'S' && y === 'S') ? 'SS' : (x === 'A' && y === 'A') ? 'AA' : 'AS';
+      kids.push(g); count[g]++;
+    }));
+
+    inhKids.innerHTML = kids.map((g, i) => `
+      <li class="inh-child" data-g="${g}" style="--i:${i}">
+        <span class="inh-well" aria-hidden="true"><span class="inh-well__bore"></span></span>
+        <span class="inh-child__geno figure-num">${GENO_TEXT[g]}</span>
+        <span class="inh-child__label">${esc(INH.outcomeLabels[g])}</span>
+      </li>`).join('');
+
+    inhKids.classList.remove('is-in');
+    void inhKids.offsetHeight;                    // commit the from-state
+    inhKids.classList.add('is-in');
+
+    ['AA', 'AS', 'SS'].forEach((k) => {
+      $('#inhPc-' + k).textContent = (count[k] / 4 * 100) + '%';
+    });
+
+    const R = INH.readouts;
+    if (count.SS === 0 && count.AS === 0)      { inhHead.textContent = R.none.h;         inhBody.textContent = R.none.b; }
+    else if (count.SS === 0)                   { inhHead.textContent = R.carriersOnly.h; inhBody.textContent = R.carriersOnly.b; }
+    else if (count.SS === 4)                   { inhHead.textContent = R.all.h;          inhBody.textContent = R.all.b; }
+    else {
+      inhHead.textContent = (count.SS / 4 * 100) + '% of children affected, ' +
+                            (count.AS / 4 * 100) + '% carriers.';
+      inhBody.textContent = R.mixed.b;
+    }
+  }
+
+  $('#inhControls').addEventListener('click', (e) => {
+    const btn = e.target.closest('.inh-opt');
+    if (!btn) return;
+    const p = Number(btn.dataset.p);
+    parents[p] = btn.dataset.g;
+    $$('.inh-opt[data-p="' + p + '"]').forEach((o) =>
+      o.setAttribute('aria-pressed', String(o === btn)));
+    inhUpdate();
+  });
+
+  inhUpdate();
+
   /* ---------- 3 · build the 3D geometry ------------------------------ */
 
   // specimen field behind the hero drop
@@ -215,6 +448,82 @@
       `background:${rnd() > 0.78 ? 'var(--color-probe)' : 'var(--color-lumen)'}`;
     field.appendChild(sp);
   }
+
+  /* --- the specimen card's print ------------------------------------
+     The barcode on the old card was a repeating-linear-gradient: every bar
+     the same width, which is the one thing a real barcode never is. This
+     encodes the actual specimen ID as Code 128-B — start, data, modulo-103
+     check digit, stop — so the bars are a genuine, scannable symbol.
+     Pattern table is the standard one: each digit is an element width in
+     modules, alternating bar/space, beginning on a bar.
+     ------------------------------------------------------------------ */
+  const CODE128 = (
+    '212222 222122 222221 121223 121322 131222 122213 122312 132212 221213 ' +
+    '221312 231212 112232 122132 122231 113222 123122 123221 223211 221132 ' +
+    '221231 213212 223112 312131 311222 321122 321221 312212 322112 322211 ' +
+    '212123 212321 232121 111323 131123 131321 112313 132113 132311 211313 ' +
+    '231113 231311 112133 112331 132131 113123 113321 133121 313121 211331 ' +
+    '231131 213113 213311 213131 311123 311321 331121 312113 312311 332111 ' +
+    '314111 221411 431111 111224 111422 121124 121421 141122 141221 112214 ' +
+    '112412 122114 122411 142112 142211 241211 221114 413111 241112 134111 ' +
+    '111242 121142 121241 114212 124112 124211 411212 421112 421211 212141 ' +
+    '214121 412121 111143 111341 131141 114113 114311 411113 411311 113141 ' +
+    '114131 311141 411131 211412 211214 211232 2331112').split(' ');
+
+  function code128b(text) {
+    const vals = [104];                                  // Start B
+    for (let i = 0; i < text.length; i++) {
+      const v = text.charCodeAt(i) - 32;                 // Code B: ASCII 32–126
+      vals.push(v >= 0 && v < 95 ? v : 0);
+    }
+    let sum = 104;
+    for (let i = 1; i < vals.length; i++) sum += vals[i] * i;
+    vals.push(sum % 103);                                // modulo-103 check
+    vals.push(106);                                      // Stop
+    return vals.map((v) => CODE128[v]).join('');
+  }
+
+  function barcodeSVG(text) {
+    const pat = code128b(text);
+    const QZ = 10, H = 100;                              // quiet zone, in modules
+    let x = QZ, bar = true, rects = '';
+    for (let i = 0; i < pat.length; i++) {
+      const w = Number(pat[i]);
+      if (bar) rects += '<rect x="' + x + '" y="0" width="' + w + '" height="' + H + '"/>';
+      x += w; bar = !bar;
+    }
+    return '<svg viewBox="0 0 ' + (x + QZ) + ' ' + H + '" preserveAspectRatio="none" ' +
+           'shape-rendering="crispEdges" aria-hidden="true">' +
+           '<rect width="100%" height="100%" fill="#fff"/>' +
+           '<g fill="#111">' + rects + '</g></svg>';
+  }
+
+  const KIT = C.specimen.card;
+  $('#dbsCode').innerHTML = barcodeSVG(KIT.barcode);
+  $('#dbsId').textContent = KIT.idPrefix + ' / ' + KIT.serial;
+
+  // the regulatory block printed on the BACK of the real card. The symbols are
+  // the ISO 15223-1 marks a diagnostic kit actually carries.
+  const glyph = (d, extra) =>
+    '<svg class="dbs__glyph" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
+    'stroke-width="1.7" aria-hidden="true">' + (extra || '') + d + '</svg>';
+
+  $('#dbsReg').innerHTML =
+    '<span class="dbs__reg-row"><span class="dbs__reg-key">REF</span>' +
+      '<span class="dbs__reg-val">' + esc(KIT.ref) + '</span></span>' +
+    '<span class="dbs__reg-row"><span class="dbs__reg-key">LOT</span>' +
+      '<span class="dbs__reg-val">' + esc(KIT.lot) + '</span></span>' +
+    '<span class="dbs__reg-row">' +
+      glyph('<path d="M7 3h10M7 21h10M7 3v3l5 5 5-5V3M7 21v-3l5-5 5 5v3"/>') +
+      '<span class="dbs__reg-val">' + esc(KIT.expiry) + '</span></span>' +
+    '<span class="dbs__reg-marks">' +
+      '<span class="dbs__ce">CE</span>' +
+      '<span class="dbs__ivd">IVD</span>' +
+      glyph('<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>' +
+            '<text x="12" y="15" font-size="9" stroke="none" fill="currentColor" ' +
+            'text-anchor="middle" font-family="monospace">2</text>') +
+      glyph('<path d="M3 5h7a2 2 0 012 2v12a2 2 0 00-2-2H3zM21 5h-7a2 2 0 00-2 2v12a2 2 0 012-2h7z"/>') +
+    '</span>';
 
   // laminate the card so its edge has depth when it turns
   const cardEl = $('#dbsCard'), PLIES = 4;
@@ -295,18 +604,22 @@
   const railFill = $('#railFill'), scaleRead = $('#scaleRead'), pctRead = $('#pctRead');
 
   // The descent, then the ascent: patient → base pair → population → patient.
+  // The descent, then the ascent. Bottoming out at the base pair and coming
+  // straight back to a family — the inheritance odds, then the four case notes —
+  // is what closes the loop the section order now tells.
   const SCALES = [
     ['hero', '10⁰ m'], ['specimen', '10⁻³ m'], ['assay', '10⁻⁹ m'],
+    ['inheritance', '10⁰ m'], ['stories', '10⁰ m'],
     ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'], ['workflow', '10⁰ m'],
     ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'], ['collaborators', '10³ m'],
-    ['stories', '10⁴ m'], ['reach', '10⁵ m'], ['contact', '10⁰ m']
+    ['reach', '10⁵ m'], ['contact', '10⁰ m']
   ];
 
   if (REDUCED) {
     // Collapse every scrub scene to a static, fully readable end-state.
     // Layout is handled by `body.no-motion` in CSS; only the values that
     // a tween would otherwise have produced are set here.
-    document.body.classList.add('no-motion');   // holds --lumen-level at 0.45 in CSS
+    // body.no-motion is already set at the top; CSS holds --lumen-level at 0.45
     $('#runCounter').textContent = C.validation.runValue;
     scaleRead.textContent = '10⁰ m';
     return;
