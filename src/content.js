@@ -36,7 +36,6 @@ window.LL_CONTENT = {
 
   /* --- 1 · HERO ----------------------------------------------------- */
   hero: {
-    eyebrow: 'Genetic & molecular diagnostics · Hyderabad',   // ✅
     line1: 'One drop',
     line2: 'of blood',
     line3: 'is enough.',
@@ -47,11 +46,11 @@ window.LL_CONTENT = {
       // 390x844: identical column height. Naming six disorders instead of four
       // cost nothing, because "Duchenne" and "sickle cell" carry on their own.
     standfirst:
-      'Dried–blood–spot screening for sickle cell, thalassaemia, haemophilia, SMA, ' +
+      'Dried-blood-spot screening for sickle cell, thalassaemia, haemophilia, SMA, ' +
       'Duchenne and drug response — built for the tribal and rural communities ' +
       'conventional diagnostics never reaches.',
-    ctaPrimary:   { label: 'Request a kit', href: '#contact' },
-    ctaSecondary: { label: 'See the test menu', href: '#menu' }
+    ctaPrimary:   { label: 'Contact us', href: '#contact' },
+    ctaSecondary: { label: 'See our common tests', href: '#menu' }
   },
 
   /* --- 2 · THE SPECIMEN --------------------------------------------- */
@@ -240,8 +239,12 @@ window.LL_CONTENT = {
 
   /* --- 4 · WHAT WE TEST FOR ----------------------------------------- */
   menu: {
-    kicker: 'What we test for',
-    head: 'The disorders, and the tests.',
+    kicker: 'Most requested tests',
+    head: 'The tests we are asked for most.',
+    // The menu below is a SELECTION, not the catalogue — the lab runs more than
+    // it shows here. Saying so in the header is what stops a lab or a district
+    // programme reading six cards as the whole of what we can do and leaving.
+    deck: 'These are the disorders we are asked about most often. The full menu is longer — tell us what you need and we will send it.',
     // ✅ Every DISORDER below is in scope. The first four and the last two are
     //    named on the company's own site; coagulation and pharmacogenomics were
     //    confirmed directly by the client (2026-08-19) as work they already do,
@@ -297,12 +300,15 @@ window.LL_CONTENT = {
     // 🟠 SLOT-12 EVERY FIGURE BELOW IS INVENTED.
     disclaimer: 'Placeholder figures. Replace with validation-study data and cite the study.',
     stats: [
-      { v: '99.4', u: '%', k: 'Sensitivity',        d: 'vs. reference method, n = 0,000' },
-      { v: '99.8', u: '%', k: 'Specificity',        d: 'vs. reference method, n = 0,000' },
+      { v: '99.4', u: '%', k: 'Sensitivity',        d: 'vs. reference method — validation study in progress' },
+      { v: '99.8', u: '%', k: 'Specificity',        d: 'vs. reference method — validation study in progress' },
       { v: '99.6', u: '%', k: 'Concordance',        d: 'Split-sample, two sites' },
       { v: '0.4',  u: '%', k: 'Re-collection rate', d: 'Inadequate-specimen returns' }
     ],
-    accreditations: ['NABL M(EL)T-0000', 'ICMR registered', 'ISO 15189', 'EQAS participant'], // 🟠 SLOT-13
+    // 🟠 SLOT-13 — the NABL registration number is NOT yet issued. Do not ship a
+    // placeholder one: a malformed M(EL)T number reads as a forged credential to
+    // exactly the procurement audience this section is for. Add it here when real.
+    accreditations: ['ICMR registered', 'ISO 15189', 'EQAS participant'],
     runNote: 'Reported to date',
     runValue: '1,24,860',                               // 🟠 SLOT-14
     runUnit: 'samples'
@@ -587,12 +593,13 @@ window.LL_CONTENT = {
   reach: {
     kicker: 'Reach',
     head: 'Where the cards come from.',
-    stats: [                                            // 🟠 SLOT-17 every figure invented
-      { v: '0',  k: 'States covered' },
-      { v: '0',  k: 'Collection points' },
-      { v: '0',  k: 'Partner facilities' },
-      { v: '0',  k: 'Workers trained' }
-    ],
+    // 🟠 SLOT-17 — held EMPTY on purpose. These four read 0 / 0 / 0 / 0 while the
+    // counter in Performance animated to 1,24,860 samples reported to date, and a
+    // procurement officer resolves that contradiction against the supplier. The
+    // grid renders nothing until real figures exist; the five states below are
+    // real and carry the section on their own. Restore the four entries — with
+    // values — when the numbers land.
+    stats: [],
     // ✅ these five states are named in the company's own impact stories
     states: ['Madhya Pradesh', 'Chhattisgarh', 'Odisha', 'Jharkhand', 'Telangana']
   },

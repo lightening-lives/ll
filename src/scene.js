@@ -102,7 +102,7 @@
         <span class="code text-probe">${esc(s.time)}</span>
       </div>
       <h3 class="font-display text-[1.75rem] text-chalk mt-auto pt-8">${esc(s.t)}</h3>
-      <p class="text-sm text-mute mt-2">${esc(s.d)}</p>
+      <p class="prose text-sm text-chalk mt-2">${esc(s.d)}</p>
     </article>`).join('');
 
   const fi = $('#foundersImg');
@@ -363,8 +363,12 @@
   $('#stateList').innerHTML = C.reach.states.map((n) =>
     `<li class="chip credential text-chalk">${esc(n)}</li>`).join('');
 
-  // reach
-  $('#reachGrid').innerHTML = C.reach.stats.map((s) => `
+  // reach — an empty stat set hides the grid entirely rather than rendering a
+  // row of zeros. A container built to hold proof, holding none, reads worse
+  // than no container at all.
+  const reachGrid = $('#reachGrid');
+  if (!C.reach.stats.length) reachGrid.remove();
+  else reachGrid.innerHTML = C.reach.stats.map((s) => `
     <div class="bg-void p-6">
       <p class="figure-num text-lumen text-[clamp(2rem,5vw,3.25rem)] leading-none">${esc(s.v)}</p>
       <p class="datakey text-mute mt-3">${esc(s.k)}</p>
@@ -379,17 +383,93 @@
     return `<div class="field ${f.n === 'org' || f.n === 'panel' ? 'sm:col-span-2' : ''}">
         <label class="field__label block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
         ${control}
+        <p class="field__err" id="e-${f.n}" hidden></p>
       </div>`;
   }).join('');
 
-  $('#kitForm').addEventListener('submit', (e) => {
+  /* The form kept `novalidate` and then validated nothing, so an empty
+     submission succeeded silently. `novalidate` stays — the native bubbles are
+     unstyleable and vanish on scroll — but checkValidity() now drives our own
+     messages: aria-invalid on the field, a described-by error line under it,
+     and focus moved to the first failure so a keyboard user lands on the
+     problem instead of hunting for it. */
+  const kitForm = $('#kitForm'), formNote = $('#formNote');
+  const MSG = {
+    valueMissing: (l) => l + ' is required.',
+    typeMismatch: () => 'That does not look like an email address.'
+  };
+
+  const clearErr = (el) => {
+    el.removeAttribute('aria-invalid');
+    el.removeAttribute('aria-describedby');
+    const slot = $('#e-' + el.name);
+    if (slot) { slot.hidden = true; slot.textContent = ''; }
+  };
+
+  const showErr = (el) => {
+    const label = (C.contact.fields.find((f) => f.n === el.name) || {}).l || 'This field';
+    const v = el.validity;
+    const msg = v.valueMissing ? MSG.valueMissing(label)
+              : v.typeMismatch ? MSG.typeMismatch()
+              : 'Please check this field.';
+    el.setAttribute('aria-invalid', 'true');
+    const slot = $('#e-' + el.name);
+    if (slot) {
+      slot.textContent = msg;
+      slot.hidden = false;
+      el.setAttribute('aria-describedby', slot.id);
+    }
+  };
+
+  // re-validating on input would shout at someone mid-typing; clearing is safe
+  kitForm.addEventListener('input', (e) => {
+    if (e.target.hasAttribute('aria-invalid')) clearErr(e.target);
+  });
+
+  kitForm.addEventListener('submit', (e) => {
     e.preventDefault();
-    // 🟠 SLOT-19 still needs an endpoint. The visitor is told what to do next
-    // rather than being shown the build's own to-do list.
-    $('#formNote').textContent = C.contact.endpoint
-      ? 'Sending…'
-      : 'This form is not connected yet — please email ' + C.brand.email + ' and we will reply the same day.';
-    $('#formNote').style.color = 'var(--color-deep)';
+    const fields = [...kitForm.elements].filter((el) => el.name && el.willValidate);
+    fields.forEach(clearErr);
+    const bad = fields.filter((el) => !el.checkValidity());
+
+    if (bad.length) {
+      bad.forEach(showErr);
+      formNote.textContent = bad.length === 1
+        ? 'One field needs attention.'
+        : bad.length + ' fields need attention.';
+      formNote.style.color = 'var(--color-deep)';
+      bad[0].focus();
+      return;
+    }
+
+    // 🟠 SLOT-19 still needs an endpoint. Until it exists the honest path is
+    // also the DESIGNED path: hand the visitor a pre-filled mail draft rather
+    // than an apology. Everything they just typed travels with it, so a valid
+    // submission never costs them the typing.
+    if (C.contact.endpoint) {
+      formNote.textContent = 'Sending…';
+      formNote.style.color = 'var(--color-deep)';
+      kitForm.submit();
+      return;
+    }
+
+    const get = (n) => (kitForm.elements[n] || {}).value || '—';
+    const body = [
+      'Name: ' + get('name'),
+      'Hospital / laboratory: ' + get('org'),
+      'Email: ' + get('email'),
+      'Phone: ' + get('phone'),
+      'Samples per month: ' + get('volume'),
+      'Panel of interest: ' + get('panel')
+    ].join('\n');
+
+    window.location.href = 'mailto:' + C.brand.email
+      + '?subject=' + encodeURIComponent('Kit request — ' + get('org'))
+      + '&body=' + encodeURIComponent(body);
+
+    formNote.textContent = 'Opening your email app with these details filled in. '
+      + 'If nothing happens, write to ' + C.brand.email + '.';
+    formNote.style.color = 'var(--color-deep)';
   });
 
   /* --- the inheritance machine (interactive) --------------------------
@@ -501,13 +581,21 @@
     window.addEventListener('scroll', onScrollNav, { passive: true });
   }
 
-  // `is-lit` flips the whole bar's palette once the paper section reaches it
-  const litSection = $('#contact');
-  if (litSection && hasIO) {
-    new IntersectionObserver(
-      ([e]) => document.body.classList.toggle('is-lit', e.isIntersecting),
-      { rootMargin: '-35% 0px 0px 0px', threshold: 0 }
-    ).observe(litSection);
+  // `is-lit` flips the whole bar's palette once the paper section reaches it.
+  // It watches #contact AND the footer: both are bg-bone, and observing only
+  // #contact left the footer on paper without the lit palette — the grain
+  // kept adding instead of subtracting, and the focus ring stayed gold at
+  // 1.47:1 across the footer's twelve links.
+  // NOT 'footer' — the story cards each carry a <footer class="story__foot">,
+  // so a bare tag selector picks one of those instead of the page's.
+  const litSections = ['#contact', 'footer.bg-bone'].map(sel => $(sel)).filter(Boolean);
+  if (litSections.length && hasIO) {
+    const lit = new Set();
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => e.isIntersecting ? lit.add(e.target) : lit.delete(e.target));
+      document.body.classList.toggle('is-lit', lit.size > 0);
+    }, { rootMargin: '-35% 0px 0px 0px', threshold: 0 });
+    litSections.forEach(el => io.observe(el));
   }
 
   /* ---------- the sheet, below 768 ------------------------------------

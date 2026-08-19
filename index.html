@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lightening Lives — genetic screening from one drop of blood</title>
 <meta name="description" content="Dried-blood-spot genetic and molecular screening built for the places cold chains do not reach. Haemoglobinopathies, coagulation and neuromuscular disorders, pharmacogenomics, newborn panels and carrier testing at population scale.">
-<meta name="theme-color" content="#0a0d14">
+<meta name="theme-color" content="#11171c">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400..600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="./dist/site.css">
 </head>
 <body>
@@ -19,15 +19,19 @@
 <div class="vignette" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 
-<a href="#menu" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-lumen focus:text-void focus:px-3 focus:py-2 hud">Skip to assay menu</a>
+<a href="#menu" class="sr-only focus:not-sr-only focus:fixed focus:top-3 focus:left-3 focus:z-[70] focus:bg-lumen focus:text-void focus:px-3 focus:py-2 hud">Skip to the common tests</a>
 
 <nav class="nav">
   <a href="#top" class="nav__mark flex items-center gap-2.5 no-underline">
     <img src="assets/brand/mark.png" alt="" width="256" height="256"
          class="w-11 h-11 shrink-0" aria-hidden="true">
-    <span class="flex items-baseline gap-2">
+    <!-- The tagline is stacked under the name, not set beside it. Beside it, at
+         the same optical weight, it read as a second wordmark competing with the
+         first; under it, it reads as what it is. The two-line block still fits
+         inside the 44px symbol's height, so --nav-h does not grow. -->
+    <span class="flex flex-col justify-center">
       <span class="font-display text-[1.35rem] leading-none tracking-[-.02em] text-chalk">Lightening&nbsp;Lives</span>
-      <span class="hud text-mute hidden xl:inline">Every Life Matters</span>
+      <span class="nav__tagline hud text-mute">Every Life Matters</span>
     </span>
   </a>
   <!-- Five items, one per question an evaluator actually arrives with, in page
@@ -51,7 +55,7 @@
     <a href="#provenance"  class="hud nav__link no-underline">Who we are</a>
   </div>
   <div class="nav__end">
-    <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
+    <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
     <button type="button" class="nav__toggle" id="navToggle"
             aria-expanded="false" aria-controls="navLinks">
       <span class="sr-only">Sections</span>
@@ -90,16 +94,15 @@
     <!-- TYPE: flat, at Z=0, so it stays crisp and uncropped at every scroll position -->
     <div class="scene-layer absolute inset-0 flex items-end" id="heroType">
       <div class="scene-copy mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-[9svh]">
-        <p class="hud text-lumen mb-6" data-ll="hero.eyebrow"></p>
         <h1 class="display-xl text-chalk">
           <span class="block" data-ll="hero.line1"></span>
           <span class="block" data-ll="hero.line2"></span>
           <span class="block italic" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
         </h1>
-        <p class="mt-7 max-w-[44ch] text-mute text-[1.0625rem]" data-slot="SLOT-03" data-ll="hero.standfirst"></p>
+        <p class="mt-7 max-w-[44ch] text-mute hero-deck" data-slot="SLOT-03" data-ll="hero.standfirst"></p>
         <div class="mt-8 flex flex-wrap items-center gap-3" id="heroCta">
-          <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Request a kit</a>
-          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors">See the test menu</a>
+          <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
+          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors">See our common tests</a>
         </div>
       </div>
     </div>
@@ -154,7 +157,7 @@
         <div class="scene-copy w-full md:w-[46%] md:ml-auto pb-[7svh] md:pb-0 px-5 md:px-0">
           <p class="eyebrow text-probe mb-4"><span data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="specimen.head"></h2>
-          <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-06" data-ll="specimen.body"></p>
+          <p class="prose mt-5 text-mute text-base" data-slot="SLOT-06" data-ll="specimen.body"></p>
           <dl class="mt-7 grid gap-px bg-line border border-line" data-slot="SLOT-07" id="specimenPoints"></dl>
         </div>
       </div>
@@ -177,7 +180,7 @@
         <div class="scene-copy w-full lg:w-[38%] pb-[7svh] lg:pb-0 px-5 md:px-0">
           <p class="eyebrow text-probe mb-4"><span data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
-          <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-08" data-ll="assay.body"></p>
+          <p class="prose mt-5 text-mute text-base" data-slot="SLOT-08" data-ll="assay.body"></p>
           <ol class="mt-7 border-t border-line" data-slot="SLOT-09" id="assayStack"></ol>
           <!-- below lg the scene flows, so the index runs at its natural length
                under the copy. At lg and up it moves to the gutter instead. -->
@@ -208,7 +211,7 @@
     <p class="eyebrow text-probe mb-4"><span data-ll="inheritance.scale"></span> ·
        <span data-ll="inheritance.kicker"></span></p>
     <h2 class="display-lg text-chalk max-w-[19ch]" data-ll="inheritance.head"></h2>
-    <p class="mt-6 max-w-[60ch] text-mute text-[.9375rem]" data-ll="inheritance.body"></p>
+    <p class="prose mt-6 max-w-[60ch] text-mute text-base" data-ll="inheritance.body"></p>
 
     <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 items-start">
       <div>
@@ -216,7 +219,7 @@
 
         <div class="inh-readout mt-10 rule-t pt-7" role="status" aria-live="polite">
           <p id="inhHeadline" class="font-display text-[clamp(1.3rem,2.3vw,1.85rem)] leading-[1.08] text-chalk"></p>
-          <p id="inhBody" class="mt-3.5 text-mute text-[.9375rem] max-w-[46ch]"></p>
+          <p id="inhBody" class="prose mt-3.5 text-mute text-base max-w-[46ch]"></p>
         </div>
 
         <a id="inhCta" class="inline-block mt-9 hud bg-lumen text-void px-6 py-3.5
@@ -227,7 +230,7 @@
         <p class="hud text-mute mb-5" data-ll="inheritance.childrenLabel"></p>
         <ul id="inhChildren" class="inh-children"></ul>
         <dl id="inhOdds" class="mt-10 grid grid-cols-3 gap-px bg-line border border-line"></dl>
-        <p class="mt-7 text-[.8125rem] leading-relaxed text-mute max-w-[58ch]"
+        <p class="prose mt-7 text-[.9375rem] leading-relaxed text-mute max-w-[58ch]"
            data-ll="inheritance.disclaimer"></p>
       </div>
     </div>
@@ -259,6 +262,9 @@
       <div>
         <p class="eyebrow text-lumen mb-4" data-ll="menu.kicker"></p>
         <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="menu.head"></h2>
+        <!-- Six cards are a selection, not the catalogue. Without this line the
+             header reads as a complete offer and the lab looks smaller than it is. -->
+        <p class="mt-5 max-w-[46ch] text-mute" data-ll="menu.deck"></p>
       </div>
       <p class="build-note meta text-mute max-w-[34ch]" data-slot="SLOT-11" data-ll="menu.note"></p>
     </header>
@@ -332,20 +338,20 @@
         <p class="role text-probe" data-ll="provenance.founder.role"></p>
         <h3 class="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.05] text-chalk mt-2"
             data-ll="provenance.founder.name"></h3>
-        <p class="mt-5 text-mute text-[.9375rem]" data-ll="provenance.founder.bio"></p>
+        <p class="prose mt-5 text-mute text-base" data-ll="provenance.founder.bio"></p>
         <ul class="mt-7 flex flex-wrap gap-2" id="founderCreds"></ul>
       </article>
       <article class="border-t border-line pt-7">
         <p class="role text-probe" data-ll="provenance.cofounder.role"></p>
         <h3 class="font-display text-[1.5rem] leading-[1.1] text-chalk mt-2" data-ll="provenance.cofounder.name"></h3>
-        <p class="mt-5 text-mute text-[.9375rem]" data-ll="provenance.cofounder.bio"></p>
+        <p class="prose mt-5 text-mute text-base" data-ll="provenance.cofounder.bio"></p>
       </article>
     </div>
 
     <div class="mt-14 grid gap-4 md:grid-cols-3" id="governance"></div>
     <div class="mt-10">
       <p class="hud text-mute mb-2">Core team</p>
-      <p class="text-sm text-mute mb-6">Select anyone for more details.</p>
+      <p class="prose text-[.9375rem] text-mute mb-6">Select anyone for more details.</p>
       <ul class="team-grid" id="teamList"></ul>
     </div>
   </div>
@@ -402,7 +408,8 @@
                <dd class="meta mt-1 text-[oklch(45%_.02_250)]"><span data-ll="brand.city"></span></dd></div>
         </dl>
       </div>
-      <form class="self-start" data-slot="SLOT-19" id="kitForm" novalidate>
+      <form class="self-start" data-slot="SLOT-19" id="kitForm" novalidate
+            aria-describedby="formNote">
         <div class="grid gap-7 sm:grid-cols-2" id="formFields"></div>
         <button type="submit" class="mt-10 hud bg-void text-bone px-8 py-4 hover:bg-deep transition-colors">
           <span data-ll="contact.submit"></span>
@@ -426,7 +433,7 @@
       <div>
         <h2 class="footnav__head">What we do</h2>
         <ul>
-          <li><a href="#menu">Test menu</a></li>
+          <li><a href="#menu">Common tests</a></li>
           <li><a href="#performance">Analytical performance</a></li>
           <li><a href="#capabilities">Services &amp; training</a></li>
         </ul>
@@ -470,6 +477,5 @@
      Sticky control at the foot of the viewport; swaps the ground token family
      on the real page. Remove this one line together with `rm -rf preview/`
      once the ground is signed off and baked into src/input.css. -->
-<script src="./preview/ground-switcher.js"></script>
 </body>
 </html>

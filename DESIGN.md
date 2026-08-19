@@ -50,9 +50,32 @@ grained one reads as an exposure — and a set of translucent per-section ground
 page has rhythm instead of reading as one sheet. The section tints must stay translucent:
 an opaque band would occlude `.illum` and kill the lightening mechanic outright.
 
-Measured, worst case (lightest ground + full illumination lift + grain at its cap):
-secondary text holds **5.44:1** at the top and **5.25:1** at the foot; primary text is
-above 14:1 throughout. Both clear the 4.5:1 AA floor.
+**The ground shipped is "Lifted slate", not the original darkfield set** — same hue,
+four to six points of lightness above it (`void` 20% rather than 13%, `mute` 69% rather
+than 64%). It was chosen off the live switcher in `preview/`, which drove nine candidates
+against the real page. PRODUCT.md's viewers are on mid-range Android, 6-bit panels, in
+bright rooms and daylight, and a near-black ground bands and washes out in exactly those
+conditions; slate buys about 0.7:1 on secondary text and the banding goes.
+
+*What it costs, stated plainly:* the descent to the bone closing section has less distance
+to travel, so part of the "lights coming up" payoff is spent before the first scroll. The
+opening claim above — "roughly 6% illumination" — describes darkfield, not what ships.
+**That paragraph needs rewriting to match, or the ground needs reverting. Right now the
+document argues one thing and the page renders another.**
+
+Measured against the composited ground (section tint + `.illum` lift + `.vignette` +
+grain at its cap), not against the raw token: secondary text holds **5.88:1** at the top
+and **5.44:1** at the foot. Primary text bottoms out at **9.80:1** — an earlier claim of
+"above 14:1 throughout" was measured against the bare token and was wrong by about 4.5
+points. Everything clears the 4.5:1 AA floor.
+
+Two things the audit of 2026-08-19 corrected rather than documented:
+- `#workflow`'s step copy was `text-mute` on `bg-ink` and measured **4.48:1** composited —
+  the one piece of real interface text on the page that broke the floor above. It is
+  `text-chalk` now.
+- The bone **footer** never received `is-lit` (the observer watched `#contact` alone), so
+  its focus ring stayed gold-on-bone at **1.47:1** across twelve links. The ring now
+  follows the ground statically as well as through the observer, and measures 7.30:1.
 
 ## The hero — the plate, and one well on it
 
@@ -435,8 +458,9 @@ fluorophore. `serum` is structural only — it fails contrast as text, so `alarm
 `deep` carry any red that has to be read.
 | Token | Value | Origin |
 |---|---|---|
-| `void` | `oklch(13% .012 250)` | darkfield ground |
-| `ink` / `slab` | `oklch(17/23% .014 250)` | instrument housing |
+| `void` | `oklch(20% .014 250)` | the ground — "Lifted slate" (see below) |
+| `ink` / `slab` | `oklch(24/30% .014 250)` | instrument housing |
+| `line` | `oklch(39% .014 250)` | hairline rule |
 | `lumen` | `oklch(83% .16 88)` | the brand's own gold, read as transmitted light — PRIMARY |
 | `serum` | `oklch(58% .17 30)` | whole blood; structural only, never text |
 | `alarm` | `oklch(70% .16 33)` | warning text on dark (7.0:1) |
@@ -494,10 +518,24 @@ key, a measurement. Sans means a person reads it: a name, a title, an award, a p
 | `credential` | Sans 500 | 13px | Sentence | 0 | an award, an accreditation, a state |
 | `claim` | Sans 600 | 15px | Sentence | −.004em | an assertion — "No venipuncture" |
 | `meta` | Sans 400 | 12.5px | Sentence | .01em | attributions and footnotes |
+| `micro` | **Condensed** 500 | 11.5px | UPPER | .10em | taxonomy lines — the floor of the scale |
 
 Light-on-dark is compensated on all three perceptual axes, so each role runs slightly
 larger, slightly looser in leading, and one step heavier than the same role would be on
-paper. `.chip` is the one shared container for `credential` pills, so an award, an
+paper.
+
+**Running prose was the one thing this table never covered**, and it went uncompensated:
+plain paragraphs inherited Plex Sans 400 at 15px, which on this ground reads a size
+smaller than it sets. Body copy is 16px now, and `.prose` carries **weight 450** — a real
+intermediate instance, which is why the font request asks for `IBM Plex Sans wght@400..600`
+rather than three static cuts (400/500/600 have no 450 to snap to, so the weight silently
+did nothing until the range syntax landed). The hero deck scales with its headline via
+`hero-deck`'s clamp instead of sitting at a fixed 17px under a 120px h1.
+
+The compensation is opt-in **by role, not by element**. Written once as `p, li, dd`, it
+reached display type — `.story__pull` and `#inhHeadline` are both `<p>` set in Fraunces,
+and both went to 450, undoing the `h1,h2,h3 { font-weight: 400 }` that exists precisely to
+keep the display voice light. The unit of compensation is the role. `.chip` is the one shared container for `credential` pills, so an award, an
 accreditation and a place name are the same object everywhere on the page.
 
 Form labels are the one place the table above does **not** apply: a person fills a form
@@ -513,9 +551,20 @@ Two exceptions worth stating, because both look like violations:
   page chrome as an instrument readout, and the eyebrow is chrome, not content. `hud` is
   therefore better read as *the chrome voice* than as *the machine voice*.
 
-The only type below 11.5px is the **simulated print on the 3D objects** — the kit's REF,
+`micro` is the floor, and it exists because the variant index had quietly grown its own
+undocumented micro-scale below it: 9.5px taxonomy lines, a **10px disclosure button** and
+a 10px source link, none `aria-hidden`, all live interface text — in the one region a
+first-time visitor must read to understand the figure at all. The two controls were
+promoted to `hud`, which is what the chrome voice is for; the taxonomy lines route through
+`micro`; and `.vidx__hint` — the only sentence that tells anyone the strand is draggable —
+went back to `meta` at 12.5px in chalk, having been the smallest thing in the region it
+explains.
+
+Nothing screen-readable now sits below 11.5px. The only type below it is the
+**simulated print on the 3D objects** — the kit's REF,
 LOT and write-on label, and the plate skirt's row/column engraving. Those are photographs
-of objects rather than interface text, and both are now `aria-hidden`.
+of objects rather than interface text, and both are now `aria-hidden` — as are the helix's own `.lmark__key` / `.lmark__tag`
+labels, which belong to the same category and were missing from this list.
 
 **Motion** — scrub-linked only; nothing autoplays. Every scene is driven by scroll position
 so the visitor is the camera operator. Reduced-motion collapses all scrub to static end-states.
@@ -549,7 +598,8 @@ calibrated screen and turned people into smudges on everything else.
 
 ## The masthead
 
-Sun symbol at 44px, then the name set in Fraunces, then the tagline in the mono voice.
+Sun symbol at 44px, then the name set in Fraunces, then the tagline in the **chrome**
+voice (`hud`, Plex Sans Condensed — not mono; mono stays reserved for machine-read data).
 The supplied logo is a **stacked** lockup — sun above, name curved around it, tagline
 below — and measured at 44/56/72/96px its curved lettering does not resolve below about
 72px, which is far taller than a navigation bar should be. So the bar uses the **symbol**

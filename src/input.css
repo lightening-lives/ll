@@ -13,12 +13,27 @@
    Colour derived from what you physically see in a molecular lab.
    ===================================================================== */
 @theme {
-  --color-void:  oklch(13% 0.012 250);   /* darkfield ground            */
-  --color-ink:   oklch(17% 0.014 250);   /* instrument housing          */
-  --color-slab:  oklch(23% 0.014 250);   /* raised panel                */
-  --color-line:  oklch(33% 0.014 250);   /* hairline rule               */
-  --color-mute:  oklch(64% 0.012 250);   /* secondary text on dark      */
-  --color-chalk: oklch(93% 0.006 250);   /* primary text on dark        */
+  /* GROUND: "Lifted slate" — same hue as the original darkfield set, four to
+     six points of lightness above it. Chosen off the live switcher in
+     preview/, which drove nine candidates against the real page; slate was the
+     standing default there and is now baked in, so the tokens and what renders
+     finally agree.
+
+     It is not a softening. PRODUCT.md's viewers are on mid-range Android, 6-bit
+     panels, in bright rooms and daylight, and a near-black ground bands and
+     washes out in exactly those conditions. Slate buys ~0.7:1 on secondary text
+     (measured 5.88:1 at the top of the page against 5.25:1 for darkfield) and
+     the banding goes away.
+
+     What it costs, and DESIGN.md should say so: the descent to the bone closing
+     section has less distance to travel, so part of the "lights coming up"
+     payoff is spent before the first scroll. */
+  --color-void:  oklch(20% 0.014 250);   /* the ground                  */
+  --color-ink:   oklch(24% 0.014 250);   /* instrument housing          */
+  --color-slab:  oklch(30% 0.014 250);   /* raised panel                */
+  --color-line:  oklch(39% 0.014 250);   /* hairline rule               */
+  --color-mute:  oklch(69% 0.014 250);   /* secondary text on dark      */
+  --color-chalk: oklch(94% 0.014 250);   /* primary text on dark        */
 
   --color-lumen: oklch(83% 0.160 88);    /* brand gold / transmitted light */
   --color-serum: oklch(58% 0.170 30);    /* whole blood — STRUCTURAL only */
@@ -57,10 +72,10 @@
     scroll-behavior: smooth;
     background:
       linear-gradient(180deg,
-        oklch(11.0% 0.020 260) 0,
-        oklch(12.4% 0.014 254) 210svh,
-        oklch(13.2% 0.011 248) 640svh,
-        oklch(13.6% 0.009 244) 100%),
+        oklch(19.5% 0.016 250) 0,
+        oklch(20.8% 0.015 248) 210svh,
+        oklch(22.3% 0.013 246) 640svh,
+        oklch(23.5% 0.012 244) 100%),
       var(--color-void);
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
@@ -75,6 +90,19 @@
     text-rendering: optimizeLegibility;
     overflow-x: clip;
   }
+
+  /* Light-on-dark optically thins stems: at 15-17px, Plex Sans 400 on this
+     ground loses enough of each stroke to read a size smaller than it sets.
+     450 restores it without the blockiness 500 brings to long prose. Needs
+     the variable axis, which is why index.html asks for `wght@400..600`
+     rather than three static instances.
+
+     This is opt-in by ROLE, not by element. It was written once as
+     `p, li, dd` and that reached display type: `.story__pull` and
+     `#inhHeadline` are both <p>, both Fraunces, and both went to 450 —
+     undoing the `h1,h2,h3 { font-weight: 400 }` two rules below. The unit of
+     compensation is the role, so only running prose opts in. */
+  .prose { font-weight: 450; }
 
   ::selection { background: var(--color-lumen); color: var(--color-void); }
 
@@ -99,7 +127,12 @@
     outline-offset: 3px;
     border-radius: 2px;
   }
+  /* `is-lit` is driven by an observer on #contact alone, so the bone FOOTER
+     below it never received the swap — 12 focusable controls were ringing
+     gold-on-bone at 1.47:1, under the 3:1 WCAG 2.4.11 floor. The ring follows
+     the GROUND, so every bone surface has to name itself here. */
   body.is-lit :focus-visible,
+  footer.bg-bone :focus-visible,
   [data-lit] :focus-visible {
     outline-color: var(--color-void);
     outline-width: 3px;
@@ -166,6 +199,22 @@
 }
 
 /* the head of a definition list or a spec column — genuinely a machine label */
+/* The floor of the small-type scale. DESIGN.md said the only type below
+   11.5px was simulated print on the 3D objects; in practice the variant index
+   had grown its own undocumented micro-scale — 9.5px taxonomy lines, a 10px
+   disclosure BUTTON and a 10px source link — none aria-hidden, all live
+   interface text, in the one region a first-time visitor must read to
+   understand the figure. `micro` is the floor those roles route through, and
+   nothing screen-readable sits below it. */
+@utility micro {
+  font-family: var(--font-cond);
+  font-size: 0.71875rem;
+  font-weight: 500;
+  line-height: 1.35;
+  letter-spacing: var(--tracking-hud);
+  text-transform: uppercase;
+}
+
 @utility datakey {
   font-family: var(--font-mono);
   font-size: 0.71875rem;
@@ -217,6 +266,17 @@
   font-size: clamp(2.5rem, min(8.2vw, 15.5svh), 7.5rem);
   line-height: 0.86;
   letter-spacing: -0.035em;
+}
+
+/* The deck under `display-xl`. It used to be a fixed 17px while the h1 above
+   it scaled to 120px — a 7:1 drop that read as a caption on desktop and as a
+   standfirst only on phones. Now both ends move together: 17px at 360px wide,
+   ~22px by 1920, so the ratio stays near 5:1 across the range. `max-w-[44ch]`
+   still governs the measure, and at 22px that is a ~640px column. */
+@utility hero-deck {
+  font-size: clamp(1.0625rem, 0.9rem + 0.45vw, 1.375rem);
+  line-height: 1.55;
+  font-weight: 450;
 }
 
 @utility display-lg {
@@ -1189,6 +1249,21 @@ body.is-lit .nav a.nav__cta:hover { background: var(--color-deep); }
 body.is-lit .nav__link::after { background: var(--color-deep); }
 @media (prefers-reduced-motion: reduce) { .nav__link::after { transition: none; } }
 
+/* The tagline under the wordmark. Set one step below the nav's own 12px chrome
+   and tracked wider, so the two lines read as a masthead rather than as two
+   competing labels — and so the stacked block measures ~38px, inside the 44px
+   the symbol beside it already occupies. It is the first thing to go when the
+   bar tightens: below 30rem the row needs that width for the CTA and the menu
+   button, and the name alone carries the brand. */
+.nav__tagline {
+  display: none;
+  font-size: 0.625rem;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  margin-top: 0.42rem;
+}
+@media (min-width: 30rem) { .nav__tagline { display: block; } }
+
 .nav__end { display: flex; align-items: center; gap: 0.6rem; }
 
 /* Touch floors. Measured at 390px, the bar's CTA came out 114x36 and the menu
@@ -1334,7 +1409,7 @@ body.is-lit .nav__toggle { border-color: oklch(82% 0.015 85); }
 .footnav a:hover { color: var(--color-deep); text-decoration: underline; text-underline-offset: 4px; }
 
 .nav.is-stuck { border-color: var(--color-line);
-                background-color: oklch(13% 0.012 250 / .92);
+                background-color: oklch(20% 0.014 250 / .92);
 }
 body.is-lit .nav           { background-color: transparent; }
 body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
@@ -1391,6 +1466,20 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
 }
 /* a form label is read by the person filling the form in, so it is the sans
    voice at a size you can actually read — not 12px uppercase mono */
+/* The error state the form never had. `deep` rather than `alarm` because this
+   sits on bone: alarm measures 2.6:1 on paper, deep measures 6.2:1. The border
+   carries the same signal for anyone who cannot separate the hue. */
+.field input[aria-invalid="true"],
+.field select[aria-invalid="true"] {
+  border-color: var(--color-deep);
+  outline: 1px solid var(--color-deep);
+  outline-offset: -2px;
+}
+.field__err {
+  font-family: var(--font-sans); font-size: .8125rem; font-weight: 500;
+  line-height: 1.4; color: var(--color-deep); margin-top: .4rem;
+}
+
 .field__label {
   font-family: var(--font-sans); font-size: 0.8125rem; font-weight: 600;
   line-height: 1.35; letter-spacing: 0.005em;
@@ -1572,7 +1661,7 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   color: var(--color-chalk);
 }
 .pillar__d {
-  font-family: var(--font-sans); font-size: .8125rem;
+  font-family: var(--font-sans); font-size: .875rem; font-weight: 450;
   color: var(--color-mute); line-height: 1.5; margin-top: .15rem;
 }
 
@@ -1679,11 +1768,11 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 
 /* --- the readout: only what you are pointing at ----------------------- */
 .lc { position: relative; padding-left: .9rem; border-left: 1px solid var(--vc); }
-.lc__key   { font-size: .625rem; color: var(--color-mute); }
+.lc__key   { font-size: .71875rem; color: var(--color-mute); }
 .lc__gene  { color: var(--vc); font-size: .8125rem; margin-top: .15rem; }
 .lc__cond  { font-family: var(--font-display); font-size: 1.35rem; line-height: 1.05;
              color: var(--color-chalk); margin-top: .3rem; letter-spacing: -.01em; }
-.lc__class { font-family: var(--font-cond); font-weight: 500; font-size: .59375rem;
+.lc__class { font-family: var(--font-cond); font-weight: 500; font-size: .71875rem;
              letter-spacing: var(--tracking-hud); text-transform: uppercase;
              color: var(--color-mute); margin-top: .4rem; }
 .lc__what  { font-size: .78125rem; line-height: 1.5; color: var(--color-mute);
@@ -1694,7 +1783,8 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   appearance: none; -webkit-appearance: none;
   background: none; border: 0; padding: .5rem 0 0; margin-top: .35rem;
   color: var(--color-mute); cursor: pointer; text-align: left;
-  font-size: .625rem;
+  font-family: var(--font-cond); font-size: .875rem; font-weight: 600;
+  letter-spacing: var(--tracking-hud); text-transform: uppercase;
   border-top: 1px solid var(--color-line); width: 100%;
   transition: color .2s ease;
 }
@@ -1727,8 +1817,11 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   max-height: calc(100svh - var(--nav-h, 4.5rem) - 2rem);
   overflow-y: auto;
 }
+/* This is the only sentence on the page that tells a visitor the strand is a
+   control, and it was the smallest thing in the region it explains. Back onto
+   `meta`'s 12.5px, and in chalk — an affordance nobody reads is not one. */
 .vidx__hint {
-  color: var(--color-mute); font-size: .6875rem; letter-spacing: .01em;
+  color: var(--color-chalk); font-size: .78125rem; letter-spacing: .01em;
   margin: .35rem 0 .75rem;
 }
 /* pulled out by the row's own inset so the type still lines up with the
@@ -1781,7 +1874,8 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 }
 .vidx__link {
   display: inline-flex; align-items: baseline; gap: .5em; margin-top: .55rem;
-  font-size: .625rem;
+  font-family: var(--font-cond); font-size: .8125rem; font-weight: 600;
+  letter-spacing: .04em;
   color: var(--vc); text-decoration: none;
   border-bottom: 1px solid transparent; padding-bottom: 1px;
   transition: border-color .2s ease;
@@ -1809,7 +1903,7 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
                font-size: .78125rem; line-height: 1.25; margin-top: .1rem;
                text-wrap: balance; }
 .vidx__class { display: block; font-family: var(--font-cond); font-weight: 500;
-               font-size: .59375rem; letter-spacing: var(--tracking-hud);
+               font-size: .71875rem; letter-spacing: var(--tracking-hud);
                text-transform: uppercase; color: var(--color-mute); margin-top: .18rem; }
 .vidx__note  { margin-top: .9rem; }
 
@@ -1888,7 +1982,7 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   font-size: .875rem; line-height: 1.35; letter-spacing: -.004em;
   color: var(--color-chalk);
 }
-.story__d { font-size: .875rem; line-height: 1.6; color: var(--color-mute); margin-top: .5rem; }
+.story__d { font-size: .9375rem; font-weight: 450; line-height: 1.6; color: var(--color-mute); margin-top: .5rem; }
 .story__foot {
   display: flex; align-items: center; justify-content: space-between;
   gap: .75rem; margin-top: 1.5rem;
@@ -2001,7 +2095,7 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 }
 .team-bio__text {
   margin-top: 1rem; max-width: 62ch;
-  font-size: .9375rem; line-height: 1.65; color: var(--color-mute);
+  font-size: 1rem; font-weight: 450; line-height: 1.65; color: var(--color-mute);
 }
 .team-bio__close {
   position: absolute; top: .4rem; right: .4rem;
