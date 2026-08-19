@@ -17,10 +17,13 @@ Most of the page is now real. What follows is what is still fabricated.
 |---|---|---|
 | **SLOT-12** | Performance | Sensitivity, specificity, concordance and re-collection rate — each with its n and reference method, plus the study to cite. The four figures on the page are invented. |
 | **SLOT-13** | Performance | Real accreditations and certificate numbers. `NABL M(EL)T-0000` is a placeholder and must not ship. |
-| **SLOT-11** | Test menu | The **disorders are real** (sickle cell, α/β thalassaemia, SMA, DMD — all named on your site). The **codes, turnaround times, methods and throughput are invented.** |
+| **SLOT-11** | Test menu | The **disorders are real** — sickle cell, α/β thalassaemia, SMA and DMD are named on your site; haemophilia/coagulation and pharmacogenomics were confirmed as in-scope by you on 2026-08-19. The **codes, turnaround times, methods and throughput are invented.** |
+| **SLOT-11b** | Test menu | Confirm the **coagulation** scope. The card is written for haemophilia A and B; if the panel also covers von Willebrand or other factor deficiencies, widen the indication line rather than the title. |
+| **SLOT-11c** | Test menu | Confirm **which drug genes** the pharmacogenomic panel reports. The ladder draws CYP2D6 because copy number is the clearest thing to show; the card is written to the panel, not to one gene. |
 | **SLOT-05** | Spec strip | The headline numbers. `CE / IVD` is real — it is printed on the kit. Sample and turnaround are not. |
 | **SLOT-06 / 07** | Specimen | Confirm the logistics claims: ambient transport, ordinary post, exempt-specimen rules. Regulatory-adjacent. |
 | **SLOT-08 / 09** | Assay | The real platform description and pipeline. Currently generic. |
+| **SLOT-08b** | Assay | The seven loci the variant ladder and its index name. Every gene, variant and disease association is real and standard, and every disorder is already on the company's own menu — but confirm this is the exact locus set the signed-out panel reports, and swap in the lab's preferred variant nomenclature. Each locus links to the menu card that reports it — keep the two in step if either changes. |
 
 ## Important
 

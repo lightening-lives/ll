@@ -250,12 +250,89 @@ Colour is never the only channel: each outcome carries its genotype (`A/S`), its
 carrier, solid and lit for affected. The odds are computed from the two selected parent
 genotypes, not looked up, and the readout is `aria-live="polite"`.
 
+## The variant ladder
+
+The assay scene used to flare exactly one rung out of forty-two — the sickle base — which
+sold the company short: read literally, it said *we test for sickle cell*. The ladder now
+carries **seven loci, one per disorder family on the menu**, and the point of the drawing
+is that each is a *different kind of change*, because that is what actually distinguishes
+them at the bench:
+
+| Class | Locus | Drawn as |
+|---|---|---|
+| Substitution | `HBB c.20A>T`, `HBB c.92+5G>C` | the rung flares, round nodes, one base swapped |
+| Deletion | `HBA2 −α3.7`, `SMN1 exon 7`, `DMD exon 45–50` | hollow dashed rings — the bases that should be there |
+| Inversion | `F8 intron 22` | square nodes, and the helix **winds the other way** for the segment |
+| Duplication | `CYP2D6 ×N` | the rung drawn twice, the copy offset in depth |
+
+Geometry carries the class; colour only carries the family, and only from four tokens the
+page already owns — `alarm` haemoglobin, `lumen` coagulation, `probe` neuromuscular, `bone`
+pharmacogenomic. Pharmacogenomics gets the bone/white deliberately: it is not a pathology,
+it is a dosing signal, and it should not be coloured like a disease.
+
+The twist is *accumulated* rather than computed as `i * TWIST`, so an inversion can wind
+the ladder backwards for its span and hand it back unchanged — the inversion is real
+geometry, not a texture.
+
+**The keyed index** is the legend, and it is real text, not a picture of one. Each row is
+numbered, and the same number is printed on the gene tag in the 3D scene, so the figure and
+its key read together. What the scrub animates is deliberately *not* the row copy — a
+legend you have to scroll to before you can read it is a legend that failed — it lights the
+mark, the number and the rule instead. From `lg` up the index rides the right gutter and
+the tags are shown; below that the tags are dropped and the index runs under the copy,
+one column on a phone, two from 544px.
+
+## The ladder is a control, not a picture
+
+A list that looks like a legend *is* a legend until something tells you otherwise, so every
+index row is a real `<button>` with `aria-expanded`, and one line — *Select a variant to
+inspect it* — says so out loud. Pointer, keyboard and screen reader drive the same state.
+Two levels:
+
+- **Hover / focus — soft.** The ladder falls back to a trace and the one locus stays lit.
+  Nothing moves. This is what tells you the list is a control at all.
+- **Click / Enter — locked.** The ladder *swings that locus face-on and centres it*, and the
+  row opens on what the change actually is. Escape, a click outside, clicking the row again,
+  or 24px of scroll all let go.
+
+**The hard part was making that coexist with a scroll-scrubbed camera.** The obvious route —
+disable the ScrollTrigger, take the element over, re-enable — hard-cuts on release, because
+the playhead never moved while it was off, so re-enabling snaps the helix back to where the
+scroll says it should be.
+
+So the two never touch the same value. The scroll timeline writes the **camera**
+(`--cam-y/z/rx/ry`); the inspector writes an **offset on top of it** (`--ins-*`); the transform
+in CSS is their sum. Both run at once, release is just an ease of the offset back to zero, and
+nothing has to be disabled, reverted or re-synced. Face-on is
+`--cam-ry + --ins-ry + --rot ≡ 0 (mod 360)`, snapped to the nearest turn so the ladder never
+spins more than half a revolution to get there.
+
+Isolation is one inherited number, not a class on forty-four rungs: `--dim` is registered as a
+`<number>`, every intensity in the ladder is multiplied by it, and *because* it is registered it
+transitions — the ladder fades down to the chosen locus rather than snapping.
+
+**The swing is `lg` and up only.** Below that the scene is not pinned, so by the time you reach
+the index the ladder is halfway up the document, and swinging something you cannot see is worse
+than not swinging it. There — and under reduced motion — the row simply opens. Same state, same
+markup, same content; only the flourish is conditional.
+
+**Gene tags face the camera without any per-frame JS.** A tag is a child of a rung that is
+spinning inside a helix that is also spinning, so it cancels both: `--rot` is the rung's own
+accumulated twist, written once at build time, and `--cam-ry + --ins-ry` is the helix rotation —
+the scrubbed camera plus whatever the inspector has pushed it by.
+`rotateY(calc((var(--cam-ry) + var(--ins-ry) + var(--rot)) * -1deg))` holds the type flat at
+every scroll position *and* through a swing.
+
 ## Scroll budget
 
 Pinned scenes cost the visitor time, so each one has to earn its runway. Currently
-hero 1.7 screens, specimen 1.9, assay 1.7, workflow 2.4 — about 7.7 screens of pinned
-scrolling, down from 11. The assay scene was the worst offender at 3 full screens for one
+hero 1.7 screens, specimen 1.9, assay 2.1, workflow 2.4 — about 8.1 screens of pinned
+scrolling, down from 11. The assay was once the worst offender at 3 full screens for one
 rotating helix; a scene that shows a single idea does not need three screens to show it.
+It has bought 0.4 back since, and the trade is explicit: the ladder no longer shows one
+idea but **seven marked loci across four classes of variant**, each igniting in turn, and
+seven reveals do not fit in the runway one reveal needed. Below `lg` the scene is not
+pinned at all — it flows, and costs nothing.
 
 ## Technical position — real DOM in real 3D, no WebGL
 All depth is CSS `transform-style: preserve-3d` with a scroll-driven camera, not three.js.

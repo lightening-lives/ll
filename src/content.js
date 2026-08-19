@@ -40,11 +40,16 @@ window.LL_CONTENT = {
     line1: 'One drop',
     line2: 'of blood',
     line3: 'is enough.',
-    // 🟠 SLOT-03 approve the positioning line. Disorders named are ✅ real.
+    // 🟠 SLOT-03 approve the positioning line. Disorders named are ✅ real, and
+    // the list now matches the test menu and the variant ladder exactly — if
+    // one of the three changes, change all three.
+    // Measured against the old four-disorder line at 320x568, 360x640 and
+      // 390x844: identical column height. Naming six disorders instead of four
+      // cost nothing, because "Duchenne" and "sickle cell" carry on their own.
     standfirst:
-      'Dried–blood–spot screening for sickle cell anaemia, thalassaemia, SMA and ' +
-      'Duchenne muscular dystrophy — built to reach tribal and rural communities ' +
-      'that conventional diagnostics never reaches.',
+      'Dried–blood–spot screening for sickle cell, thalassaemia, haemophilia, SMA, ' +
+      'Duchenne and drug response — built for the tribal and rural communities ' +
+      'conventional diagnostics never reaches.',
     ctaPrimary:   { label: 'Request a kit', href: '#contact' },
     ctaSecondary: { label: 'See the test menu', href: '#menu' },
     specs: [                                            // 🟠 SLOT-05 all four values
@@ -99,17 +104,96 @@ window.LL_CONTENT = {
     head: 'We read the variant, not the symptom.',
     // 🟠 SLOT-08 replace with the real platform description
     body: 'A single punch from the dried spot is eluted and run against a targeted ' +
-          'panel. Calling is automated against a curated variant set, and every ' +
-          'positive is confirmed by a second method before a report is signed out.',
+          'panel. The disorders we report are not written the same way, so one run ' +
+          'reads four kinds of change: a base substituted, exons missing, an intron ' +
+          'inverted, a gene carried twice. Every positive is confirmed by a second ' +
+          'method before sign-out.',
     stack: [                                            // 🟠 SLOT-09 real platform stack
       { step: '01', t: 'Punch & elute',      d: 'Single disc, single-tube extraction' },
       { step: '02', t: 'Targeted amplify',   d: 'Closed-tube molecular panel' },
-      { step: '03', t: 'Call & curate',      d: 'Automated calling, curated variant set' },
+      { step: '03', t: 'Call & curate',      d: 'Substitution, copy-number and star-allele calls in one set' },
       { step: '04', t: 'Orthogonal confirm', d: 'Every positive re-tested by a second method' }
     ],
-    variantCallout: {                                   // ✅ HBB c.20A>T is the sickle variant
-      label: 'HBB c.20A>T',
-      note: 'The sickle variant. One base out of three billion.'
+
+    /* --- the loci the helix actually carries -----------------------------
+       The scene used to flare exactly one rung — the sickle base — which sold
+       the section short: it read as a sickle-cell company. The ladder now
+       carries one locus per disorder family on the menu, and each is drawn as
+       a REAL structural difference in the helix rather than as a coloured dot:
+
+         sub  substitution   one base swapped, the rung flares
+         del  deletion       the rungs go hollow — bases that should be there
+         inv  inversion      the twist reverses for the length of the segment
+         dup  duplication    the rung is doubled, offset in depth
+
+       So the geometry teaches the genetics instead of decorating it, and
+       colour is never the only channel (DESIGN.md). Fields:
+         at    first rung index the locus sits on (0 – 43)
+         span  how many rungs it occupies
+         kind  sub | del | inv | dup  → the geometry AND the class caption
+         fam   haem | coag | neuro | pgx → the one accent colour it may use
+
+       ✅ Every gene, variant and disease association below is real, standard
+          and sits inside the company's confirmed scope — haemoglobinopathies,
+          coagulation, neuromuscular and pharmacogenomics. Each `menu` field is
+          the card in the menu section that reports it; keep the two in step.
+       🟠 SLOT-08b confirm this is the exact locus set the signed-out panel
+          reports, and swap in the lab's own preferred variant nomenclature.
+       -------------------------------------------------------------------- */
+    loci: [
+      { at: 3,  span: 1, kind: 'sub', fam: 'haem',
+        gene: 'HBB',    variant: 'c.20A>T',        condition: 'Sickle cell anaemia',
+        what: 'One base of the β-globin gene swapped, A to T. Two copies of it and ' +
+              'the red cell stiffens into a sickle.',
+        menu: 'LL-SCA-01' },
+      { at: 8,  span: 1, kind: 'sub', fam: 'haem',
+        gene: 'HBB',    variant: 'c.92+5G>C',      condition: 'Beta thalassaemia',
+        what: 'A base at a splice site, so β-globin is mis-spliced and barely made. ' +
+              'The commonest β-thalassaemia allele in India.',
+        menu: 'LL-THAL-02' },
+      { at: 13, span: 3, kind: 'del', fam: 'haem',
+        gene: 'HBA2',   variant: '−α3.7 deletion', condition: 'Alpha thalassaemia',
+        what: 'Not a base change at all — 3.7 kb of α-globin is simply gone. Copy ' +
+              'number, not sequence, is the answer here.',
+        menu: 'LL-THAL-02' },
+      { at: 20, span: 3, kind: 'inv', fam: 'coag',
+        gene: 'F8',     variant: 'intron 22 inv',  condition: 'Haemophilia A',
+        what: 'A segment of factor VIII flipped end to end. Around 45% of severe ' +
+              'haemophilia A, and sequencing alone will not see it.',
+        menu: 'LL-COAG-03' },
+      { at: 27, span: 2, kind: 'del', fam: 'neuro',
+        gene: 'SMN1',   variant: 'exon 7 deletion', condition: 'Spinal muscular atrophy',
+        what: 'Both copies of SMN1 exon 7 absent. About 95% of spinal muscular ' +
+              'atrophy is this one deletion.',
+        menu: 'LL-SMA-04' },
+      { at: 32, span: 3, kind: 'del', fam: 'neuro',
+        gene: 'DMD',    variant: 'exon 45–50 del', condition: 'Duchenne muscular dystrophy',
+        what: 'Whole exons missing from dystrophin, clustered in one hotspot. ' +
+              'Whether the reading frame survives decides the severity.',
+        menu: 'LL-DMD-05' },
+      { at: 39, span: 2, kind: 'dup', fam: 'pgx',
+        gene: 'CYP2D6', variant: '×N duplication', condition: 'Drug response',
+        what: 'Not a disease. Extra copies of the gene clear a drug too fast for a ' +
+              'standard dose to reach the patient.',
+        menu: 'LL-PGX-06' }
+    ],
+    // the second channel: what KIND of change it is, and which family it sits in
+    kindLabels: { sub: 'Substitution', del: 'Deletion',
+                  inv: 'Inversion',    dup: 'Duplication' },
+    famLabels:  { haem: 'Haemoglobin',   coag: 'Coagulation',
+                  neuro: 'Neuromuscular', pgx: 'Pharmacogenomic' },
+    index: {
+      title: 'Variant index',
+      // the affordance has to be stated: a list that looks like a legend is a
+      // legend until something tells you it is a control
+      hint: 'Select a variant to inspect it',
+      // ✅ the sickle figure is real: HBB c.20A>T is one base of ~3.1 Gb
+      note: 'One base out of three billion, a missing exon, an inverted intron, ' +
+            'a gene carried twice. Four classes of change, one dried spot.',
+      // every locus links to the card that reports it, so the figure and the
+      // orderable menu below can never drift apart
+      menuLabel: 'See the test',
+      menuHref: '#menu'
     }
   },
 
@@ -160,7 +244,10 @@ window.LL_CONTENT = {
   menu: {
     kicker: 'What we test for',
     head: 'The disorders, and the tests.',
-    // ✅ Every DISORDER below is named on the company's own site.
+    // ✅ Every DISORDER below is in scope. The first four and the last two are
+    //    named on the company's own site; coagulation and pharmacogenomics were
+    //    confirmed directly by the client (2026-08-19) as work they already do,
+    //    which is why the variant ladder above is allowed to draw them.
     // 🟠 SLOT-11 the codes, turnaround times, methods and throughput are INVENTED.
     note: 'Disorders are real. Codes, turnaround and methods are placeholder — replace with the signed-off menu.',
     items: [
@@ -172,19 +259,33 @@ window.LL_CONTENT = {
         indication: 'Patient diagnosis and carrier screening',
         sample: 'DBS · 1 spot', tat: '48 h', method: 'HPLC + confirmatory molecular',
         throughput: '192 / run', flag: '' },
-      { code: 'LL-SMA-03', name: 'Spinal muscular atrophy',
+      // 🟠 SLOT-11b confirm the coagulation scope. The card is written for
+      // haemophilia A and B; if the panel also covers von Willebrand or other
+      // factor deficiencies, widen the indication rather than the title.
+      { code: 'LL-COAG-03', name: 'Haemophilia & coagulation disorders',
+        indication: 'Diagnosis in a symptomatic child, and carrier testing for mothers and sisters',
+        sample: 'DBS · 1 spot', tat: '96 h', method: 'Inversion assay + targeted sequencing',
+        throughput: '48 / run', flag: '' },
+      { code: 'LL-SMA-04', name: 'Spinal muscular atrophy',
         indication: 'Symptomatic child, and carrier testing for at-risk couples',
         sample: 'DBS · 1 spot', tat: '72 h', method: 'Copy-number molecular assay',
         throughput: '96 / run', flag: '' },
-      { code: 'LL-DMD-04', name: 'Duchenne muscular dystrophy',
+      { code: 'LL-DMD-05', name: 'Duchenne muscular dystrophy',
         indication: 'Symptomatic child, and maternal carrier testing',
         sample: 'DBS · 1 spot', tat: '72 h', method: 'Deletion/duplication analysis',
         throughput: '96 / run', flag: '' },
-      { code: 'LL-PNS-05', name: 'Prenatal & newborn screening',
+      // 🟠 SLOT-11c confirm which drug genes the panel reports. The ladder draws
+      // CYP2D6 because copy number is the clearest thing to SHOW; the card is
+      // deliberately written to the panel, not to one gene.
+      { code: 'LL-PGX-06', name: 'Pharmacogenomics',
+        indication: 'Metaboliser status before treatment, so the first dose is the right one',
+        sample: 'DBS · 1 spot', tat: '72 h', method: 'Star-allele genotyping + copy number',
+        throughput: '192 / run', flag: '' },
+      { code: 'LL-PNS-07', name: 'Prenatal & newborn screening',
         indication: 'Preventing recurrence, ensuring timely intervention',
         sample: 'DBS / CVS / AF', tat: '5 d', method: 'Targeted confirmatory',
         throughput: '48 / run', flag: '' },
-      { code: 'LL-CUS-06', name: 'Customised community panels',
+      { code: 'LL-CUS-08', name: 'Customised community panels',
         indication: 'Tailored molecular testing for specific community needs',
         sample: 'DBS · 1 spot', tat: 'On scope', method: 'Built to the programme',
         throughput: 'By programme', flag: 'Programmes' }

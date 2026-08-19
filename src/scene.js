@@ -835,18 +835,242 @@
     }
   }
 
-  // the double helix — 46 base pairs, one of them the variant
+  /* The variant ladder — 44 base pairs carrying seven marked loci.
+
+     It used to flare exactly one rung, the sickle base, which sold the section
+     short: one gene, one disorder, one company. Every locus in C.assay.loci is
+     now drawn as a REAL structural difference in the helix — a substituted
+     base, a run of hollow deleted ones, a segment whose twist runs backwards,
+     a rung carried twice at depth — so the geometry teaches the four classes
+     of change the panel actually reads. Colour only says which family it is.
+
+     The twist is accumulated rather than computed as `i * TWIST`, because an
+     inversion has to be able to wind the helix the other way for the length of
+     the segment and then hand the ladder back the way it found it. */
   const helix = $('#helix');
-  const RUNGS = 42, STEP = 12.5, TWIST = 17, VARIANT = 25;
+  const RUNGS = 44, TWIST = 17;
+  const LOCI = C.assay.loci;
+
+  // rung index → { the locus that owns it, its position in the list, the
+  // offset inside the locus } — so a locus of any span is one lookup
+  const ownerOf = new Map();
+  LOCI.forEach((L, li) => {
+    for (let k = 0; k < L.span; k++) ownerOf.set(L.at + k, { L: L, li: li, k: k });
+  });
+
+  const locusRungs = LOCI.map(() => []);
+  let twist = 0;
   for (let i = 0; i < RUNGS; i++) {
-    const r = el('div', 'rung' + (i === VARIANT ? ' is-variant' : ''));
-    r.style.top = (i * STEP - (RUNGS * STEP) / 2) + 'px';
-    r.style.transform = `rotateY(${i * TWIST}deg)`;
+    const o = ownerOf.get(i);
+    const r = el('div', 'rung' + (o ? ' is-locus is-' + o.L.kind : ''));
+    // --rung-step is a clamp() on vmin, so the ladder fits a 280px phone band
+    // and a 1080px desktop stage off one rule (see input.css)
+    r.style.top = `calc(var(--rung-step) * ${(i - (RUNGS - 1) / 2).toFixed(1)})`;
+    r.style.transform = `rotateY(${twist.toFixed(1)}deg)`;
+    // the tag has to undo this rotation to stay facing the camera
+    r.style.setProperty('--rot', twist.toFixed(1));
+    if (o) r.dataset.fam = o.L.fam;
     r.appendChild(el('div', 'rung__bar'));
     r.appendChild(el('div', 'rung__node rung__node--a'));
     r.appendChild(el('div', 'rung__node rung__node--b'));
+
+    if (o && o.L.kind === 'dup') {                 // the second copy, further back
+      const ghost = el('div', 'rung__ghost');
+      ghost.appendChild(el('div', 'rung__bar'));
+      ghost.appendChild(el('div', 'rung__node rung__node--a'));
+      ghost.appendChild(el('div', 'rung__node rung__node--b'));
+      r.appendChild(ghost);
+    }
+    if (o && o.k === 0) {                          // label the head of the run
+      const tag = el('div', 'locus__tag');
+      tag.appendChild(el('span', 'locus__key', String(o.li + 1).padStart(2, '0')));
+      tag.appendChild(document.createTextNode(o.L.gene));
+      r.appendChild(tag);
+    }
+    if (o) locusRungs[o.li].push(r);
+
+    // an inversion winds the other way for its whole span, then hands back
+    twist += (o && o.L.kind === 'inv') ? -TWIST : TWIST;
     helix.appendChild(r);
   }
+
+  /* The keyed index — and the instrument's control surface.
+
+     A list that looks like a legend IS a legend until something tells you
+     otherwise, so every row is a real <button>: pointer, keyboard and screen
+     reader all drive the same state. Rendered twice — once for the right
+     gutter at lg and up, once inline under the copy below that — but only ever
+     ONE is in the accessibility tree, because the utility hiding the other
+     uses `display: none`. Ids are prefixed per copy so the two renders cannot
+     collide on `aria-controls`. */
+  const IDX = C.assay.index;
+  const idxRow = (pre) => (L, i) => `
+    <li class="vidx__item" data-fam="${esc(L.fam)}" data-kind="${esc(L.kind)}">
+      <button type="button" class="vidx__row" data-locus="${i}"
+              id="${pre}-b${i}" aria-expanded="false" aria-controls="${pre}-d${i}">
+        <span class="vidx__mark" aria-hidden="true"></span>
+        <span class="vidx__text">
+          <span class="vidx__gene code"><span
+             class="vidx__key">${String(i + 1).padStart(2, '0')}</span>${esc(L.gene)}&nbsp;${esc(L.variant)}</span>
+          <span class="vidx__cond">${esc(L.condition)}</span>
+          <span class="vidx__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</span>
+        </span>
+        <span class="vidx__chev" aria-hidden="true"></span>
+      </button>
+      <div class="vidx__detail" id="${pre}-d${i}" role="region"
+           aria-labelledby="${pre}-b${i}" hidden>
+        <div class="vidx__detail-in">
+          <p class="vidx__what">${esc(L.what)}</p>
+          <a class="vidx__link hud" href="${esc(IDX.menuHref)}"><span
+             class="code">${esc(L.menu)}</span> ${esc(IDX.menuLabel)}</a>
+        </div>
+      </div>
+    </li>`;
+  const idxHTML = (pre) =>
+    `<p class="eyebrow text-probe">${esc(IDX.title)}</p>` +
+    `<p class="vidx__hint meta">${esc(IDX.hint)}</p>` +
+    `<ul class="vidx__list">${LOCI.map(idxRow(pre)).join('')}</ul>` +
+    `<p class="vidx__note meta text-mute max-w-[46ch]">${esc(IDX.note)}</p>`;
+  $('#variantIndex').innerHTML = idxHTML('vg');
+  $('#variantIndexFlow').innerHTML = idxHTML('vf');
+
+  /* ---------- the inspector -------------------------------------------
+     Selecting a locus has to coexist with a scroll-scrubbed camera, and the
+     usual way — disable the ScrollTrigger, take the element over, re-enable —
+     hard-cuts on release, because the playhead never moved while it was off.
+
+     So the two never touch the same value. The scroll timeline writes the
+     CAMERA (`--cam-*`); the inspector writes an OFFSET on top of it
+     (`--ins-*`); the transform in input.css is the sum. Both can run at once,
+     release is just an ease of the offset back to zero, and nothing has to be
+     disabled, reverted or re-synced.
+
+     Two levels of selection:
+       hover / focus  soft — the ladder dims to the one locus, nothing moves.
+                      Cheap enough to fire on every mouse move, and it is what
+                      tells you the list is a control at all.
+       click / Enter  locked — the ladder swings that locus face-on and centres
+                      it, and the row opens on what the change actually is.
+
+     The swing is lg-and-up only. Below that the scene is not pinned, so the
+     ladder is halfway up the document by the time you reach the list, and
+     swinging something you cannot see is worse than not swinging it — there
+     the row simply opens. Reduced motion gets the same treatment.
+     -------------------------------------------------------------------- */
+  const assayEl = $('#assay');
+  const wide = window.matchMedia('(min-width: 64rem)');
+  const rowsFor = (i) => $$('.vidx__row[data-locus="' + i + '"]');
+  const INSPECT_Z = 150;
+  let hovered = null, locked = null, lockedAt = 0;
+
+  const camVar = (k) => parseFloat(getComputedStyle(helix).getPropertyValue(k)) || 0;
+
+  const paint = () => {
+    const on = locked != null ? locked : hovered;
+    assayEl.classList.toggle('is-inspecting', on != null);
+    locusRungs.forEach((rs, i) => rs.forEach((r) => r.classList.toggle('is-sel', i === on)));
+    $$('.vidx__item').forEach((li) => {
+      const i = +li.querySelector('.vidx__row').dataset.locus;
+      li.classList.toggle('is-sel', i === on);
+      li.classList.toggle('is-open', i === locked);
+    });
+  };
+
+  const setDetail = (i, open) => {
+    rowsFor(i).forEach((b) => {
+      b.setAttribute('aria-expanded', String(open));
+      const d = document.getElementById(b.getAttribute('aria-controls'));
+      if (!d) return;
+      gsap.killTweensOf(d);
+      if (open) {
+        d.hidden = false;
+        gsap.fromTo(d, { height: 0, opacity: 0 },
+          { height: 'auto', opacity: 1, duration: REDUCED ? 0 : 0.34, ease: 'power2.out' });
+      } else {
+        gsap.to(d, { height: 0, opacity: 0, duration: REDUCED ? 0 : 0.24, ease: 'power2.in',
+          onComplete() { d.hidden = true; gsap.set(d, { clearProps: 'height,opacity' }); } });
+      }
+    });
+  };
+
+  const swing = (i) => {
+    if (REDUCED || !wide.matches) return;
+    const L = LOCI[i];
+    const rot = parseFloat(locusRungs[i][0].style.getPropertyValue('--rot')) || 0;
+    // --rung-step is registered as a <length>, so it computes to real px here
+    const step = parseFloat(getComputedStyle(helix).getPropertyValue('--rung-step')) || 10;
+    // the locus is face-on when camera + rung twist lands on a whole turn; take
+    // the nearest one, so the ladder never spins more than half a revolution
+    const total = camVar('--cam-ry') + rot;
+    gsap.to(helix, {
+      '--ins-ry': Math.round(total / 360) * 360 - total,
+      '--ins-rx': -camVar('--cam-rx'),
+      '--ins-z':  INSPECT_Z - camVar('--cam-z'),
+      // and slide it so the locus itself, not the middle of the ladder, is centred
+      '--ins-y':  -camVar('--cam-y') - (L.at + (L.span - 1) / 2 - (RUNGS - 1) / 2) * step,
+      duration: 0.85, ease: 'power3.inOut', overwrite: true
+    });
+  };
+
+  const unswing = () => {
+    if (REDUCED) return;
+    gsap.to(helix, { '--ins-ry': 0, '--ins-rx': 0, '--ins-z': 0, '--ins-y': 0,
+      duration: 0.55, ease: 'power2.inOut', overwrite: true });
+  };
+
+  const release = () => {
+    if (locked == null) return;
+    const i = locked;
+    locked = null;
+    setDetail(i, false);
+    unswing();
+    paint();
+  };
+
+  const lock = (i) => {
+    if (locked === i) { release(); return; }
+    if (locked != null) setDetail(locked, false);
+    locked = i;
+    lockedAt = window.scrollY;
+    setDetail(i, true);
+    swing(i);
+    paint();
+  };
+
+  $$('.vidx__row').forEach((btn) => {
+    const i = +btn.dataset.locus;
+    btn.addEventListener('click', () => lock(i));
+    btn.addEventListener('pointerenter', (e) => {
+      if (e.pointerType === 'touch') return;      // a tap is a click, not a hover
+      hovered = i; paint();
+    });
+    btn.addEventListener('pointerleave', () => { hovered = null; paint(); });
+    btn.addEventListener('focus', () => { hovered = i; paint(); });
+    btn.addEventListener('blur',  () => { hovered = null; paint(); });
+    // the list is one widget: arrows walk it, Home/End jump, Escape lets go
+    btn.addEventListener('keydown', (e) => {
+      const step = { ArrowDown: 1, ArrowRight: 1, ArrowUp: -1, ArrowLeft: -1 }[e.key];
+      const peers = $$('.vidx__row', btn.closest('.vidx__list'));
+      let to = null;
+      if (step) to = peers[(i + step + peers.length) % peers.length];
+      else if (e.key === 'Home') to = peers[0];
+      else if (e.key === 'End') to = peers[peers.length - 1];
+      else if (e.key === 'Escape') { release(); return; }
+      if (!to) return;
+      e.preventDefault();
+      to.focus();
+    });
+  });
+
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') release(); });
+  document.addEventListener('pointerdown', (e) => {
+    if (locked != null && !e.target.closest('.vidx')) release();
+  });
+  // scrolling is the other way of saying "done" — and it is the only one that
+  // matters on a phone, where there is no outside to click
+  window.addEventListener('scroll', () => {
+    if (locked != null && Math.abs(window.scrollY - lockedAt) > 24) release();
+  }, { passive: true });
 
   /* ---------- 4 · handoff aid: press S to reveal data slots ---------- */
   document.addEventListener('keydown', (e) => {
@@ -880,6 +1104,10 @@
     // body.no-motion is already set at the top; CSS holds --lumen-level at 0.45
     $('#runCounter').textContent = C.validation.runValue;
     scaleRead.textContent = '10⁰ m';
+    // the camera tween never runs here, so the ladder is parked square-on —
+    // every locus readable, nothing withheld. --cam-* default to 0 anyway;
+    // this only leans it enough to read as an object rather than a diagram.
+    helix.style.setProperty('--cam-rx', '-4');
     return;
   }
 
@@ -935,13 +1163,53 @@
     .fromTo('#specimen .scene-layer > div > div',
       { y: 50, opacity: 0 }, { y: 0, opacity: 1, ease: 'none', duration: 0.28 }, 0.05);
 
-  // ---- 3 · the helix turns; the variant flares as it comes round
-  gsap.timeline({ scrollTrigger: scrub('#assay') })
-    .fromTo('#helix',
-      { rotateY: -30, rotateX: 12, z: -560, y: 120 },
-      { rotateY: 430, rotateX: -4, z: 170, y: -100, ease: 'none', duration: 1 }, 0)
-    .fromTo('#variantCallout', { opacity: 0, x: -18 },
-      { opacity: 1, x: 0, ease: 'none', duration: 0.14 }, 0.46);
+  /* ---- 3 · the ladder turns, and each locus ignites as it comes round.
+
+     Two camera moves, not one. Below lg the ladder lives in a 42svh band with
+     a 280px floor, so the wide travel (220px of Y and 730px of Z) would swing
+     half the loci straight out of a clipped box; the narrow move is scaled to
+     the band it is actually inside. gsap.matchMedia owns both, so a rotate or
+     a devtools resize rebuilds the right one and reverts the other. */
+  const assayCamera = {
+    wide:   { rotateY: [-30, 430], rotateX: [12, -4], z: [-560, 170], y: [120, -100],
+              // pinned, so the ladder is on screen for the whole scrub and the
+              // loci can ignite one at a time right across it
+              flare: [0.10, 0.62] },
+    narrow: { rotateY: [-24, 392], rotateX: [10, -3], z: [-300,  80], y: [ 56,  -56],
+              // flowed, the band scrolls out of view around 70% of the runway.
+              // The flares are pulled into the front third so every locus lights
+              // while its rung is still visible; by the time the reader reaches
+              // the index under the copy, the whole ladder is already read.
+              flare: [0.04, 0.34] }
+  };
+
+  gsap.matchMedia().add(
+    { wide: '(min-width: 64rem)', narrow: '(max-width: 63.99rem)' },
+    (ctx) => {
+      const cam = ctx.conditions.wide ? assayCamera.wide : assayCamera.narrow;
+      const tl = gsap.timeline({ scrollTrigger: scrub('#assay') });
+      // the CAMERA only — never the transform itself. input.css sums it with
+      // the inspector's --ins-* offset, which is what lets a visitor take hold
+      // of the ladder mid-scrub without either side having to be switched off
+      tl.fromTo('#helix',
+        { '--cam-ry': cam.rotateY[0], '--cam-rx': cam.rotateX[0],
+          '--cam-z': cam.z[0], '--cam-y': cam.y[0] },
+        { '--cam-ry': cam.rotateY[1], '--cam-rx': cam.rotateX[1],
+          '--cam-z': cam.z[1], '--cam-y': cam.y[1],
+          ease: 'none', duration: 1 }, 0);
+
+      // one flare per locus, evenly spaced down the runway. The rungs and the
+      // index row share a single tween because they share the same --flare —
+      // the geometry and its legend cannot drift out of step.
+      const [flareAt, flareSpan] = cam.flare;
+      const gap = flareSpan / Math.max(1, LOCI.length - 1);
+      LOCI.forEach((L, i) => {
+        const targets = locusRungs[i].concat($$('[data-locus="' + i + '"]'));
+        tl.fromTo(targets, { '--flare': 0 },
+          { '--flare': 1, ease: 'none', duration: Math.min(0.1, gap) },
+          flareAt + i * gap);
+      });
+    });
 
   // ---- 4 · catalogue cards tilt up into place
   gsap.utils.toArray('.assay-card').forEach((card, i) => {

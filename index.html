@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Lightening Lives — genetic screening from one drop of blood</title>
-<meta name="description" content="Dried-blood-spot genetic and molecular screening built for the places cold chains do not reach. Newborn panels, haemoglobinopathies and carrier testing at population scale.">
+<meta name="description" content="Dried-blood-spot genetic and molecular screening built for the places cold chains do not reach. Haemoglobinopathies, coagulation and neuromuscular disorders, pharmacogenomics, newborn panels and carrier testing at population scale.">
 <meta name="theme-color" content="#0a0d14">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -168,7 +168,7 @@
 </section>
 
 <!-- ================= 3 · THE ASSAY ================= -->
-<section class="scene" id="assay" style="height:170svh">
+<section class="scene" id="assay" style="height:210svh">
   <div class="stage" data-pin>
     <div class="world" aria-hidden="true">
       <div class="layer">
@@ -176,23 +176,21 @@
       </div>
     </div>
     <div class="scene-layer absolute inset-0">
-      <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end md:items-center">
-        <div class="scene-copy w-full md:w-[44%] pb-[7svh] md:pb-0 px-5 md:px-0">
+      <!-- `scene-frame` so the flow/pin rules can target the copy wrapper WITHOUT
+           also hitting the index panel, which is the scene-layer's other child -->
+      <div class="scene-frame mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end lg:items-center">
+        <div class="scene-copy w-full lg:w-[38%] pb-[7svh] lg:pb-0 px-5 md:px-0">
           <p class="eyebrow text-probe mb-4"><span data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
           <p class="mt-5 text-mute text-[.9375rem]" data-slot="SLOT-08" data-ll="assay.body"></p>
           <ol class="mt-7 border-t border-line" data-slot="SLOT-09" id="assayStack"></ol>
-          <p class="md:hidden mt-6 border-l-2 border-alarm pl-4">
-            <span class="figure-num text-alarm text-[1.1rem] block" data-ll="assay.variantCallout.label"></span>
-            <span class="meta text-mute" data-ll="assay.variantCallout.note"></span>
-          </p>
+          <!-- below lg the scene flows, so the index runs at its natural length
+               under the copy. At lg and up it moves to the gutter instead. -->
+          <div class="lg:hidden mt-8" data-slot="SLOT-08b" id="variantIndexFlow"></div>
         </div>
       </div>
-      <!-- desktop: the callout rides in beside the flared base pair -->
-      <div id="variantCallout" class="opacity-0 hidden md:block absolute left-[76%] top-[62%]">
-        <span class="figure-num text-alarm text-[1.35rem]" data-ll="assay.variantCallout.label"></span>
-        <p class="meta text-mute mt-1.5 max-w-[26ch]" data-ll="assay.variantCallout.note"></p>
-      </div>
+      <!-- lg and up: the index rides the right gutter, keyed to the ladder -->
+      <div id="variantIndex" class="vidx hidden lg:block absolute" data-slot="SLOT-08b"></div>
     </div>
   </div>
 </section>

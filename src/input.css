@@ -716,25 +716,161 @@
   flex: 0 0 auto; object-fit: contain; display: block;
 }
 
-/* --- double helix ----------------------------------------------------- */
+/* =====================================================================
+   THE VARIANT LADDER
+   ---------------------------------------------------------------------
+   The scene used to flare exactly one rung — the sickle base — and so read
+   as a sickle-cell company. It now carries one locus per disorder family on
+   the menu, and each is drawn as a REAL structural difference in the helix
+   rather than as a coloured dot, because that is what actually distinguishes
+   them at the bench:
+
+     .is-sub  substitution   one base swapped — the rung flares, round nodes
+     .is-del  deletion       hollow dashed rings: bases that should be there
+     .is-inv  inversion      SQUARE nodes, and the twist reverses (set in JS)
+     .is-dup  duplication    the rung is doubled, offset in depth
+
+   Shape and structure carry the class; colour only carries the FAMILY, and
+   only from the four tokens the page already owns (DESIGN.md: colour is
+   never the only channel). --flare, 0 → 1, is scrubbed per locus so each one
+   ignites as it comes round, and lights its row in the keyed index.
+   ===================================================================== */
+@property --flare { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --rot   { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --dim   { syntax: "<number>"; inherits: true; initial-value: 1; }
+/* registered as a LENGTH, not just declared, so getComputedStyle resolves the
+   clamp() to real px — scene.js needs the number to centre a locus on screen */
+@property --rung-step { syntax: "<length>"; inherits: true; initial-value: 10px; }
+
+/* The camera, and the offset a visitor can push it by.
+   --cam-* is written by the scroll scrub; --ins-* by the inspector when a
+   locus is selected. The transform below is their SUM, which is the whole
+   trick: neither has to be disabled for the other to work, and letting go is
+   just an ease of --ins-* back to zero. */
+@property --cam-y  { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --cam-z  { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --cam-rx { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --cam-ry { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --ins-y  { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --ins-z  { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --ins-rx { syntax: "<number>"; inherits: true; initial-value: 0; }
+@property --ins-ry { syntax: "<number>"; inherits: true; initial-value: 0; }
+
 .helix       { position: absolute; left: var(--helix-x, 50%); top: 50%;
-               transform-style: preserve-3d; }
+               transform-style: preserve-3d;
+               /* the ladder sizes itself off the SHORT edge, so 44 rungs fit a
+                  280px phone band and a 1080px desktop stage without a single
+                  breakpoint: 6px × 44 = 264px, 13px × 44 = 572px */
+               --rung-step: clamp(6px, 1.15vmin, 13px);
+               /* GSAP's own property order, kept so the two agree */
+               transform:
+                 translate3d(0, calc((var(--cam-y) + var(--ins-y)) * 1px),
+                                calc((var(--cam-z) + var(--ins-z)) * 1px))
+                 rotateX(calc((var(--cam-rx) + var(--ins-rx)) * 1deg))
+                 rotateY(calc((var(--cam-ry) + var(--ins-ry)) * 1deg)); }
 .rung        { position: absolute; left: 0; top: 0; transform-style: preserve-3d;
                height: 2px; }
 .rung__bar   { position: absolute; inset: 0;
                background: linear-gradient(90deg,
                  var(--color-probe), oklch(50% 0.03 220), var(--color-lumen));
-               opacity: .5; }
+               opacity: calc(.5 * var(--dim)); }
 .rung__node  { position: absolute; top: 50%; width: 1.15vmin; height: 1.15vmin;
                margin-top: -0.575vmin; border-radius: 50%; }
+.rung__node  { opacity: var(--dim); }
 .rung__node--a { left: -0.575vmin;  background: var(--color-probe);
                  box-shadow: 0 0 1.4vmin oklch(82% 0.14 170 / .6); }
 .rung__node--b { right: -0.575vmin; background: var(--color-lumen);
                  box-shadow: 0 0 1.4vmin oklch(80% 0.15 72 / .6); }
-.rung.is-variant .rung__bar  { background: var(--color-serum); opacity: 1; height: 3px; top: -0.5px; }
-.rung.is-variant .rung__node { background: var(--color-serum);
-                               box-shadow: 0 0 2.6vmin oklch(58% 0.17 30 / .95);
-                               width: 1.7vmin; height: 1.7vmin; margin-top: -0.85vmin; }
+
+/* --- the four families, and the only colour each may use ---------------
+   --vc is the solid accent, --vcs the same hue pre-multiplied for glow, so
+   nothing here needs relative-colour syntax (still patchy on the mid-range
+   Android this site is built for). */
+[data-fam="haem"]  { --vc: oklch(70% 0.160 33);  --vcs: oklch(70% 0.160 33 / .55); }
+[data-fam="coag"]  { --vc: oklch(83% 0.160 88);  --vcs: oklch(83% 0.160 88 / .55); }
+[data-fam="neuro"] { --vc: oklch(80% 0.170 148); --vcs: oklch(80% 0.170 148 / .55); }
+[data-fam="pgx"]   { --vc: oklch(95% 0.012 85);  --vcs: oklch(95% 0.012 85 / .45); }
+
+/* --- a marked locus, in any class -------------------------------------
+   Every intensity below is multiplied by --dim. It is 1 normally; selecting a
+   locus drops the whole ladder to a fraction and lifts that one back, so
+   isolation is one inherited number rather than a class on forty-four rungs.
+   Registered as a <number>, so it TRANSITIONS — the ladder fades down to the
+   chosen locus instead of snapping. */
+.rung, .locus__tag { transition: --dim .38s ease; }
+.rung.is-locus .rung__bar {
+  background: var(--vc); height: 3px; top: -0.5px;
+  opacity: calc((.42 + var(--flare) * .58) * var(--dim));
+}
+.rung.is-locus .rung__node {
+  --nd: calc(1.3vmin + var(--flare) * 0.55vmin + var(--lift, 0) * 0.45vmin);
+  background: var(--vc); border: 0;
+  width: var(--nd); height: var(--nd); margin-top: calc(var(--nd) / -2);
+  opacity: calc((.5 + var(--flare) * .5) * var(--dim));
+  box-shadow: 0 0 calc(1.1vmin + var(--flare) * 2vmin + var(--lift, 0) * 2vmin) var(--vcs);
+}
+.rung.is-locus .rung__node--a { left: calc(var(--nd) / -2); }
+.rung.is-locus .rung__node--b { right: calc(var(--nd) / -2); }
+
+/* --- deletion: the bases that should be there, and are not ------------- */
+.rung.is-del .rung__bar {
+  background: none; height: 0; top: 1px;
+  border-top: 1px dashed var(--vc);
+  opacity: calc((.26 + var(--flare) * .44) * var(--dim));
+}
+.rung.is-del .rung__node {
+  background: none; box-shadow: none;
+  border: 1px dashed var(--vc);
+  opacity: calc((.42 + var(--flare) * .58) * var(--dim));
+}
+
+/* --- inversion: square bases; the twist itself reverses in scene.js ---- */
+.rung.is-inv .rung__node { border-radius: 1px; }
+
+/* --- duplication: the same rung, a second time, further back ---------- */
+.rung__ghost {
+  position: absolute; inset: 0; transform-style: preserve-3d;
+  transform: translateZ(1.8vmin) rotateY(-7deg);
+  opacity: calc(.3 + var(--flare) * .45);
+}
+
+/* --- the gene symbol, held facing the viewer --------------------------
+   The tag is a child of a rung that is spinning inside a helix that is also
+   spinning, so it cancels BOTH rotations: --rot is the rung's own cumulative
+   twist (written once per rung in scene.js), and --cam-ry + --ins-ry is the
+   helix rotation — the scrubbed camera plus whatever offset the inspector has
+   pushed it by. Undoing the sum keeps the type flat to the camera at every
+   scroll position AND through a swing — no per-frame JS, no billboarding.
+   Only shown from lg up, where the composition actually has a gutter for it;
+   below that the keyed index under the copy carries every name in full. */
+.locus__tag {
+  display: none;
+  position: absolute; left: 100%; top: 50%;
+  transform-origin: 0 50%;
+  transform: translateY(-50%)
+             rotateY(calc((var(--cam-ry) + var(--ins-ry) + var(--rot)) * -1deg))
+             translate3d(1vmin, 0, 1.4vmin);
+  white-space: nowrap; pointer-events: none;
+  font-family: var(--font-mono); font-weight: 500;
+  font-size: clamp(9px, 1.05vmin, 13px); letter-spacing: .05em;
+  color: var(--vc);
+  opacity: calc((.4 + var(--flare) * .6) * var(--dim));
+  text-shadow: 0 0 0.9vmin var(--color-void), 0 1px 2px var(--color-void);
+}
+.locus__key { color: var(--color-mute); margin-right: .5em; }
+@media (min-width: 64rem) { .locus__tag { display: block; } }
+
+/* --- selecting one locus ----------------------------------------------
+   The ladder falls back to a trace of itself and the chosen locus stays lit
+   and grows — the same move a darkfield instrument makes when it stops
+   surveying and starts looking at one thing. */
+#assay.is-inspecting .helix { --dim: .17; }
+#assay.is-inspecting .rung.is-sel { --dim: 1; --lift: 1; }
+#assay.is-inspecting .rung.is-sel .rung__bar { height: 4px; top: -1px; }
+#assay.is-inspecting .locus__tag { --dim: .12; }
+#assay.is-inspecting .rung.is-sel .locus__tag {
+  --dim: 1; font-size: clamp(10px, 1.25vmin, 15px);
+}
 
 /* =====================================================================
    SCENE GEOMETRY PLACEMENT — mobile first, then the side-by-side desktop
@@ -765,39 +901,70 @@
    same fault: a bottom-aligned column taller than the box holding it, and on
    a 640px Android it is worse, not better.
 
-   So below 768 these two scenes flow instead of pinning: the geometry takes a
+   So below 768 these scenes flow instead of pinning: the geometry takes a
    band of its own at the top, the copy runs at its natural length underneath,
    and neither can reach the other. The hero keeps its pin (its copy measures
    593px and fits), and the workflow lane is horizontal and already works.
+
+   The assay carries the same treatment all the way to 1024, not 768: it now
+   has to hold the variant index as well as the pipeline, and the side-by-side
+   composition only has a gutter wide enough for the index from lg up. Between
+   768 and 1024 the ladder takes the band and the index runs two-up under the
+   copy, which is a better tablet page than a pinned column that overflows.
    ---------------------------------------------------------------------- */
 @media (max-width: 47.99rem) {
-  #specimen, #assay { height: auto !important; }
-  #specimen .stage, #assay .stage {
-    position: static; height: auto; overflow: hidden;
-  }
+  #specimen { height: auto !important; }
+  #specimen .stage { position: static; height: auto; overflow: hidden; }
   /* the geometry gets a fixed band — same 42svh the reduced-motion collapse
      already uses, including its 280px floor for short handsets. `clip` rather
      than the `hidden` used there because these scenes are still ANIMATING:
      hidden would flatten the 3D chain into a flat rectangle. */
-  #specimen .world, #assay .world {
+  #specimen .world {
     position: relative; height: 42svh; min-height: 280px; overflow: clip;
   }
-  #specimen .scene-layer, #assay .scene-layer {
-    position: static; padding-bottom: 6svh;
-  }
-  #specimen .scene-layer > div, #assay .scene-layer > div {
-    height: auto; display: block;
-  }
+  #specimen .scene-layer { position: static; padding-bottom: 6svh; }
+  #specimen .scene-layer > div { height: auto; display: block; }
   /* the scrim existed to hold type legible ON the artwork; nothing is behind
      the copy now, so it goes, and with it the padding that made room for it */
-  #specimen .scene-copy, #assay .scene-copy {
+  #specimen .scene-copy {
     background: none; width: 100%;
     padding-top: 2.25rem; padding-bottom: 0;
   }
-  #specimen .world .layer, #assay .world .layer { pointer-events: none; }
+  #specimen .world .layer { pointer-events: none; }
   /* the narrow values put the geometry in the upper third of a FULL viewport;
      inside a 42svh band that reads as "stuck to the top", so it re-centres */
   #specimen .dbs { --dbs-y: 47%; }
+}
+
+/* the same treatment for the assay, held all the way up to lg */
+@media (max-width: 63.99rem) {
+  #assay { height: auto !important; }
+  #assay .stage { position: static; height: auto; overflow: hidden; }
+  #assay .world {
+    position: relative; height: 42svh; min-height: 280px; overflow: clip;
+  }
+  #assay .scene-layer { position: static; padding-bottom: 6svh; }
+  /* `.scene-frame`, not `> div`: the scene-layer's OTHER child is the index
+     panel, and a bare child selector beats `hidden` on specificity — which
+     un-hid the gutter panel on top of the flowed one */
+  #assay .scene-layer > .scene-frame {
+    height: auto; display: block; padding-top: 0;
+  }
+  /* Flowed, the column is as wide as the window, and at 1022px that is a 115ch
+     measure — unreadable. Capped at 36rem the prose keeps a ~70ch measure AND
+     the index still gets two ~270px columns inside the same box, so one number
+     serves both. It is inert on a phone, where 36rem is wider than the screen. */
+  #assay .scene-copy {
+    background: none; width: 100%; max-width: 36rem;
+    padding-top: 2.25rem; padding-bottom: 0;
+  }
+  /* once there is more window than measure, the column centres rather than
+     hugging the left edge under a full-width band of geometry */
+  @media (min-width: 34rem) { #assay .scene-copy { margin-inline: auto; } }
+  #assay .world .layer { pointer-events: none; }
+  /* the ladder centres in its own band rather than sitting in a gutter */
+  #assay .helix { --helix-x: 50%; }
+  #assay .rung  { width: min(44vw, 34vmin); margin-left: min(-22vw, -17vmin); }
 }
 
 /* The pinned scenes centre their copy in a 100svh stage. On a SHORT window
@@ -809,8 +976,13 @@
    height out of the centring sum. Browsers without `safe` drop the line and
    keep Tailwind's plain `items-center`, which is today's behaviour. */
 @media (min-width: 768px) {
-  #specimen .scene-layer > div,
-  #assay .scene-layer > div {
+  #specimen .scene-layer > div {
+    align-items: safe center;
+    padding-top: var(--nav-h, 4.5rem);
+  }
+}
+@media (min-width: 64rem) {
+  #assay .scene-layer > .scene-frame {
     align-items: safe center;
     padding-top: var(--nav-h, 4.5rem);
   }
@@ -850,12 +1022,20 @@
   .scene-copy { background: none; padding-top: 0; }
   .plate-layer { --plate-x: 64%; --plate-y: 40%; --plate-w: 58vmin; --drop-w: 8.2vmin; }
   .dbs   { --dbs-x: 30%;  --dbs-y: 52%; --dbs-w: min(37vmin, 330px); }
-  /* pulled left of the old 70%: the callout needs a gutter it can never be
-     pushed out of, and the helix scales up ~1.17x as it travels to z:170 */
-  .helix { --helix-x: 64%; }
-  .rung  { width: 30vmin; margin-left: -15vmin; }
 }
-@media (min-width: 1280px) { .helix { --helix-x: 66%; } }
+/* The ladder only moves off centre where the side-by-side composition exists —
+   lg and up. Pulled well left of the old 64%: the right gutter now holds the
+   whole variant index rather than a two-line callout, the gene tags stand a
+   further ~1vmin outboard of each rung, and the ladder scales up ~1.17x as it
+   travels to z:170. Measured at 1024x768 the copy column ends at 399px and the
+   ladder's left extreme lands at 477px; at 1440x900 the index panel starts at
+   ~1162px and the outermost tag ends at ~1030px. */
+@media (min-width: 64rem) {
+  .helix { --helix-x: 58%; }
+  .rung  { width: 26vmin; margin-left: -13vmin; }
+}
+@media (min-width: 1280px) { .helix { --helix-x: 59%; } }
+@media (min-width: 1536px) { .helix { --helix-x: 60%; } }
 
 /* =====================================================================
    ILLUMINATION — the page lightens as you descend
@@ -1403,28 +1583,150 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   .pillar__items { grid-template-columns: repeat(2, 1fr); gap: .7rem 2.5rem; }
 }
 
-/* --- the variant callout ---------------------------------------------
-   It was pinned at left:76%, which sits INSIDE the helix: the rungs are
-   30vmin wide about --helix-x, and the scene travels to z:170px, which
-   perspective-scales them a further ~1.17x. The label was printing over
-   the base pairs it was supposed to be annotating.
+/* --- the variant index -------------------------------------------------
+   The keyed legend to the ladder: one numbered row per locus, and the number
+   is printed on the tag in the 3D scene too, so the figure and its key are
+   readable together rather than side by side and unrelated.
 
-   It is now anchored to the right margin with a reserved gutter, and given
-   a leader rule so it reads as an annotation pointing AT the variant rather
-   than as a caption that happens to be nearby.
+   What --flare animates here is deliberately NOT the text. Row copy sits at
+   full opacity at every scroll position — it is content, and a legend you
+   have to scroll to before you can read it is a legend that failed. The
+   scrub lights the MARK, the number and the rule instead, so a locus
+   arriving reads as an instrument picking it up.
    -------------------------------------------------------------------- */
-#variantCallout {
-  right: clamp(1.25rem, 3.5vw, 3rem);
+.vidx {
+  right: clamp(1.25rem, 3vw, 3rem);
   left: auto;
-  top: 44%;                    /* level with the flared variant rung */
-  width: min(21ch, 26vw);
-  padding-left: 1rem;
-  border-left: 1px solid oklch(70% 0.16 33 / .45);
+  /* centred in the room BELOW the fixed bar, not in the raw viewport — at
+     1280x700 a viewport-centred panel puts its own heading under the nav,
+     the same fault the copy columns were already corrected for */
+  top: calc(50% + var(--nav-h, 4.5rem) / 2);
+  transform: translateY(-50%);
+  width: min(27ch, 24vw);
+  /* a backstop, not a layout: with the note dropped while inspecting the panel
+     fits every frame measured down to 1024x640, and this only catches a longer
+     locus list or a bigger text-size preference */
+  max-height: calc(100svh - var(--nav-h, 4.5rem) - 2rem);
+  overflow-y: auto;
 }
-#variantCallout::before {
-  content: ""; position: absolute; left: -3.25rem; top: .72rem;
-  width: 3.25rem; height: 1px;
-  background: linear-gradient(90deg, transparent, oklch(70% 0.16 33 / .55));
+/* the note is the general gloss on the whole ladder. The moment a visitor is
+   looking at ONE locus it is the least useful line on the panel, and the row
+   that just opened needs its room. */
+#assay.is-inspecting .vidx__note { display: none; }
+.vidx__hint {
+  color: var(--color-mute); font-size: .6875rem; letter-spacing: .01em;
+  margin: .35rem 0 .75rem;
+}
+/* pulled out by the row's own inset so the type still lines up with the
+   eyebrow above it, while the hover fill and the rules run wider */
+.vidx__list { display: grid; margin-inline: -.5rem; }
+.vidx__item { border-top: 1px solid var(--color-line); }
+.vidx__item:first-child { border-top: 0; }
+
+/* The row is a real <button>: same state for pointer, keyboard and screen
+   reader, and `aria-expanded` says what clicking it will do. It has to be
+   reset out of the UA button styles first — the type here is the page's, not
+   the platform's. */
+.vidx__row {
+  appearance: none; -webkit-appearance: none;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  width: 100%;
+  display: grid; grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: start; gap: .5rem;
+  padding: .4rem .5rem .45rem;
+  border: 0;
+  background: oklch(17% 0.014 250 / calc(var(--flare) * .55));
+  transition: background-color .2s ease;
+}
+.vidx__row:hover,
+.vidx__item.is-sel > .vidx__row { background: oklch(21% 0.016 250 / .85); }
+.vidx__row:focus-visible {
+  outline: 2px solid var(--vc); outline-offset: -2px;
+}
+/* the affordance, at rest almost nothing: a chevron that turns when the row
+   opens. It is the only thing in the row that is decoration. */
+.vidx__chev {
+  width: .5rem; height: .5rem; margin-top: .3rem; align-self: start;
+  border-right: 1px solid var(--color-mute); border-bottom: 1px solid var(--color-mute);
+  transform: rotate(-45deg); opacity: .5;
+  transition: transform .28s ease, opacity .2s ease, border-color .2s ease;
+}
+.vidx__row:hover .vidx__chev { opacity: 1; }
+.vidx__item.is-open .vidx__chev {
+  transform: rotate(45deg) translate(-1px, -1px);
+  border-color: var(--vc); opacity: 1;
+}
+
+/* what the change actually is — the payoff for selecting a locus */
+.vidx__detail { overflow: hidden; }
+.vidx__detail-in { padding: .1rem .5rem .7rem .85rem; margin: 0 0 0 1rem;
+                   border-left: 1px solid var(--vc); }
+.vidx__what {
+  font-family: var(--font-sans); font-size: .78125rem; line-height: 1.5;
+  color: var(--color-mute); max-width: 40ch;
+}
+.vidx__link {
+  display: inline-flex; align-items: baseline; gap: .5em; margin-top: .55rem;
+  font-size: .625rem;
+  color: var(--vc); text-decoration: none;
+  border-bottom: 1px solid transparent; padding-bottom: 1px;
+  transition: border-color .2s ease;
+}
+.vidx__link:hover { border-bottom-color: currentColor; }
+.vidx__key {
+  color: var(--color-mute); margin-right: .6em;
+  opacity: calc(.55 + var(--flare) * .45);
+}
+.vidx__mark {
+  width: .5rem; height: .5rem; margin-top: .3rem; border-radius: 50%;
+  background: var(--vc);
+  opacity: calc(.42 + var(--flare) * .58);
+  box-shadow: 0 0 calc(var(--flare) * .6rem) var(--vcs);
+}
+/* the mark repeats the ladder's own shape language, so the legend can be read
+   back onto the geometry without relying on hue */
+.vidx__item[data-kind="del"] .vidx__mark { background: none; border: 1px dashed var(--vc); }
+.vidx__item[data-kind="inv"] .vidx__mark { border-radius: 1px; }
+.vidx__item[data-kind="dup"] .vidx__mark {
+  box-shadow: .3rem .3rem 0 -.055rem var(--vc), 0 0 calc(var(--flare) * .6rem) var(--vcs);
+}
+.vidx__gene  { display: block; color: var(--vc); font-size: .71875rem; line-height: 1.3; }
+.vidx__cond  { display: block; color: var(--color-chalk); font-family: var(--font-sans);
+               font-size: .78125rem; line-height: 1.25; margin-top: .1rem;
+               text-wrap: balance; }
+.vidx__class { display: block; font-family: var(--font-cond); font-weight: 500;
+               font-size: .59375rem; letter-spacing: var(--tracking-hud);
+               text-transform: uppercase; color: var(--color-mute); margin-top: .18rem; }
+.vidx__note  { margin-top: .9rem; }
+
+/* A short laptop has no room for the closing note on top of seven rows and a
+   fixed bar; the rows are the content, the note is the gloss, so the note is
+   what goes. It is still read in full below lg, where the index flows. */
+@media (min-width: 64rem) and (max-height: 46rem) {
+  .vidx__note  { display: none; }
+  .vidx__class { display: none; }
+  .vidx__row   { padding-top: .3rem; padding-bottom: .35rem; }
+  /* the copy column has the same problem the hero already solves this way:
+     the frame is shorter than the rhythm was drawn for, so the rhythm gives.
+     The heading is the bulk of it — 5.6vw is 72px at 1280, which wraps the
+     line to four rows — so it gets the hero's treatment too: bounded by the
+     SHORT edge as well as the long one, so it can never eat the column. */
+  #assay h2 { font-size: clamp(2rem, min(4.4vw, 9svh), 4.75rem); }
+  #assayStack li { padding-block: .5rem; }
+  #assay .scene-copy > p[data-ll] { margin-top: 1rem; }
+  #assay .scene-copy > ol { margin-top: 1.25rem; }
+}
+
+/* below lg the index runs under the copy instead, and gets to spread out */
+#variantIndexFlow .vidx__list { grid-template-columns: minmax(0, 1fr); }
+@media (min-width: 34rem) {
+  #variantIndexFlow .vidx__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 2rem;
+  }
+  /* the top rule has to come back once rows sit two-up, or the second column
+     loses its head rule and the grid stops reading as a table */
+  #variantIndexFlow .vidx__item:first-child { border-top: 1px solid var(--color-line); }
 }
 
 /* --- impact, given testimonial weight ---------------------------------
@@ -1740,10 +2042,22 @@ body.no-motion .plate-layer { --plate-x: 50%; --plate-y: 62%;
    the collapsed stage, which is only 42svh tall */
 body.no-motion              { --plate-tilt: 46; --plate-spin: -4;
                               --ignite: 1; --fall: 0.5; }
-body.no-motion #variantCallout { position: relative; left: auto; top: auto;
-                              right: auto; width: auto; max-width: 34ch;
-                              opacity: 1 !important; margin-top: 1.5rem; }
-body.no-motion #variantCallout::before { display: none; }
+/* Every locus is already lit — nothing about the ladder is withheld behind a
+   scrub — and the index drops out of the gutter and back into the flow of the
+   copy, where it reads as the list of disorders it actually is. IDs beat the
+   `lg:hidden` / `hidden lg:block` utilities on specificity, so neither of
+   these needs !important. */
+body.no-motion .rung,
+body.no-motion .vidx__item   { --flare: 1; }
+/* selecting a locus still dims the ladder to it — that is the only thing left
+   saying which one you picked — but it does so as a cut, not a fade */
+body.no-motion .rung,
+body.no-motion .locus__tag  { transition: none; }
+body.no-motion #variantIndex     { display: none; }
+body.no-motion #variantIndexFlow { display: block; }
+/* with no gutter composition to hold, the column takes an article measure and
+   gives the flowed index room for its two columns */
+body.no-motion #assay .scene-copy { width: 100%; max-width: 44rem; }
 /* the two new sections need no static fallback of their own — both are plain
    flow layout — but the child tiles must not sit at opacity 0 if the class
    that reveals them is never applied */
