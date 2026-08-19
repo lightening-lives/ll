@@ -121,6 +121,12 @@ Everything printed on the card is now read off the photographs in `ref_images/`.
   the coated stock around it, the guide ring is a proper SVG dashed circle rather than a
   CSS border, and the dried spot is flat and lopsided with a darker chromatographic rim —
   it was a glossy sphere, which is not what a dried stain looks like.
+- **The spot is bright red, and that is clinical, not decorative.** It was drawn at chroma
+  0.054–0.064, which is mud, not blood — and a brown spot is what a *degraded or unusable
+  sample* looks like, so the card was quietly telling a lab director the specimen had
+  failed. It now runs 0.165–0.205 at hue 26–28. The rim stays deeper than the centre, so
+  the chromatographic edge survives the correction, but nothing on the card reads brown.
+  Confirmed with the client: the spot on a real card does not change colour.
 - **The regulatory row is on the back**, where it is on the real card: REF, LOT, expiry,
   CE, IVD and the do-not-reuse mark, as ISO 15223-1 symbols.
 
@@ -328,16 +334,29 @@ capped throw. `touch-action: none` on the grab surface is the contract — a dra
 on the strand turns it instead of scrolling the page — and the surface covers the strand's
 column *only*, so the copy stays selectable and the rest of the section scrolls normally.
 
-**Scroll now does almost nothing at all.** There is no scrub on this scene — not a short
-one, none. A single entrance fires once when the section comes into view (a short dolly and
-settle, `once: true`), and after that the camera never moves on its own again. Scrolling
-through the section leaves `--cam-*` byte-identical at both ends; verified. Every degree of
-rotation is the visitor's, through `--ins-ry`.
+**Scroll does one short thing, and that is the whole effect.** This scene's history is a
+record of how much scroll one idea is worth: three screens of pinned scrub for a rotating
+helix, then 2.1 for seven loci igniting in turn, then 1.5, then a single screen with *no*
+scrub at all — and that last step went one too far. Stripped of motion entirely, the strand
+read as a diagram someone had left on the page rather than an object worth reaching for.
 
-The resting pose is deliberately not square-on — 20° of yaw, −3° of pitch — because a few
-degrees are what make it read as an object with a far side worth turning to, rather than a
-diagram that happens to be lit. Reduced motion is placed straight into that same pose with
-no arrival, which is the whole point of no-motion: same object, same angle, no journey.
+So the scrub is back at **0.4 of a screen** (378px measured at 1920×946): a 46° turn, 9° of
+pitch, a 260px dolly forward and a 65px rise. Enough that the strand is visibly moving as
+you arrive, nowhere near enough to be a performance you sit through. It ends in the pose the
+hand then takes over from.
+
+Rotation composes rather than conflicts: scroll writes `--cam-ry`, the hand writes
+`--ins-ry`, CSS adds them. A visitor who has turned the strand and then scrolls keeps their
+offset — they are moving the camera, not being overruled by it.
+
+**Reduced motion keeps the pose, and `.helix` is deliberately exempt from the
+`transform: none` reset the other scenes get.** That reset exists because the hero plate and
+the specimen card have their transforms written frame by frame, so nulling them is the only
+way to stop the motion. The strand's transform is no longer like that — it is a *static*
+pose composed in CSS from `--cam-*` (set once by scene.js) and `--ins-*`. Nulling it does
+not remove an animation, it removes the camera, flattening the strand to a face-on diagram
+for exactly the readers who can least afford a less legible drawing. Reduced motion means no
+motion, not no perspective. The card and the hero are untouched by this.
 
 **The gutter has three states**, not a permanent list: a hint at rest, the readout for
 whatever you are pointing at, and the full index if you ask for it. Nothing is captioned
@@ -365,16 +384,15 @@ every scroll position *and* through a swing.
 ## Scroll budget
 
 Pinned scenes cost the visitor time, so each one has to earn its runway. Currently
-hero 1.7 screens, specimen 1.9, workflow 2.4 — about 6 screens of pinned scrolling, down
-from 11. **The assay no longer appears in this budget at all.** It was the worst offender
-in the catalogue at 3 full screens for one rotating helix, then 2.1 for seven loci igniting
-in turn, then 1.5 for a dolly-in. It is now exactly one screen with no scrub, so it has no
-pinned runway to account for.
+hero 1.7 screens, specimen 1.9, assay 1.4, workflow 2.4 — about 7.4 screens of pinned
+scrolling, down from 11. The assay was the worst offender in the catalogue at 3 full screens
+for one rotating helix, then 2.1 for seven loci igniting in turn. It now costs **0.4 of a
+screen of runway**, less than a seventh of what it started with.
 
 That is the clearest argument on this page for interaction over animation. The sequence the
 scene used to spend two screens *playing* is something the visitor now performs themselves,
-in whatever order they like, for as long as they like — and it costs a third of the scroll
-it used to. Below `lg` it flows, and costs nothing.
+in whatever order they like, for as long as they like — and the scroll that remains is only
+what it takes to bring the object into the room. Below `lg` it flows, and costs nothing.
 
 ## Technical position — real DOM in real 3D, no WebGL
 All depth is CSS `transform-style: preserve-3d` with a scroll-driven camera, not three.js.

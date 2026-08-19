@@ -1224,12 +1224,13 @@
     // body.no-motion is already set at the top; CSS holds --lumen-level at 0.45
     $('#runCounter').textContent = C.validation.runValue;
     scaleRead.textContent = '10⁰ m';
-    // The entrance never runs here, so the strand is placed straight into its
-    // resting pose rather than left at the --cam-* defaults of zero. Same
-    // object, same angle, no arrival — which is the whole point of no-motion.
-    helix.style.setProperty('--cam-ry', '20');
+    // The scrub never runs here, so the strand is placed straight into the pose
+    // that scrub ENDS on rather than left at the --cam-* defaults of zero. Same
+    // object, same angle, no journey — which is the whole point of no-motion.
+    helix.style.setProperty('--cam-ry', '36');
     helix.style.setProperty('--cam-rx', '-3');
-    helix.style.setProperty('--cam-z',  '90');
+    helix.style.setProperty('--cam-z',  '120');
+    helix.style.setProperty('--cam-y',  '-25');
     return;
   }
 
@@ -1309,35 +1310,34 @@
   // .scene-copy now, so it simply reads at 1, which is what the reduced-motion
   // path has always shown. The card still turns to face you underneath it.
 
-  /* ---- 3 · the ladder arrives once, and then it is simply there.
+  /* ---- 3 · a short turn on the way in, and then it is yours.
 
-     This scene has now given up its scroll budget entirely. It began at three
-     screens of pinned scrub for one rotating helix, went to 2.1 for seven loci
-     igniting in turn, then 1.5 for a dolly-in — and it is now ONE screen, with
-     no scrub at all.
+     The history of this scene is a story about how much scroll one idea is
+     worth. It began at three screens of pinned scrub for one rotating helix,
+     went to 2.1 for seven loci igniting in turn, then 1.5, then to a single
+     screen with no scrub at all — and that last step went too far. Stripped of
+     motion entirely the strand read as a diagram someone had left on the page,
+     not as an object worth reaching for.
 
-     What is left is a single entrance that fires once when the section comes
-     into view: a short dolly and settle, not tied to scroll position, so it
-     cannot be scrubbed back and forth and cannot be half-played. After that
-     the camera never moves again on its own. Every degree of rotation from
-     that point is the visitor's, through --ins-ry.
+     So the scrub is back, but it is SHORT and it is the whole effect: 0.4 of a
+     screen of runway, a 46° turn, and a gentle dolly forward. Enough that the
+     strand is visibly moving as you arrive, nowhere near enough to be a
+     performance you have to sit through. It ends in the same resting pose the
+     static version used, which is where the hand takes over.
 
-     The resting pose is deliberately NOT square-on: a few degrees of yaw and a
-     little negative pitch are what make it read as an object with a far side
-     worth turning to, rather than as a diagram that happens to be lit. */
-  const REST = { ry: 20, rx: -3, z: 90, y: 0 };
+     Rotation composes rather than conflicts: scroll writes --cam-ry, the hand
+     writes --ins-ry, CSS adds them. A visitor who has turned the strand and
+     then scrolls keeps their offset — they are moving the camera, not being
+     overruled by it. */
+  const tl = gsap.timeline({ scrollTrigger: scrub('#assay') });
+  tl.fromTo('#helix',
+    { '--cam-ry': -10, '--cam-rx': 6, '--cam-z': -140, '--cam-y': 40 },
+    { '--cam-ry': 36, '--cam-rx': -3, '--cam-z': 120, '--cam-y': -25,
+      ease: 'none', duration: 1, onUpdate: queuePlace }, 0);
 
-  gsap.fromTo('#helix',
-    { '--cam-ry': REST.ry - 22, '--cam-rx': REST.rx + 5,
-      '--cam-z': REST.z - 210, '--cam-y': REST.y + 26, opacity: 0 },
-    { '--cam-ry': REST.ry, '--cam-rx': REST.rx, '--cam-z': REST.z, '--cam-y': REST.y,
-      opacity: 1, duration: REDUCED ? 0 : 1.15, ease: 'power3.out',
-      onUpdate: queuePlace, onComplete: queuePlace,
-      scrollTrigger: { trigger: '#assay', start: 'top 72%', once: true } });
-
-  // The markers are parked on the strand's projected axis. Nothing scroll-driven
-  // moves the strand any more, but the section can still be scrolled while a
-  // drag's momentum is settling, so a cheap re-park on scroll stays worth it.
+  // The markers are parked on the strand's projected axis, so they follow it
+  // through the turn. This second trigger covers the rest: arriving in view,
+  // and any drag momentum still settling after the scrub has run out.
   ScrollTrigger.create({
     trigger: '#assay', start: 'top bottom', end: 'bottom top',
     onUpdate: queuePlace,

@@ -651,13 +651,20 @@
   transform: translate(-50%, -50%) rotate(-7deg);
   /* deliberately lopsided — a blood spot is not a disc */
   border-radius: 63% 37% 52% 48% / 43% 57% 43% 57%;
+  /* BRIGHT RED, and clinically that is not a style choice. A brown spot is what
+     a degraded or unusable sample looks like, so drawing the kit's spot brown
+     told a lab director the specimen had failed. The old values sat at chroma
+     0.054–0.064, which is why: that is mud, not blood. These run 0.165–0.205 at
+     hue 26–28 — unmistakably red — and the rim is still DEEPER than the centre,
+     so the chromatographic edge a real dried spot has survives the correction.
+     Confirmed with the client: the spot on the card does not change colour. */
   background:
     radial-gradient(ellipse 66% 62% at 54% 44%,
-      oklch(43% 0.062 33) 0%,  oklch(42% 0.064 32) 55%,
-      oklch(38% 0.061 31) 78%, oklch(34% 0.054 29) 100%);
+      oklch(57% 0.205 28) 0%,  oklch(53% 0.205 27) 55%,
+      oklch(48% 0.192 26) 78%, oklch(44% 0.178 26) 100%);
   box-shadow:
-    inset 0 0 0 1.5px oklch(30% 0.050 27 / .5),     /* the dried rim */
-    0 0 .3vmin oklch(40% 0.05 30 / .3);             /* wick into the fibre */
+    inset 0 0 0 1.5px oklch(40% 0.165 25 / .5),     /* the dried rim */
+    0 0 .3vmin oklch(52% 0.185 28 / .32);           /* wick into the fibre */
 }
 /* the barcode. scene.js writes a REAL Code 128-B symbol in here as SVG —
    the old repeating-gradient gave every bar the same width, which is the one
@@ -2132,8 +2139,15 @@ body.no-motion .stage       { position: static; height: auto; overflow: visible;
 body.no-motion .world       { position: relative; height: 42svh; min-height: 280px;
                               overflow: hidden; }
 body.no-motion .world,
-body.no-motion .helix,
 body.no-motion .dbs         { transform: none !important; }
+/* .helix is NOT in that list any more, and the distinction is the point. Its
+   transform used to be written frame by frame by the scrub, so nulling it was
+   the only way to stop the motion. It is now a STATIC pose composed in CSS from
+   --cam-* (set once by scene.js) and --ins-* (whatever the visitor has turned
+   it to). Nulling it does not remove an animation, it removes the camera —
+   flattening the strand to a face-on diagram for exactly the readers who can
+   least afford a less legible drawing. Reduced motion means no motion, not no
+   perspective. */
 body.no-motion .dbs         { transform: translate(-50%, -50%) !important;
                               left: 50%; top: 50%; margin: 0; }
 body.no-motion .scene-layer { position: relative; inset: auto;
