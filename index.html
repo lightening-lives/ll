@@ -45,8 +45,8 @@
        Every audience has at least three entries here. The set no longer steps
        down at breakpoints — these same five hold from 768px up, and below that
        they become the sheet the menu button opens. Sections that lost their
-       slot (the inheritance explainer, capabilities, reach, collaborators, the
-       two scroll scenes) are indexed in full in the footer. -->
+       slot (the inheritance explainer, capabilities, collaborators, the two
+       scroll scenes) are indexed in full in the footer. -->
   <div class="nav__links" id="navLinks">
     <a href="#stories"     class="hud nav__link no-underline">Impact</a>
     <a href="#menu"        class="hud nav__link no-underline">Tests</a>
@@ -99,7 +99,7 @@
           <span class="block" data-ll="hero.line2"></span>
           <span class="block italic" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
         </h1>
-        <p class="mt-7 max-w-[44ch] text-mute hero-deck" data-slot="SLOT-03" data-ll="hero.standfirst"></p>
+        <p class="mt-7 max-w-[44ch] text-mute hero-deck" data-ll="hero.standfirst"></p>
         <div class="mt-8 flex flex-wrap items-center gap-3" id="heroCta">
           <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
           <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors">See our common tests</a>
@@ -157,8 +157,8 @@
         <div class="scene-copy w-full md:w-[46%] md:ml-auto pb-[7svh] md:pb-0 px-5 md:px-0">
           <p class="eyebrow text-probe mb-4"><span data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="specimen.head"></h2>
-          <p class="prose mt-5 text-mute text-base" data-slot="SLOT-06" data-ll="specimen.body"></p>
-          <dl class="mt-7 grid gap-px bg-line border border-line" data-slot="SLOT-07" id="specimenPoints"></dl>
+          <p class="prose mt-5 text-mute text-base" data-ll="specimen.body"></p>
+          <dl class="mt-7 grid gap-px bg-line border border-line" id="specimenPoints"></dl>
         </div>
       </div>
     </div>
@@ -180,11 +180,11 @@
         <div class="scene-copy w-full lg:w-[38%] pb-[7svh] lg:pb-0 px-5 md:px-0">
           <p class="eyebrow text-probe mb-4"><span data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
-          <p class="prose mt-5 text-mute text-base" data-slot="SLOT-08" data-ll="assay.body"></p>
-          <ol class="mt-7 border-t border-line" data-slot="SLOT-09" id="assayStack"></ol>
+          <p class="prose mt-5 text-mute text-base" data-ll="assay.body"></p>
+          <ol class="mt-7 border-t border-line" id="assayStack"></ol>
           <!-- below lg the scene flows, so the index runs at its natural length
                under the copy. At lg and up it moves to the gutter instead. -->
-          <div class="lg:hidden mt-8" data-slot="SLOT-08b" id="variantIndexFlow"></div>
+          <div class="lg:hidden mt-8" id="variantIndexFlow"></div>
         </div>
       </div>
       <!-- lg and up the ladder stops being a picture and becomes an object you
@@ -196,7 +196,7 @@
       <div id="helixDrag" class="hidden lg:block absolute" aria-hidden="true"></div>
       <div id="locusLead" class="hidden lg:block absolute" aria-hidden="true"></div>
       <div id="locusMarks" class="hidden lg:block absolute inset-0"></div>
-      <div id="variantIndex" class="vidx hidden lg:block absolute" data-slot="SLOT-08b"></div>
+      <div id="variantIndex" class="vidx hidden lg:block absolute"></div>
     </div>
   </div>
 </section>
@@ -249,7 +249,6 @@
         <p class="eyebrow text-lumen mb-4" data-ll="stories.kicker"></p>
         <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="stories.head"></h2>
       </div>
-      <p class="meta text-mute max-w-[34ch]" data-slot="SLOT-18" data-ll="stories.note"></p>
     </header>
     <div class="mt-14 grid gap-5 md:grid-cols-3" id="storyGrid"></div>
   </div>
@@ -262,14 +261,13 @@
       <div>
         <p class="eyebrow text-lumen mb-4" data-ll="menu.kicker"></p>
         <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="menu.head"></h2>
-        <!-- Six cards are a selection, not the catalogue. Without this line the
+        <!-- The cards are a selection, not the catalogue. Without this line the
              header reads as a complete offer and the lab looks smaller than it is. -->
         <p class="mt-5 max-w-[46ch] text-mute" data-ll="menu.deck"></p>
       </div>
-      <p class="build-note meta text-mute max-w-[34ch]" data-slot="SLOT-11" data-ll="menu.note"></p>
     </header>
     <!-- The two umbrella families, glossed once. Same `gap-px bg-line` inset-rule
-         grid the specimen points and the reach figures use, so it reads as part
+         grid the specimen points and the cost claim use, so it reads as part
          of the instrument register rather than as a new component. -->
     <dl class="mt-10 grid gap-px bg-line border border-line sm:grid-cols-3" id="menuFamilies"></dl>
     <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3" style="perspective:1400px" id="assayGrid"></div>
@@ -287,7 +285,7 @@
         <div class="mt-10 rule-t pt-6">
           <p class="datakey text-mute" data-ll="validation.runNote"></p>
           <p class="figure-num text-lumen text-[clamp(2.5rem,6vw,4.5rem)] leading-none mt-2"
-             data-slot="SLOT-14"><span id="runCounter">0</span></p>
+            ><span id="runCounter">0</span></p>
           <p class="datakey text-mute mt-1.5" data-ll="validation.runUnit"></p>
         </div>
       </div>
@@ -332,8 +330,7 @@
       </div>
       <div>
         <p class="prose text-mute text-base max-w-[52ch]" data-ll="access.body"></p>
-        <dl class="mt-8 grid gap-px bg-line border border-line" data-slot="SLOT-27" id="accessPoints"></dl>
-        <p class="build-note meta text-mute mt-4" data-slot="SLOT-27" data-ll="access.note"></p>
+        <dl class="mt-8 grid gap-px bg-line border border-line" id="accessPoints"></dl>
       </div>
     </div>
   </div>
@@ -352,7 +349,8 @@
 <section id="provenance" class="relative z-10 py-[12svh] border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="eyebrow text-lumen mb-4" data-ll="provenance.kicker"></p>
-    <h2 class="display-lg text-chalk max-w-[16ch]" data-ll="provenance.head"></h2>
+    <h2 class="display-lg text-chalk max-w-[26ch]" data-ll="provenance.head"></h2>
+    <p class="mt-5 max-w-[46ch] text-mute" data-ll="provenance.deck"></p>
 
     <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(200px,270px)_1.35fr_1fr] lg:gap-14 items-start">
       <figure class="portrait">
@@ -396,20 +394,6 @@
       <p class="build-note meta text-mute max-w-[34ch]" data-slot="SLOT-21" data-ll="collaborators.note"></p>
     </header>
     <ul class="logo-cloud mt-14" id="collabGrid"></ul>
-  </div>
-</section>
-
-<!-- ================= 12 · REACH ================= -->
-<section id="reach" class="relative z-10 py-[12svh] border-t border-line">
-  <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <p class="eyebrow text-lumen mb-4" data-ll="reach.kicker"></p>
-    <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="reach.head"></h2>
-    <div class="mt-12 grid grid-cols-2 lg:grid-cols-4 gap-px bg-line border border-line"
-         data-slot="SLOT-17" id="reachGrid"></div>
-    <div class="mt-12 border-t border-line pt-7">
-      <p class="meta text-mute mb-5">States named in our own impact records</p>
-      <ul class="flex flex-wrap gap-2" id="stateList"></ul>
-    </div>
   </div>
 </section>
 
@@ -482,7 +466,6 @@
           <li><a href="#stories">Impact</a></li>
           <li><a href="#provenance">Our team</a></li>
           <li><a href="#collaborators">Collaborations</a></li>
-          <li><a href="#reach">Reach</a></li>
           <li><a href="#contact">Request a kit</a></li>
         </ul>
       </div>

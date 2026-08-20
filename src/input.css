@@ -1876,6 +1876,8 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
 }
 
 /* what the change actually is — the payoff for selecting a locus */
+/* `.vidx__link` — the per-variant "LL-… See the test" link — was removed from
+   the markup by the client on 2026-08-20, so its rule is gone with it. */
 .vidx__detail { overflow: hidden; }
 .vidx__detail-in { padding: .1rem .5rem .7rem .85rem; margin: 0 0 0 1rem;
                    border-left: 1px solid var(--vc); }
@@ -1883,15 +1885,6 @@ li:hover > .face, .face:hover { filter: none; border-color: oklch(58% 0.09 90); 
   font-family: var(--font-sans); font-size: .78125rem; line-height: 1.5;
   color: var(--color-mute); max-width: 40ch;
 }
-.vidx__link {
-  display: inline-flex; align-items: baseline; gap: .5em; margin-top: .55rem;
-  font-family: var(--font-cond); font-size: .8125rem; font-weight: 600;
-  letter-spacing: .04em;
-  color: var(--vc); text-decoration: none;
-  border-bottom: 1px solid transparent; padding-bottom: 1px;
-  transition: border-color .2s ease;
-}
-.vidx__link:hover { border-bottom-color: currentColor; }
 .vidx__key {
   color: var(--color-mute); margin-right: .6em;
   opacity: calc(.55 + var(--flare) * .45);

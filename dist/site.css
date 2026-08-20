@@ -380,6 +380,9 @@
   .max-w-\[19ch\] {
     max-width: 19ch;
   }
+  .max-w-\[26ch\] {
+    max-width: 26ch;
+  }
   .max-w-\[34ch\] {
     max-width: 34ch;
   }
@@ -448,6 +451,9 @@
   }
   .justify-center {
     justify-content: center;
+  }
+  .justify-end {
+    justify-content: flex-end;
   }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
@@ -535,6 +541,9 @@
     @supports (color: color-mix(in lab, red, red)) {
       border-color: color-mix(in oklab, var(--color-probe) 40%, transparent);
     }
+  }
+  .border-transparent {
+    border-color: transparent;
   }
   .bg-bone {
     background-color: var(--color-bone);
@@ -780,9 +789,6 @@
   .text-\[clamp\(2rem\,4\.5vw\,3rem\)\] {
     font-size: clamp(2rem, 4.5vw, 3rem);
   }
-  .text-\[clamp\(2rem\,5vw\,3\.25rem\)\] {
-    font-size: clamp(2rem, 5vw, 3.25rem);
-  }
   .leading-\[1\.1\] {
     --tw-leading: 1.1;
     line-height: 1.1;
@@ -1010,9 +1016,6 @@
     }
     .lg\:grid-cols-2 {
       grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-    .lg\:grid-cols-4 {
-      grid-template-columns: repeat(4, minmax(0, 1fr));
     }
     .lg\:grid-cols-\[1fr_1\.35fr\] {
       grid-template-columns: 1fr 1.35fr;
@@ -2964,24 +2967,6 @@ li:hover > .face, .face:hover {
   line-height: 1.5;
   color: var(--color-mute);
   max-width: 40ch;
-}
-.vidx__link {
-  display: inline-flex;
-  align-items: baseline;
-  gap: .5em;
-  margin-top: .55rem;
-  font-family: var(--font-cond);
-  font-size: .8125rem;
-  font-weight: 600;
-  letter-spacing: .04em;
-  color: var(--vc);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  padding-bottom: 1px;
-  transition: border-color .2s ease;
-}
-.vidx__link:hover {
-  border-bottom-color: currentColor;
 }
 .vidx__key {
   color: var(--color-mute);

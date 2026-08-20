@@ -36,37 +36,20 @@ window.LL_CONTENT = {
 
   /* --- 1 · HERO ----------------------------------------------------- */
   hero: {
-    line1: 'One drop',
-    line2: 'of blood',
-    line3: 'is enough.',
-    // 🟠 SLOT-03 approve the positioning line. Disorders named are ✅ real, and
-    // the list still matches the test menu and the variant ladder exactly — if
-    // one of the three changes, change all three.
-    //
-    // Reframed 2026-08-20 on the client's own words. Two changes:
-    //   1. The two UMBRELLA families lead — haemoglobinopathies and
-    //      musculopathies — with the disorders following as their gloss. A flat
-    //      list of six read as six products; the families read as a discipline,
-    //      and they are the words the company's own team bios already use.
-    //   2. "Built for the people", not "for the tribal and rural communities
-    //      conventional diagnostics never reaches". The old line put a ceiling
-    //      on the audience, and a private lab or a state programme read itself
-    //      out of it. The tribal and rural evidence now lives in Impact and
-    //      Reach, where it is proven rather than claimed.
-    // Affordability is named here for the first time and argued in full in the
-    // `access` block below — no figure, because a published price goes stale
-    // and gets held against you in procurement.
-    //
-    // Re-measured against the line it replaces at 320, 360 and 390 CSS px:
-    // 7 / 7 / 6 lines, identical at all three. The first draft ended
-    // "Affordable at community scale. Built for the people." and cost an extra
-    // line at 320 and 390 — the hero column is the tightest block on the page,
-    // so the shorter close wins. "At community scale" is not lost: the whole
-    // `access` section below is that argument, at length.
+    line1: 'Genetic answers',
+    line2: 'every family',
+    line3: 'can afford.',
+    // ✅ Title and positioning line are the client's own copy, supplied
+    // 2026-08-20. Affordability now leads the headline itself rather than
+    // waiting for the deck. The disorders named here still match the test menu
+    // and the variant ladder — if one of the three changes, change all three.
+    // Note: haemophilia is NOT named in this line although the coagulation
+    // panel is still carded in the menu and drawn in the ladder (locus 04).
     standfirst:
-      'Dried-blood-spot screening for haemoglobinopathies and musculopathies — ' +
-      'sickle cell, thalassaemia, haemophilia, SMA and Duchenne — plus drug ' +
-      'response. Affordable, and built for the people.',
+      'Dried blood spot screening for haemoglobinopathies and musculopathies '
+      + 'including Sickle Cell Anaemia, Thalassaemia, Spinal Muscular Atrophy '
+      + 'and Duchenne Muscular Atrophy along with pharmacogenetics in broad '
+      + 'aspects. Affordable, and built for all the people.',
     ctaPrimary:   { label: 'Contact us', href: '#contact' },
     ctaSecondary: { label: 'See our common tests', href: '#menu' }
   },
@@ -75,16 +58,19 @@ window.LL_CONTENT = {
   specimen: {
     scale: '10⁻³ m',
     kicker: 'The specimen',
-    head: 'A card, a postbox, a result.',
-    // 🟠 SLOT-06 confirm the logistics claims — these are regulatory-adjacent.
-    body: 'Collection is a finger or heel prick onto a single filter-paper spot. ' +
-          'The card dries at ambient temperature and travels by ordinary post. ' +
-          'No phlebotomist, no centrifuge, no cold chain, no courier contract.',
-    points: [                                           // 🟠 SLOT-07 each claim
-      { t: 'No venipuncture', d: 'A finger prick. A trained health worker can collect it.' },
-      { t: 'No cold chain',   d: 'Ambient transport removes the largest rural failure point.' },
-      { t: 'Ordinary post',   d: 'Ships in a paper mailer under exempt-specimen rules.' },
-      { t: 'Barcoded',        d: 'Every card carries its own specimen ID. No names travel.' }
+    head: 'A card that makes the difference!',
+    // ✅ client copy, 2026-08-20.
+    body: 'Collection is a finger or heel prick onto a single spot specialised card. ' +
+          'The card dries for a second at room temperature and travels by ordinary ' +
+          'post to reach us. No phlebotomist, no centrifuge, no cold chain, nothing ' +
+          'sophisticated absolutely!',
+    // ✅ client copy, 2026-08-20. 'Ordinary post' was struck in the same pass —
+    // the claim is still made once, in `body` above, which is where it belongs:
+    // it is a fact about the journey, not a third thing the method removes.
+    points: [
+      { t: 'No venipuncture', d: 'A finger prick. Not a trained health worker, but you… yes, YOU can collect it.' },
+      { t: 'No cold chain',   d: 'Room temperature transport removes the largest rural failure point and the COST ofcourse!' },
+      { t: 'Barcoded',        d: 'Every card carries its own unique specimen ID. No identity revealed, no issues of understanding handwriting, secrecy maintained.' }
     ],
     // ✅ every value below is read off the physical kit in ref_images/.
     // The barcode is a REAL Code 128-B encoding of `barcode` — scene.js encodes
@@ -113,17 +99,16 @@ window.LL_CONTENT = {
     scale: '10⁻⁹ m',
     kicker: 'The assay',
     head: 'We read the variant, not the symptom.',
-    // 🟠 SLOT-08 replace with the real platform description
-    body: 'A single punch from the dried spot is eluted and run against a targeted ' +
-          'panel. The disorders we report are not written the same way, so one run ' +
-          'reads four kinds of change: a base substituted, exons missing, an intron ' +
-          'inverted, a gene carried twice. Every positive is confirmed by a second ' +
-          'method before sign-out.',
-    stack: [                                            // 🟠 SLOT-09 real platform stack
-      { step: '01', t: 'Punch & elute',      d: 'Single disc, single-tube extraction' },
+    // ✅ client copy, 2026-08-20. The orthogonal-confirmation claim was dropped
+    // from both the body and the pipeline in the same pass — the page no longer
+    // states anywhere that positives are re-tested by a second method.
+    body: 'A single punch from the dried blood spot is utilised to run against a ' +
+          'targeted panel. We read four kinds of change: a base substituted, exons ' +
+          'missing, a gene carried twice and many more.',
+    stack: [
+      { step: '01', t: 'Punch & proceed',    d: 'Single disc, single-tube multiplex reaction' },
       { step: '02', t: 'Targeted amplify',   d: 'Closed-tube molecular panel' },
-      { step: '03', t: 'Call & curate',      d: 'Substitution, copy-number and star-allele calls in one set' },
-      { step: '04', t: 'Orthogonal confirm', d: 'Every positive re-tested by a second method' }
+      { step: '03', t: 'Call & curate',      d: 'Substitution, copy-number and star-allele calls in one set' }
     ],
 
     /* --- the loci the helix actually carries -----------------------------
@@ -148,8 +133,8 @@ window.LL_CONTENT = {
           and sits inside the company's confirmed scope — haemoglobinopathies,
           coagulation, neuromuscular and pharmacogenomics. Each `menu` field is
           the card in the menu section that reports it; keep the two in step.
-       🟠 SLOT-08b confirm this is the exact locus set the signed-out panel
-          reports, and swap in the lab's own preferred variant nomenclature.
+       ✅ Reviewed by the client 2026-08-20: locus 05 renamed to the exon 7 and
+          exon 8 deletion, and locus 07 (CYP2D6 ×N) struck from the ladder.
        -------------------------------------------------------------------- */
     loci: [
       { at: 3,  span: 1, kind: 'sub', fam: 'haem',
@@ -173,7 +158,7 @@ window.LL_CONTENT = {
               'haemophilia A, and sequencing alone will not see it.',
         menu: 'LL-COAG-03' },
       { at: 27, span: 2, kind: 'del', fam: 'neuro',
-        gene: 'SMN1',   variant: 'exon 7 deletion', condition: 'Spinal muscular atrophy',
+        gene: 'SMN1',   variant: 'exon 7 and exon 8 deletion', condition: 'Spinal muscular atrophy',
         what: 'Both copies of SMN1 exon 7 absent. About 95% of spinal muscular ' +
               'atrophy is this one deletion.',
         menu: 'LL-SMA-04' },
@@ -181,12 +166,10 @@ window.LL_CONTENT = {
         gene: 'DMD',    variant: 'exon 45–50 del', condition: 'Duchenne muscular dystrophy',
         what: 'Whole exons missing from dystrophin, clustered in one hotspot. ' +
               'Whether the reading frame survives decides the severity.',
-        menu: 'LL-DMD-05' },
-      { at: 39, span: 2, kind: 'dup', fam: 'pgx',
-        gene: 'CYP2D6', variant: '×N duplication', condition: 'Drug response',
-        what: 'Not a disease. Extra copies of the gene clear a drug too fast for a ' +
-              'standard dose to reach the patient.',
-        menu: 'LL-PGX-06' }
+        menu: 'LL-DMD-05' }
+      // The CYP2D6 ×N duplication locus was removed by the client on 2026-08-20.
+      // No locus on the ladder is `kind: 'dup'` or `fam: 'pgx'` any more — the
+      // labels below are kept so either can be restored without touching scene.js.
     ],
     // the second channel: what KIND of change it is, and which family it sits in
     kindLabels: { sub: 'Substitution', del: 'Deletion',
@@ -200,15 +183,15 @@ window.LL_CONTENT = {
       // so the scene says both — and says the right one for the input in use.
       hint: 'Drag to turn the strand · point at a marker to read it',
       hintNarrow: 'Tap a variant to see what the change is',
-      listLabel: 'All seven variants',
+      listLabel: 'All six variants',
       listLabelOpen: 'Hide the list',
       // ✅ the sickle figure is real: HBB c.20A>T is one base of ~3.1 Gb
       note: 'One base out of three billion, a missing exon, an inverted intron, ' +
-            'a gene carried twice. Four classes of change, one dried spot.',
-      // every locus links to the card that reports it, so the figure and the
-      // orderable menu below can never drift apart
-      menuLabel: 'See the test',
-      menuHref: '#menu'
+            'a gene carried twice. Four classes of change, one dried blood spot punch.'
+      // The per-variant "LL-… → See the test" link was removed by the client on
+      // 2026-08-20. The `menu` field on each locus above is retained purely as a
+      // cross-reference: it records which menu card reports that locus, so the
+      // ladder and the menu can still be kept in step by hand.
     }
   },
 
@@ -221,13 +204,16 @@ window.LL_CONTENT = {
   inheritance: {
     scale: '10⁰ m',
     kicker: 'What a carrier result means',
-    head: 'Two carriers who never knew. Four possible children.',
-    body: 'Set both parents and the odds redraw. This is the conversation a genetic ' +
-          'counsellor has with a family — and the reason a test before conception ' +
-          'matters more than a diagnosis after.',
+    head: 'Love brought them together. Genetics changed the odds. Four possible children.',
+    // ✅ client copy, 2026-08-20. It replaced the line that told the reader the
+    // control was interactive ("Set both parents and the odds redraw"), so the
+    // affordance now rests on the two labelled parent selectors alone.
+    body: 'Two silent carriers, looked perfectly healthy until their genes told ' +
+          'another story. They never knew they were carriers—until a child ' +
+          'changed everything.',
     parentLabels: ['Parent 1', 'Parent 2'],
     options: [                                   // ✅ standard AR genotype language
-      { g: 'AA', label: 'Not a carrier' },
+      { g: 'AA', label: 'Normal' },
       { g: 'AS', label: 'Carrier' },
       { g: 'SS', label: 'Affected' }
     ],
@@ -264,7 +250,7 @@ window.LL_CONTENT = {
     // programme reading eight cards as the whole of what we can do and leaving.
     // The deck now leads on the two FAMILIES rather than on the disorders, so
     // the section reads as a discipline with a long menu behind it.
-    deck: 'Two families account for most of what we are asked for. These cards are a selection, not the catalogue — we run a much wider DNA menu, and we build panels to a programme.',
+    deck: 'What you see here is just a glimpse. Our DNA menu goes much further, with customised panels built around the needs of every programme.',
 
     /* --- the two umbrella families, glossed once ------------------------
        ✅ "Haemoglobinopathies" and "musculopathies" are the company's own
@@ -287,51 +273,53 @@ window.LL_CONTENT = {
       { t: 'Coagulation & drug response',
         d: 'Haemophilia and other factor deficiencies, and pharmacogenomic metaboliser status.' }
     ],
-    // ✅ Every DISORDER below is in scope. The first four and the last two are
-    //    named on the company's own site; coagulation and pharmacogenomics were
-    //    confirmed directly by the client (2026-08-19) as work they already do,
-    //    which is why the variant ladder above is allowed to draw them.
-    // 🟠 SLOT-11 the codes, turnaround times, methods and throughput are INVENTED.
-    note: 'Disorders are real. Codes, turnaround and methods are placeholder — replace with the signed-off menu.',
+    // ✅ Codes, sample volumes, turnaround, method and throughput are the
+    //    client's own figures, supplied 2026-08-20:
+    //      · 1 spot for every test except alpha/beta thalassaemia, which needs 3
+    //      · 24 h turnaround throughout, except SMA at 48 h
+    //      · targeted molecular panel is the method for every test
+    //      · 1,200 samples a day of throughput
+    //    The codes are still carried here as stable keys but are NO LONGER shown
+    //    on the cards — removed by the client in the same pass.
+    // 🟠 SLOT-11b confirm the coagulation scope. The card is written for
+    //    haemophilia A and B; if the panel also covers von Willebrand or other
+    //    factor deficiencies, widen the indication rather than the title.
+    // 🟠 SLOT-11c confirm which drug genes the pharmacogenomic panel reports.
     items: [
       { code: 'LL-SCA-01', name: 'Sickle cell anaemia',
         indication: 'Patient diagnosis, carrier and family screening',
-        sample: 'DBS · 1 spot', tat: '48 h', method: 'Targeted molecular panel',
-        throughput: '384 / run', flag: 'Most ordered' },
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: 'Most ordered' },
       { code: 'LL-THAL-02', name: 'Alpha & beta thalassaemia',
         indication: 'Patient diagnosis and carrier screening',
-        sample: 'DBS · 1 spot', tat: '48 h', method: 'HPLC + confirmatory molecular',
-        throughput: '192 / run', flag: '' },
-      // 🟠 SLOT-11b confirm the coagulation scope. The card is written for
-      // haemophilia A and B; if the panel also covers von Willebrand or other
-      // factor deficiencies, widen the indication rather than the title.
+        sample: 'DBS · 3 spots', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
       { code: 'LL-COAG-03', name: 'Haemophilia & coagulation disorders',
         indication: 'Diagnosis in a symptomatic child, and carrier testing for mothers and sisters',
-        sample: 'DBS · 1 spot', tat: '96 h', method: 'Inversion assay + targeted sequencing',
-        throughput: '48 / run', flag: '' },
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
       { code: 'LL-SMA-04', name: 'Spinal muscular atrophy',
         indication: 'Symptomatic child, and carrier testing for at-risk couples',
-        sample: 'DBS · 1 spot', tat: '72 h', method: 'Copy-number molecular assay',
-        throughput: '96 / run', flag: '' },
+        sample: 'DBS · 1 spot', tat: '48 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
       { code: 'LL-DMD-05', name: 'Duchenne muscular dystrophy',
         indication: 'Symptomatic child, and maternal carrier testing',
-        sample: 'DBS · 1 spot', tat: '72 h', method: 'Deletion/duplication analysis',
-        throughput: '96 / run', flag: '' },
-      // 🟠 SLOT-11c confirm which drug genes the panel reports. The ladder draws
-      // CYP2D6 because copy number is the clearest thing to SHOW; the card is
-      // deliberately written to the panel, not to one gene.
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
       { code: 'LL-PGX-06', name: 'Pharmacogenomics',
         indication: 'Metaboliser status before treatment, so the first dose is the right one',
-        sample: 'DBS · 1 spot', tat: '72 h', method: 'Star-allele genotyping + copy number',
-        throughput: '192 / run', flag: '' },
-      { code: 'LL-PNS-07', name: 'Prenatal & newborn screening',
-        indication: 'Preventing recurrence, ensuring timely intervention',
-        sample: 'DBS / CVS / AF', tat: '5 d', method: 'Targeted confirmatory',
-        throughput: '48 / run', flag: '' },
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
+      // Prenatal was struck from this card by the client on 2026-08-20 — newborn
+      // screening only, so the sample is a dried spot like every other test here.
+      { code: 'LL-NBS-07', name: 'Newborn screening',
+        indication: 'Screening at birth, so intervention starts before symptoms do',
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: '' },
       { code: 'LL-CUS-08', name: 'Customised community panels',
         indication: 'Tailored molecular testing for specific community needs',
-        sample: 'DBS · 1 spot', tat: 'On scope', method: 'Built to the programme',
-        throughput: 'By programme', flag: 'Programmes' }
+        sample: 'DBS · 1 spot', tat: '24 h', method: 'Targeted molecular panel',
+        throughput: '1,200 / day', flag: 'Programmes' }
     ],
 
     /* --- the closing card: the menu does not end here --------------------
@@ -362,27 +350,33 @@ window.LL_CONTENT = {
   validation: {
     kicker: 'Analytical performance',
     head: 'Numbers, with their denominators.',
-    // 🟠 SLOT-12 EVERY FIGURE BELOW IS INVENTED.
-    disclaimer: 'Placeholder figures. Replace with validation-study data and cite the study.',
+    // 🟠 SLOT-12 sensitivity, specificity and concordance are STILL INVENTED.
+    // The re-collection rate and the running total below are the client's own
+    // figures, supplied 2026-08-20.
+    disclaimer: 'Sensitivity, specificity and concordance are placeholder figures pending the validation study.',
     stats: [
       { v: '99.4', u: '%', k: 'Sensitivity',        d: 'vs. reference method — validation study in progress' },
       { v: '99.8', u: '%', k: 'Specificity',        d: 'vs. reference method — validation study in progress' },
       { v: '99.6', u: '%', k: 'Concordance',        d: 'Split-sample, two sites' },
-      { v: '0.4',  u: '%', k: 'Re-collection rate', d: 'Inadequate-specimen returns' }
+      { v: '0.2',  u: '%', k: 'Re-collection rate', d: 'Repeat testing on inadequate-specimen returns' }
     ],
+    // ✅ ICMR validated is the one credential the client asked to stand here.
+    // ISO 15189 and EQAS participation were struck on 2026-08-20.
     // 🟠 SLOT-13 — the NABL registration number is NOT yet issued. Do not ship a
     // placeholder one: a malformed M(EL)T number reads as a forged credential to
     // exactly the procurement audience this section is for. Add it here when real.
-    accreditations: ['ICMR registered', 'ISO 15189', 'EQAS participant'],
+    accreditations: ['ICMR validated'],
     runNote: 'Reported to date',
-    runValue: '1,24,860',                               // 🟠 SLOT-14
-    runUnit: 'samples'
+    runValue: '2,00,000',                               // ✅ client figure, 2026-08-20
+    // the total is cumulative and the counter animates up to it, so the unit
+    // line carries the tense: it is not a closed book, it is still being added to
+    runUnit: 'samples and counting…'
   },
 
   /* --- 6 · WORKFLOW ------------------------------------------------- */
   workflow: {
     kicker: 'How you run it',
-    head: 'Five steps, one postbox.',
+    head: '5 steps, one courier!',
     steps: [                                            // 🟠 SLOT-15 confirm steps + timings
       { n: '01', t: 'Request kits',  d: 'Tell us volume and panel. Kits ship free.',       time: 'Day 0' },
       { n: '02', t: 'Collect',       d: 'Finger or heel prick onto the card. Air-dry.',    time: 'Day 1' },
@@ -411,31 +405,26 @@ window.LL_CONTENT = {
   access: {
     scale: '10⁰ m',
     kicker: 'What it costs',
-    head: 'Priced so a programme can afford everyone.',
-    body: 'Cost is a design decision here, not a discount. A dried spot needs no ' +
-          'phlebotomist, no centrifuge, no cold chain and no courier contract — so ' +
-          'the cost of reaching one more village is close to the cost of a stamp.',
-    // 🟠 SLOT-27 confirm all three claims before launch.
-    //   · "Kits ship free"        — consistent with workflow step 01 and contact.body
-    //   · "One price per sample"  — consistent with contact.body and formNote
-    //   · "No cost to the family" — NOT corroborated anywhere in the existing
-    //     material. It is the strongest of the three and the one most likely to
-    //     be quoted back. Confirm it or cut it; do not ship it unverified.
-    points: [
-      { t: 'Kits ship free',
-        d: 'Cards, lancets and mailers at no charge, at any volume.' },
-      { t: 'One price per sample',
-        d: 'Quoted to your volume and panel. No instrument to buy, nothing to install.' },
-      { t: 'No cost to the family',
-        d: 'Programme- and partner-funded screening reaches the patient free.' }
-    ],
-    note: 'Cost claims are placeholder until confirmed — see SLOT-27.'
+    head: 'Priced so a programme can include everyone.',
+    body: 'Cost is a design decision here, not a discount. A dried blood spot ' +
+          'collection needs no phlebotomist, no centrifuge, no cold chain and no ' +
+          'manual job — so the cost of reaching one more village is close to the ' +
+          'cost of a stamp.',
+    // ✅ SLOT-27 resolved 2026-08-20. All three claims the section used to make
+    // were struck by the client — "One price per sample", the unverified "No cost
+    // to the family", and finally "Kits ship free". The section is now the
+    // argument alone, which is the strongest part of it anyway. Free kits are
+    // still promised in workflow step 01, and the per-sample quote still reaches
+    // the reader through `contact.body` and the form note.
+    // Adding a claim back is just pushing an object into this array — the grid
+    // renders itself from it, and disappears when it is empty.
+    points: []
   },
 
   /* --- 7 · CAPABILITIES --------------------------------------------- */
   capabilities: {
     kicker: 'Beyond the assay',
-    head: 'What else we can do for your laboratory.',
+    head: 'What else we can do for you!',
     // ✅ Every pillar and sub-item below is verbatim scope from the company's
     // own Solutions & Services page. Wording tightened, substance unchanged.
     pillars: [
@@ -487,7 +476,9 @@ window.LL_CONTENT = {
   /* --- 7 · PROVENANCE  (replaces the Golden Circle section) ---------- */
   provenance: {
     kicker: 'Who is behind the assay',
-    head: 'Built by the people who built the mission.',
+    // ✅ client copy, 2026-08-20.
+    head: 'Behind every assay is a story, a purpose, and the people who dared to build it.',
+    deck: 'Meet our founders.',
     // ✅ Every credential below is stated on the company's own About page.
     // ✅ the site's own portrait — it shows both founders together
     portrait: 'assets/people/founders.jpg',
@@ -647,8 +638,8 @@ window.LL_CONTENT = {
   stories: {
     kicker: 'Impact',
     head: 'What early detection actually changes.',
-    // 🟠 SLOT-18 — say "published with consent" only once consent is on file.
-    note: 'Four case notes from our own records, de-identified.',
+    // The "Four case notes from our own records, de-identified" line was struck
+    // by the client on 2026-08-20 and the element removed from index.html.
     // ✅ All four narratives are the company's own, from the Impact Stories page.
     //
     // These are NOT quotes. They are case notes the company wrote in the third
@@ -676,46 +667,40 @@ window.LL_CONTENT = {
            'ever knowing the cause. During a second pregnancy, carrier testing showed ' +
            'both parents carried the SMA mutation.' },
 
+      // ✅ rewritten by the client, 2026-08-20
       { place: 'Odisha', cond: 'SCA',
         t: 'Breaking the cycle of silent carriers',
-        pull: 'Testing revealed both were carriers of sickle cell anaemia — breaking ' +
-              'a generational cycle the community thought was fate.',
-        d: 'A young couple came to us after seeing breathing difficulty, muscle ' +
-           'weakness, severe anaemia and repeated infections in two children in ' +
-           'their extended family.' },
+        pull: 'Because sometimes, breaking a generational cycle begins with ' +
+              'knowing what you carry.',
+        d: 'A young couple came to us after watching children in their extended ' +
+           'family struggle with severe anaemia and repeated health complications. ' +
+           'For years, the family had accepted it as fate, never knowing that a ' +
+           'hidden genetic condition could be silently passed from one generation ' +
+           'to the next. Testing revealed that both were carriers of sickle cell ' +
+           'anaemia, despite appearing completely healthy. For the first time, fear ' +
+           'gave way to understanding—and knowledge offered them the power to make ' +
+           'informed choices for their future children.' },
 
+      // ✅ rewritten by the client, 2026-08-20
       { place: 'Jharkhand', cond: 'DMD',
         t: 'Knowledge at the right time',
-        pull: 'The family received counselling, and could make informed choices ' +
-              'for future pregnancies.',
-        d: 'A mother brought her 6-year-old daughter to a local health camp. The girl ' +
-           'was diagnosed with DMD at an early stage, and the mother’s carrier ' +
-           'testing was positive.' }
+        pull: 'Early diagnosis brought clarity, and knowledge gave the family a ' +
+              'chance to prepare for the road ahead.',
+        d: 'A mother brought her 6-year-old daughter to a local health camp, hoping ' +
+           'for answers to her growing muscle weakness. Genetic testing revealed DMD ' +
+           'at an early stage, giving the family a chance to understand the condition ' +
+           'and plan timely care. The mother’s carrier testing was also positive, ' +
+           'uncovering a risk she had never known she carried.' }
     ]
-  },
-
-  /* --- 10 · REACH --------------------------------------------------- */
-  reach: {
-    kicker: 'Reach',
-    head: 'Where the cards come from.',
-    // 🟠 SLOT-17 — held EMPTY on purpose. These four read 0 / 0 / 0 / 0 while the
-    // counter in Performance animated to 1,24,860 samples reported to date, and a
-    // procurement officer resolves that contradiction against the supplier. The
-    // grid renders nothing until real figures exist; the five states below are
-    // real and carry the section on their own. Restore the four entries — with
-    // values — when the numbers land.
-    stats: [],
-    // ✅ these five states are named in the company's own impact stories
-    states: ['Madhya Pradesh', 'Chhattisgarh', 'Odisha', 'Jharkhand', 'Telangana']
   },
 
   /* --- 11 · CONTACT ------------------------------------------------- */
   contact: {
     kicker: 'Request a kit',
     head: 'Tell us the volume. We will send the cards.',
-    body: 'Kits are free. We will come back with a panel recommendation, a per-sample ' +
-          'price and a collection schedule — whether you are a laboratory, a hospital, ' +
-          'an NGO or a district programme.',
+    body: 'Let us know what you’re looking for and we will come back with a panel ' +
+          'recommendation, a per-sample price and a collection schedule — whether ' +
+          'you are a laboratory, a hospital, an NGO or a district programme.',
     // The organisation field used to be labelled "Hospital / laboratory", which
     // quietly told an NGO field lead and a district health officer that the form
     // was not for them — while both are named target buyers. It is now a neutral

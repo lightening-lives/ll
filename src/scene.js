@@ -74,9 +74,11 @@
   // the catalogue — the section a lab director screenshots
   $('#assayGrid').innerHTML = C.menu.items.map((a) => `
     <article class="assay-card p-6 flex flex-col">
-      <div class="flex items-start justify-between gap-3">
-        <span class="code text-lumen">${esc(a.code)}</span>
-        ${a.flag ? `<span class="credential text-probe border border-probe/40 px-2.5 py-1">${esc(a.flag)}</span>` : ''}
+      <div class="flex items-start justify-end">
+        ${a.flag
+          ? `<span class="credential text-probe border border-probe/40 px-2.5 py-1">${esc(a.flag)}</span>`
+          : `<span class="credential border border-transparent px-2.5 py-1 invisible"
+                   aria-hidden="true">&mdash;</span>`}
       </div>
       <h3 class="font-display text-[1.6rem] leading-[1.05] text-chalk mt-4">${esc(a.name)}</h3>
       <p class="text-sm text-mute mt-2 flex-1">${esc(a.indication)}</p>
@@ -380,26 +382,17 @@
       </footer>
     </article>`).join('');
 
-  // what it costs — same inset-rule grid as the specimen points, because it is
-  // making the same kind of claim: four things that are true of the method
-  $('#accessPoints').innerHTML = C.access.points.map((p) => `
+  // what it costs — the same inset-rule grid as the specimen points, for the
+  // same kind of claim. The client struck the last of the three claims on
+  // 2026-08-20, so it currently holds nothing and removes itself rather than
+  // ruling off an empty box. Push a { t, d } back into `access.points` and the
+  // grid comes back with it.
+  const accessPoints = $('#accessPoints');
+  if (!C.access.points.length) accessPoints.remove();
+  else accessPoints.innerHTML = C.access.points.map((p) => `
     <div class="bg-void p-5">
       <dt class="claim text-chalk">${esc(p.t)}</dt>
       <dd class="text-sm text-mute mt-2">${esc(p.d)}</dd>
-    </div>`).join('');
-
-  $('#stateList').innerHTML = C.reach.states.map((n) =>
-    `<li class="chip credential text-chalk">${esc(n)}</li>`).join('');
-
-  // reach — an empty stat set hides the grid entirely rather than rendering a
-  // row of zeros. A container built to hold proof, holding none, reads worse
-  // than no container at all.
-  const reachGrid = $('#reachGrid');
-  if (!C.reach.stats.length) reachGrid.remove();
-  else reachGrid.innerHTML = C.reach.stats.map((s) => `
-    <div class="bg-void p-6">
-      <p class="figure-num text-lumen text-[clamp(2rem,5vw,3.25rem)] leading-none">${esc(s.v)}</p>
-      <p class="datakey text-mute mt-3">${esc(s.k)}</p>
     </div>`).join('');
 
   // contact form
@@ -952,7 +945,7 @@
     }
   }
 
-  /* The variant ladder — 44 base pairs carrying seven marked loci.
+  /* The variant ladder — 44 base pairs carrying six marked loci.
 
      It used to flare exactly one rung, the sickle base, which sold the section
      short: one gene, one disorder, one company. Every locus in C.assay.loci is
@@ -1077,8 +1070,6 @@
       <div class="vidx__detail" id="vf-d${i}" role="region" hidden>
         <div class="vidx__detail-in">
           <p class="vidx__what">${esc(L.what)}</p>
-          <a class="vidx__link hud" href="${esc(IDX.menuHref)}"><span
-             class="code">${esc(L.menu)}</span> ${esc(IDX.menuLabel)}</a>
         </div>
       </div>` : ''}
     </li>`;
@@ -1088,9 +1079,7 @@
     <p class="lc__gene code">${esc(L.gene)}&nbsp;${esc(L.variant)}</p>
     <p class="lc__cond">${esc(L.condition)}</p>
     <p class="lc__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</p>
-    <p class="lc__what">${esc(L.what)}</p>
-    <a class="vidx__link hud" href="${esc(IDX.menuHref)}"><span
-       class="code">${esc(L.menu)}</span> ${esc(IDX.menuLabel)}</a>`;
+    <p class="lc__what">${esc(L.what)}</p>`;
 
   gutterEl.innerHTML =
     `<div class="lc" id="locusCard" hidden aria-live="polite"></div>` +
@@ -1338,8 +1327,8 @@
     ['hero', '10⁰ m'], ['specimen', '10⁻³ m'], ['assay', '10⁻⁹ m'],
     ['inheritance', '10⁰ m'], ['stories', '10⁰ m'],
     ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'], ['workflow', '10⁰ m'],
-    ['access', '10⁰ m'], ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'], ['collaborators', '10³ m'],
-    ['reach', '10⁵ m'], ['contact', '10⁰ m']
+    ['access', '10⁰ m'], ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'],
+    ['collaborators', '10³ m'], ['contact', '10⁰ m']
   ];
 
   if (REDUCED) {

@@ -15,26 +15,38 @@ Most of the page is now real. What follows is what is still fabricated.
 
 | Slot | Where | What I need |
 |---|---|---|
-| **SLOT-12** | Performance | Sensitivity, specificity, concordance and re-collection rate — each with its n and reference method, plus the study to cite. The four figures on the page are invented. |
-| **SLOT-13** | Performance | Real accreditations and certificate numbers. `NABL M(EL)T-0000` is a placeholder and must not ship. |
-| **SLOT-11** | Test menu | The **disorders are real** — sickle cell, α/β thalassaemia, SMA and DMD are named on your site; haemophilia/coagulation and pharmacogenomics were confirmed as in-scope by you on 2026-08-19. The **codes, turnaround times, methods and throughput are invented.** |
+| **SLOT-12** | Performance | Sensitivity, specificity and concordance — each with its n and reference method, plus the study to cite. **Three figures, not four:** the re-collection rate is now yours (0.2%), and the running total is now yours (2,00,000). These three are still invented and the red note under the heading now says exactly that. |
+| **SLOT-13** | Performance | Anything beyond **ICMR validated**, which is now the single credential shown — NABL in particular, with its certificate number. `NABL M(EL)T-0000` was a placeholder and is not on the page. ISO 15189 and EQAS participation were struck on your instruction. |
 | **SLOT-11b** | Test menu | Confirm the **coagulation** scope. The card is written for haemophilia A and B; if the panel also covers von Willebrand or other factor deficiencies, widen the indication line rather than the title. |
-| **SLOT-11c** | Test menu | Confirm **which drug genes** the pharmacogenomic panel reports. The ladder draws CYP2D6 because copy number is the clearest thing to show; the card is written to the panel, not to one gene. |
-| **SLOT-27** | What it costs | Confirm the three cost claims. Two are already implied elsewhere on the page — *kits ship free* (workflow step 01) and *one price per sample, quoted to volume* (contact). The third, **"No cost to the family"**, is not corroborated anywhere in your material. It is the strongest line in the section and the one most likely to be quoted back at you. Confirm it or I cut it. |
-| **SLOT-06 / 07** | Specimen | Confirm the logistics claims: ambient transport, ordinary post, exempt-specimen rules. Regulatory-adjacent. |
-| **SLOT-08 / 09** | Assay | The real platform description and pipeline. Currently generic. |
-| **SLOT-08b** | Assay | The seven loci the variant ladder and its index name. Every gene, variant and disease association is real and standard, and every disorder is already on the company's own menu — but confirm this is the exact locus set the signed-out panel reports, and swap in the lab's preferred variant nomenclature. Each locus links to the menu card that reports it — keep the two in step if either changes. |
+| **SLOT-11c** | Test menu | Confirm **which drug genes** the pharmacogenomic panel reports. The card is written to the panel, not to one gene — and CYP2D6 no longer appears anywhere on the page, since you struck it from the variant ladder. |
+
+Resolved by your 2026-08-20 pass: **SLOT-03** (hero), **SLOT-06 / 07** (specimen),
+**SLOT-08 / 08b / 09** (assay, pipeline and locus set), **SLOT-11** (codes, sample,
+turnaround, method, throughput), **SLOT-14** (samples reported), **SLOT-27** (cost).
+
+### Cut in your second round, same day
+
+- **The variant index stays as it was.** It was cut and then reinstated in the same
+  round, so the gutter readout, the point-at-a-marker interaction, the leader rule
+  and the full list are all still there, along with the strand's own position.
+- **"Ordinary post"** dropped from the specimen claims. The claim is still made once,
+  in the paragraph above them.
+- **"Kits ship free"** dropped from *What it costs*, which was the last of its three
+  claims — the section is now the argument alone. Free kits are still promised in
+  workflow step 01. The grid removes itself rather than ruling off an empty box;
+  pushing a `{ t, d }` back into `access.points` brings it back.
+- **The running total now reads *2,00,000 samples and counting…*.**
 
 ## Important
 
 | Slot | Where | What I need |
 |---|---|---|
-| SLOT-03 | Hero | Approve the **rewritten** positioning line. It now leads on the two umbrella families — *haemoglobinopathies* and *musculopathies*, your own team's words — with the disorders following as their gloss, names affordability for the first time, and closes on **"Built for the people"** rather than on "the tribal and rural communities conventional diagnostics never reaches". The old line put a ceiling on the audience: a private lab or a state programme read itself out of it. The tribal and rural evidence has not been dropped — it now lives in Impact and Reach, where it is proven rather than claimed. |
+| ~~SLOT-03~~ | Hero | **Done** — replaced wholesale with your own copy. The headline is now *Genetic answers / every family / can afford.* and affordability leads the page rather than waiting for the deck. Note that haemophilia is no longer named in the standfirst although the coagulation panel is still carded in the menu and drawn on the ladder. |
 | **SLOT-26** | Test menu | The **wider catalogue**. The menu now closes on a card that says the eight test cards are a selection, and names *inborn errors of metabolism*, *non-communicable and complex-disease panels* and *other single-gene and carrier tests*. Those three are inferred from your own material — the core offer in PRODUCT.md and the "genetic disorders and NCDs" wording on your R&D pillar. **Send me the real list** and I will name it properly. This is the line that tells a programme with an unusual requirement it is worth asking. |
-| SLOT-14 | Performance | Samples reported to date. |
-| SLOT-15 | Workflow | Confirm the five steps and their day counts. |
-| SLOT-17 | Reach | States, collection points, partner facilities, workers trained. **Deliberately showing `0`** so nobody mistakes a placeholder for a real number. Five states are already listed from your own impact stories. |
-| SLOT-18 | Impact | The four narratives are yours, taken from your Impact Stories page. Confirm they are cleared for a clinician-facing page and that no family is re-identifiable. **Now set as testimonials:** the outcome sentence of each note is pulled out and set large. Nothing is invented — the pull line is verbatim from your own text — but it does give each note far more prominence, so re-check the consent position. If you have *real, consented quotes* from families, they would be stronger still and drop straight into the `pull` field in `src/content.js`. |
+| ~~SLOT-14~~ | Performance | **Done** — 2,00,000 samples reported to date. The counter animates to it. |
+| SLOT-15 | Workflow | Confirm the five steps and their day counts. The heading is now *5 steps, one courier!*, but step 03 still reads "paper mailer, ordinary post, prepaid" — tell me which of the two is right and I will make them agree. |
+| ~~SLOT-17~~ | Reach | **Section deleted** on your instruction — the heading, the empty stat grid and the five-state list are all gone, and the footer index no longer links to it. The five states still appear as the datelines on the impact case notes. |
+| SLOT-18 | Impact | Two of the four narratives are now your rewritten versions (Odisha and Jharkhand), and the "de-identified" note under the heading was struck on your instruction. **Consent is still the open question** — with that note gone, nothing on the page tells a reader these are de-identified case notes rather than named patients. Confirm the consent position. |
 | SLOT-21 | Collaborators | **Done for now** — I extracted all 13 logos from the montage on your Partnerships page and they are live in `assets/partners/`. They are raster crops on white, shown on paper plates. Send vector originals when you have them and they drop straight in. |
 | SLOT-22 | Team | **Dr. Vivek Sharma, Chief Business & Strategy Advisor** exists on your team page but that block is *commented out*, so I left him off. His photo is already downloaded, and his bio is now captured verbatim in a comment in `src/content.js` — re-enabling him is a one-line change. |
 | SLOT-24 | Team | Selecting any core-team face now opens their record. The six bios are verbatim from your own `-details.php` pages. **Two corrections to check:** your team page lists "Mr. Jyothi Vislavath" but the bio on the detail page reads "Ms. Jyothi Vislavath" — I have used **Ms.**; and Mehraj Begum's role is now the full "Admin & Operations Executive". The Patron and the two Advisory Board members have no detail page, so they have no record to open — send bios and they get the same treatment. |
