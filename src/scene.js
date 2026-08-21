@@ -53,22 +53,22 @@
   $('#specimenPoints').innerHTML = C.specimen.points.map((p) => `
     <div class="bg-void p-5">
       <dt class="claim text-chalk">${esc(p.t)}</dt>
-      <dd class="text-sm text-mute mt-2">${esc(p.d)}</dd>
+      <dd class="prose text-mute mt-2">${esc(p.d)}</dd>
     </div>`).join('');
 
   // assay pipeline
   $('#assayStack').innerHTML = C.assay.stack.map((s) => `
     <li class="flex gap-4 py-3 border-b border-line">
       <span class="code text-probe pt-0.5 shrink-0">${esc(s.step)}</span>
-      <span><span class="text-chalk text-sm">${esc(s.t)}</span>
-        <span class="text-mute text-sm"> — ${esc(s.d)}</span></span>
+      <span><span class="claim text-chalk">${esc(s.t)}</span>
+        <span class="credential text-mute"> — ${esc(s.d)}</span></span>
     </li>`).join('');
 
   // the two umbrella families, glossed once, above the grid
   $('#menuFamilies').innerHTML = C.menu.families.map((f) => `
     <div class="bg-void p-5">
       <dt class="claim text-chalk">${esc(f.t)}</dt>
-      <dd class="text-sm text-mute mt-2">${esc(f.d)}</dd>
+      <dd class="prose text-mute mt-2">${esc(f.d)}</dd>
     </div>`).join('');
 
   // the catalogue — the section a lab director screenshots
@@ -80,13 +80,13 @@
           : `<span class="credential border border-transparent px-2.5 py-1 invisible"
                    aria-hidden="true">&mdash;</span>`}
       </div>
-      <h3 class="font-display text-[1.6rem] leading-[1.05] text-chalk mt-4">${esc(a.name)}</h3>
-      <p class="text-sm text-mute mt-2 flex-1">${esc(a.indication)}</p>
+      <h3 class="display-sm text-chalk mt-4">${esc(a.name)}</h3>
+      <p class="prose text-mute mt-2 flex-1">${esc(a.indication)}</p>
       <dl class="mt-6 grid grid-cols-2 gap-y-3 gap-x-4 rule-t pt-4">
-        <div><dt class="datakey text-mute">Sample</dt><dd class="text-sm text-chalk mt-1">${esc(a.sample)}</dd></div>
-        <div><dt class="datakey text-mute">Turnaround</dt><dd class="${/^[\d.]/.test(a.tat) ? 'figure-num' : 'credential'} text-lumen text-sm mt-1">${esc(a.tat)}</dd></div>
-        <div><dt class="datakey text-mute">Method</dt><dd class="text-sm text-chalk mt-1 min-h-[2.6em]">${esc(a.method)}</dd></div>
-        <div><dt class="datakey text-mute">Throughput</dt><dd class="figure-num text-chalk text-sm mt-1">${esc(a.throughput)}</dd></div>
+        <div><dt class="datakey text-mute">Sample</dt><dd class="credential text-chalk mt-1">${esc(a.sample)}</dd></div>
+        <div><dt class="datakey text-mute">Turnaround</dt><dd class="${/^[\d.]/.test(a.tat) ? 'figure-num text-xs' : 'credential'} text-lumen mt-1">${esc(a.tat)}</dd></div>
+        <div><dt class="datakey text-mute">Method</dt><dd class="credential text-chalk mt-1 min-h-[2.6em]">${esc(a.method)}</dd></div>
+        <div><dt class="datakey text-mute">Throughput</dt><dd class="figure-num text-xs text-chalk mt-1">${esc(a.throughput)}</dd></div>
       </dl>
     </article>`).join('')
     // the ninth cell is not a product. It sits in the same grid and takes the
@@ -95,8 +95,8 @@
     + `
     <article class="assay-card assay-card--more p-6 flex flex-col" data-slot="SLOT-26">
       <span class="code text-probe">${esc(C.menu.more.eyebrow)}</span>
-      <h3 class="font-display text-[1.6rem] leading-[1.05] text-chalk mt-4">${esc(C.menu.more.t)}</h3>
-      <p class="text-sm text-mute mt-3 flex-1">${esc(C.menu.more.d)}</p>
+      <h3 class="display-sm text-chalk mt-4">${esc(C.menu.more.t)}</h3>
+      <p class="prose text-mute mt-3 flex-1">${esc(C.menu.more.d)}</p>
       <a class="hud text-lumen mt-6 no-underline inline-flex items-center gap-2 self-start
                 border-b border-lumen/40 pb-1 hover:border-lumen transition-colors"
          href="${esc(C.menu.more.cta.href)}">${esc(C.menu.more.cta.label)}
@@ -106,7 +106,7 @@
   // performance figures — always with their denominator
   $('#statGrid').innerHTML = C.validation.stats.map((s) => `
     <div class="bg-void p-6">
-      <p class="figure-num text-probe text-[clamp(2rem,4.5vw,3rem)] leading-none">${esc(s.v)}<span
+      <p class="figure-num text-probe text-[clamp(2rem,1.3rem+1.88vw,3rem)] leading-none">${esc(s.v)}<span
          class="figure-unit text-mute ml-1">${esc(s.u)}</span></p>
       <p class="datakey text-chalk mt-3">${esc(s.k)}</p>
       <p class="meta text-mute mt-1.5">${esc(s.d)}</p>
@@ -120,11 +120,11 @@
     <article class="wf-step shrink-0 w-[78vw] sm:w-[42vw] lg:w-[26vw] min-h-[15.5rem]
                     flex flex-col bg-ink border border-line p-7">
       <div class="flex items-baseline justify-between">
-        <span class="figure-num text-lumen text-[2.5rem] leading-none">${esc(s.n)}</span>
+        <span class="figure-num text-lumen text-[clamp(2rem,1.3rem+1.88vw,3rem)] leading-none">${esc(s.n)}</span>
         <span class="code text-probe">${esc(s.time)}</span>
       </div>
-      <h3 class="font-display text-[1.75rem] text-chalk mt-auto pt-8">${esc(s.t)}</h3>
-      <p class="prose text-sm text-chalk mt-2">${esc(s.d)}</p>
+      <h3 class="display-sm text-chalk mt-auto pt-8">${esc(s.t)}</h3>
+      <p class="prose text-chalk mt-2">${esc(s.d)}</p>
     </article>`).join('');
 
   const fi = $('#foundersImg');
@@ -135,12 +135,12 @@
     <article class="pillar">
       <span class="pillar__n figure-num">${esc(p.n)}</span>
       <div class="pillar__head">
-        <h3 class="font-display text-[clamp(1.35rem,2.4vw,1.95rem)] leading-[1.1] text-chalk">${esc(p.t)}</h3>
-        <p class="text-sm text-mute mt-2.5">${esc(p.d)}</p>
+        <h3 class="display-sm text-chalk">${esc(p.t)}</h3>
+        <p class="prose text-mute mt-2.5">${esc(p.d)}</p>
       </div>
       <ul class="pillar__items">
         ${p.items.map(([t, d]) => `
-          <li><span class="pillar__t">${esc(t)}</span><span class="pillar__d">${esc(d)}</span></li>`).join('')}
+          <li><span class="pillar__t claim">${esc(t)}</span><span class="pillar__d">${esc(d)}</span></li>`).join('')}
       </ul>
     </article>`).join('');
 
@@ -154,7 +154,7 @@
                       width="446" height="520" loading="lazy" decoding="async">` : ''}
       <span class="gov__body">
         <span class="role text-probe block">${esc(p.role)}</span>
-        <span class="font-display text-[clamp(1.25rem,1.9vw,1.6rem)] leading-[1.12] text-chalk block mt-2">${esc(p.name)}</span>
+        <span class="display-xs text-chalk block mt-2">${esc(p.name)}</span>
       </span>
     </div>`).join('');
 
@@ -174,8 +174,8 @@
               aria-label="More details about ${esc(t.name)}, ${esc(t.role)}">
         ${t.img ? `<img class="face" src="${esc(t.img)}" alt=""
                        width="446" height="520" loading="lazy" decoding="async">` : ''}
-        <span class="team-name">${esc(t.name)}</span>
-        <span class="team-role">${esc(t.role)}</span>
+        <span class="team-name claim">${esc(t.name)}</span>
+        <span class="team-role role">${esc(t.role)}</span>
         <span class="team-cue hud" aria-hidden="true">
           <span class="team-cue__x"></span>More details</span>
       </button>
@@ -373,7 +373,7 @@
     <article class="story${i === 0 ? ' story--lead md:col-span-3' : ''}">
       <p class="story__pull">${esc(st.pull)}</p>
       <div class="story__note">
-        <h3 class="story__t">${esc(st.t)}</h3>
+        <h3 class="story__t claim">${esc(st.t)}</h3>
         <p class="story__d">${esc(st.d)}</p>
       </div>
       <footer class="story__foot">
@@ -392,7 +392,7 @@
   else accessPoints.innerHTML = C.access.points.map((p) => `
     <div class="bg-void p-5">
       <dt class="claim text-chalk">${esc(p.t)}</dt>
-      <dd class="text-sm text-mute mt-2">${esc(p.d)}</dd>
+      <dd class="prose text-mute mt-2">${esc(p.d)}</dd>
     </div>`).join('');
 
   // contact form
@@ -410,9 +410,9 @@
     // organisation type added there are seven fields, so six pair off cleanly and
     // only `panel` — the widest label and the longest options — takes the full row.
     return `<div class="field ${f.n === 'panel' ? 'sm:col-span-2' : ''}">
-        <label class="field__label block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
+        <label class="field__label role block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
         ${control}
-        <p class="field__err" id="e-${f.n}" hidden></p>
+        <p class="field__err credential" id="e-${f.n}" hidden></p>
       </div>`;
   }).join('');
 
@@ -519,7 +519,7 @@
       <legend class="hud text-mute">${esc(lab)}</legend>
       <div class="inh-opts" role="group" aria-label="${esc(lab)} genotype">
         ${INH.options.map((o) => `
-          <button type="button" class="inh-opt" data-p="${p}" data-g="${o.g}"
+          <button type="button" class="inh-opt claim" data-p="${p}" data-g="${o.g}"
                   aria-pressed="${String(o.g === parents[p])}">${esc(o.label)}</button>`).join('')}
       </div>
     </fieldset>`).join('');
@@ -549,7 +549,7 @@
       <li class="inh-child" data-g="${g}" style="--i:${i}">
         <span class="inh-well" aria-hidden="true"><span class="inh-well__bore"></span></span>
         <span class="inh-child__geno figure-num">${GENO_TEXT[g]}</span>
-        <span class="inh-child__label">${esc(INH.outcomeLabels[g])}</span>
+        <span class="inh-child__label credential">${esc(INH.outcomeLabels[g])}</span>
       </li>`).join('');
 
     inhKids.classList.remove('is-in');
@@ -1059,10 +1059,10 @@
               ${withDetail ? `aria-expanded="false" aria-controls="vf-d${i}"` : ''}>
         <span class="vidx__mark" aria-hidden="true"></span>
         <span class="vidx__text">
-          <span class="vidx__gene code"><span
+          <span class="vidx__gene"><span
              class="vidx__key">${String(i + 1).padStart(2, '0')}</span>${esc(L.gene)}&nbsp;${esc(L.variant)}</span>
           <span class="vidx__cond">${esc(L.condition)}</span>
-          <span class="vidx__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</span>
+          <span class="vidx__class micro">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</span>
         </span>
         ${withDetail ? '<span class="vidx__chev" aria-hidden="true"></span>' : ''}
       </button>
@@ -1075,10 +1075,10 @@
     </li>`;
 
   const readout = (L, i) => `
-    <p class="lc__key code">${String(i + 1).padStart(2, '0')}</p>
-    <p class="lc__gene code">${esc(L.gene)}&nbsp;${esc(L.variant)}</p>
+    <p class="lc__key">${String(i + 1).padStart(2, '0')}</p>
+    <p class="lc__gene">${esc(L.gene)}&nbsp;${esc(L.variant)}</p>
     <p class="lc__cond">${esc(L.condition)}</p>
-    <p class="lc__class">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</p>
+    <p class="lc__class micro">${esc(C.assay.famLabels[L.fam])} · ${esc(C.assay.kindLabels[L.kind])}</p>
     <p class="lc__what">${esc(L.what)}</p>`;
 
   gutterEl.innerHTML =
@@ -1112,7 +1112,7 @@
       `${L.gene} ${L.variant} — ${L.condition}. ` +
       `${C.assay.famLabels[L.fam]}, ${C.assay.kindLabels[L.kind]}.`);
     b.innerHTML = '<span class="lmark__ring" aria-hidden="true"></span>' +
-                  '<span class="lmark__key code" aria-hidden="true">' +
+                  '<span class="lmark__key" aria-hidden="true">' +
                   String(i + 1).padStart(2, '0') + '</span>';
     marksEl.appendChild(b);
   });
@@ -1368,9 +1368,42 @@
     });
   });
 
+  /* A PINNED scene scrubs against its own runway. `top top` -> `bottom bottom`
+     is exactly the sticky stage's travel: the object parks at the top of the
+     viewport and stays there for the whole range, so every pixel of that range
+     is a pixel you are looking at it.
+
+     A FLOWED scene has no runway, and the same two keywords then describe the
+     wrong window entirely. Below their breakpoints `#specimen` (48rem) and
+     `#assay` (64rem) drop to `height: auto`, the stage stops being sticky, and
+     the geometry becomes a 42svh band at the TOP of the section. `top top`
+     cannot fire until that band has already climbed to the top of the screen,
+     and `bottom bottom` keeps running well after it has left.
+
+     Measured at 390x844: #specimen's card occupies document 1435-1789 and is
+     on screen from 591, while the scrub ran 1435 -> 1804. The entire animation
+     played out after the card had passed the middle of the viewport and
+     finished 15px AFTER it was gone. #assay was identical below 64rem. That is
+     the "it only animates once I have scrolled past it" bug, and it was a
+     property of the trigger, not of the timeline.
+
+     Flowed scenes therefore scrub across their ARRIVAL: from the moment the
+     section's top edge enters the bottom of the viewport to the moment it
+     reaches the upper quarter. 0.75 of a screen, every pixel of it with the
+     object in view, finishing while it is still well inside the frame. */
   const scrub = (trigger, extra) => Object.assign({
     trigger, start: 'top top', end: 'bottom bottom', scrub: 0.6
   }, extra || {});
+
+  const flowScrub = (trigger, extra) => Object.assign({
+    trigger, start: 'top bottom', end: 'top 25%', scrub: 0.6
+  }, extra || {});
+
+  /* Both scenes are built inside `gsap.matchMedia`, so crossing the breakpoint
+     — a rotation, a desktop window drag — tears the old timeline down and
+     builds the other one, instead of leaving a pinned-shaped trigger measuring
+     a flowed section. */
+  const mm = gsap.matchMedia();
 
   // ---- 1 · hero: the depth field dollies past; the type stays flat and crisp.
   // Only #heroDepth enters Z — putting type in perspective scales and crops it.
@@ -1399,7 +1432,7 @@
       { '--ignite': 1, ease: 'none', duration: 0.34 }, 0.4);
 
   // ---- 2 · the specimen card turns to face you
-  gsap.timeline({ scrollTrigger: scrub('#specimen') })
+  const specimenTL = (cfg) => gsap.timeline({ scrollTrigger: cfg('#specimen') })
     .fromTo('#dbsCard',
       { rotateY: -62, rotateX: 26, z: -420, scale: 0.92 },
       { rotateY: 16, rotateX: -7, z: 130, scale: 1, ease: 'none', duration: 1 }, 0)
@@ -1413,6 +1446,8 @@
     // (z:2.5) on the first frame of the open.
     .fromTo('#dbsFlap', { rotateX: 0, z: 4 },
       { rotateX: 152, z: 4, ease: 'none', duration: 0.55 }, 0.30);
+  mm.add('(min-width: 48rem)',   () => { specimenTL(scrub); });
+  mm.add('(max-width: 47.99rem)', () => { specimenTL(flowScrub); });
   // The copy is deliberately NOT on this timeline. It used to be scrubbed from
   // { y: 50, opacity: 0 } over progress 0.05–0.33, and because a scrub is tied
   // to position rather than to arrival, the column was pinned at zero opacity
@@ -1443,11 +1478,13 @@
      writes --ins-ry, CSS adds them. A visitor who has turned the strand and
      then scrolls keeps their offset — they are moving the camera, not being
      overruled by it. */
-  const tl = gsap.timeline({ scrollTrigger: scrub('#assay') });
-  tl.fromTo('#helix',
-    { '--cam-ry': -10, '--cam-rx': 6, '--cam-z': -140, '--cam-y': 40 },
-    { '--cam-ry': 36, '--cam-rx': -3, '--cam-z': 120, '--cam-y': -25,
-      ease: 'none', duration: 1, onUpdate: queuePlace }, 0);
+  const assayTL = (cfg) => gsap.timeline({ scrollTrigger: cfg('#assay') })
+    .fromTo('#helix',
+      { '--cam-ry': -10, '--cam-rx': 6, '--cam-z': -140, '--cam-y': 40 },
+      { '--cam-ry': 36, '--cam-rx': -3, '--cam-z': 120, '--cam-y': -25,
+        ease: 'none', duration: 1, onUpdate: queuePlace }, 0);
+  mm.add('(min-width: 64rem)',   () => { assayTL(scrub); });
+  mm.add('(max-width: 63.99rem)', () => { assayTL(flowScrub); });
 
   // The markers are parked on the strand's projected axis, so they follow it
   // through the turn. This second trigger covers the rest: arriving in view,

@@ -19,8 +19,8 @@ Three things had to be true at once.
    The Z axis carries meaning here, so 3D is argument, not decoration.
 
 ## The aesthetic risk
-**The page opens at roughly 6% illumination — near-black, one lit well on a dark plate,
-hairline type — and stays dark for four full scenes.** Every competitor in Indian diagnostics opens
+**The page opens on an unlit slate ground — one lit well on a dark plate, hairline type —
+and stays dark for four full scenes.** Every competitor in Indian diagnostics opens
 on white with a blue gradient and a smiling clinician. This one opens in a darkroom.
 
 *Justification:* the risk is legible rather than arbitrary. Darkness is the working
@@ -59,9 +59,11 @@ conditions; slate buys about 0.7:1 on secondary text and the banding goes.
 
 *What it costs, stated plainly:* the descent to the bone closing section has less distance
 to travel, so part of the "lights coming up" payoff is spent before the first scroll. The
-opening claim above — "roughly 6% illumination" — describes darkfield, not what ships.
-**That paragraph needs rewriting to match, or the ground needs reverting. Right now the
-document argues one thing and the page renders another.**
+opening paragraph above used to price that descent at "roughly 6% illumination", which
+described darkfield rather than what ships; the ground is the half that was measured
+against real hardware, so the prose is the half that changed. It no longer quotes a
+figure, because the one number worth quoting is the contrast, and that is measured
+below.
 
 Measured against the composited ground (section tint + `.illum` lift + `.vignette` +
 grain at its cap), not against the raw token: secondary text holds **5.88:1** at the top
@@ -105,6 +107,51 @@ The run is deliberately partial: the tail columns are still empty, because a rea
 mid-run is never full. Rows A–H and columns 1–12 are engraved on the skirt at a size that
 is near-illegible on purpose — at a raking angle that is instrument texture, not
 information.
+
+### The deck under the headline
+
+It read as a pull-quote rather than a standfirst, and the size was only the third of three
+faults.
+
+**Measure.** At 1440 it set 20.9px into a `44ch` column — about 551px — while every other
+lead paragraph on the page sets 16px into 52–60ch. Larger type in a *narrower* column is
+the recipe for a pull-quote, and that is what it looked like: a fragment. Its column was
+also only ~62% of the headline's longest line, so the two blocks shared no edge and read
+as two unrelated objects. It is 60ch now, and the deck's right edge lands near the
+headline's. (The old comment claimed 44ch was "a ~640px column at 22px". Plex Sans `1ch`
+is ~0.6em, so it was ~581px — the arithmetic was out by 10%.)
+
+**Viewport height.** Two unlayered rules dropped the size to 16px and then 15px on
+`max-height: 46rem`, so a 390×844 phone rendered 17px and a 360×640 phone 16px — at four
+pixels' difference in *width*. Because they were unlayered they beat the utility outright
+and threw its clamp away. Type size is a function of the column it sets into; it is never
+a function of how tall the window is, and a reader who rotates their phone should not
+watch the copy resize. Both rules are gone. Spacing still answers viewport height, because
+spacing is what a short frame is short of.
+
+**Ratio.** Headline-to-deck measured 5.65:1 at 1440 and 2.35:1 at 375, because the two
+were independent clamps with different slopes and different bounds — they could not help
+drifting. The deck is now a fraction of `--display-x`, the headline's own computed size,
+published on `:root` because the deck is the h1's *sibling* and a property declared on the
+h1 would never reach it. The relationship is locked by construction and survives any
+future change to either. Measured after: 2.35 → 3.88 → 5.04 → 5.62 across 375 → 768 →
+1024 → 1440, monotonic and continuous. It is *not* a constant fraction, and should not be:
+the deck's floor binds on phones, and compressing a type scale at small sizes is correct.
+Doing it in unannounced 1px steps triggered by window height was not.
+
+**The italic came off line three.** `class="italic"` was set on "can afford." but the font
+request never asked for Fraunces' `ital` axis, so the most prominent line on the page was
+rendering as a browser-synthesised slant. The fix is removal rather than loading the real
+italic, for four reasons in order of weight: it italicised the *price claim*, and
+PRODUCT.md is explicit that price is carried qualitatively and argued from method — a
+swash flourish there is the one moment the page leaves instrument register for marketing
+register, in front of the buyers it is written for; the line already carries `SOFT 40`
+(double the page's 20) and `WONK 1`, so the slant was a third differentiator on three
+words; Fraunces Italic is a separate variable font, so it would put a second Fraunces
+download on the critical path against PRODUCT.md's mid-range-Android audience; and an
+oblique high-contrast serif thins on this ground, in the one place it is meant to be
+strongest. If line three needs more separation, take it from `wght` — already loaded at
+`300..700`, so it is free — not from slant, and not from gold.
 
 ### Four things this cost, worth writing down
 
@@ -300,7 +347,7 @@ genotypes, not looked up, and the readout is `aria-live="polite"`.
 
 The assay scene used to flare exactly one rung out of forty-two — the sickle base — which
 sold the company short: read literally, it said *we test for sickle cell*. The ladder now
-carries **seven loci, one per disorder family on the menu**, and the point of the drawing
+carries **six loci across the disorder families on the menu**, and the point of the drawing
 is that each is a *different kind of change*, because that is what actually distinguishes
 them at the bench:
 
@@ -309,12 +356,18 @@ them at the bench:
 | Substitution | `HBB c.20A>T`, `HBB c.92+5G>C` | the rung flares, round nodes, one base swapped |
 | Deletion | `HBA2 −α3.7`, `SMN1 exon 7`, `DMD exon 45–50` | hollow dashed rings — the bases that should be there |
 | Inversion | `F8 intron 22` | square nodes, and the helix **winds the other way** for the segment |
-| Duplication | `CYP2D6 ×N` | the rung drawn twice, the copy offset in depth |
 
-Geometry carries the class; colour only carries the family, and only from four tokens the
-page already owns — `alarm` haemoglobin, `lumen` coagulation, `probe` neuromuscular, `bone`
-pharmacogenomic. Pharmacogenomics gets the bone/white deliberately: it is not a pathology,
-it is a dosing signal, and it should not be coloured like a disease.
+Geometry carries the class; colour only carries the family, and only from tokens the
+page already owns — `alarm` haemoglobin, `lumen` coagulation, `probe` neuromuscular.
+
+A fourth class and a fourth family are built and unused. `CYP2D6 ×N` — a duplication,
+drawn as the rung doubled and offset in depth, coloured `bone` because pharmacogenomics
+is a dosing signal rather than a pathology and should not be coloured like a disease —
+was struck from the ladder by the client on 2026-08-20. The `dup` geometry in `scene.js`,
+the `dup`/`pgx` labels in `content.js` and the `[data-kind="dup"]` marks in the stylesheet
+all survive, so restoring it is one object in the `loci` array. Until then the figure
+draws **three** classes, and the copy that captions it says three: the assay body and the
+index note both claimed four, and both named a duplication the drawing no longer contains.
 
 The twist is *accumulated* rather than computed as `i * TWIST`, so an inversion can wind
 the ladder backwards for its span and hand it back unchanged — the inversion is real
@@ -443,6 +496,120 @@ scene used to spend two screens *playing* is something the visitor now performs 
 in whatever order they like, for as long as they like — and the scroll that remains is only
 what it takes to bring the object into the room. Below `lg` it flows, and costs nothing.
 
+## Responsive — what was actually wrong
+
+`viewport-fit=cover` was right, **every** viewport-height unit was already `svh` (not one
+bare `vh`), reduced motion was handled across ten media queries, and the hamburger had
+correct `aria-expanded`/`aria-controls`. The failures were elsewhere.
+
+**The scrub windows described the wrong scroll on a phone.** A *pinned* scene scrubs
+against its own runway: `top top` → `bottom bottom` is exactly the sticky stage's travel,
+and the object parks at the top of the viewport for all of it. A *flowed* one has no
+runway. Below their breakpoints `#specimen` (48rem) and `#assay` (64rem) drop to
+`height: auto`, the stage stops being sticky, and the geometry becomes a 42svh band at the
+**top** of the section — so `top top` cannot fire until that band has already climbed to
+the top of the screen, and `bottom bottom` keeps running after it has left.
+
+Measured at 390×844: `#specimen`'s card occupies document 1435–1789 and is on screen from
+591, while the scrub ran **1435 → 1804**. The whole animation played out after the card had
+passed the middle of the viewport, and finished 15px *after* it was gone. `#assay` was
+identical below 64rem. That is the "it only animates once I've scrolled past it" bug, and
+it was a property of the trigger, not of the timeline.
+
+Flowed scenes now scrub across their **arrival** — `top bottom` → `top 25%`, three quarters
+of a screen with the object in view throughout, finishing while it is still well inside the
+frame. Both scenes are built inside `gsap.matchMedia`, so crossing the breakpoint tears the
+old timeline down and builds the other, rather than leaving a pinned-shaped trigger
+measuring a flowed section. Measured after — 390: specimen 591→1224, assay 1804→2437; 768:
+specimen 1741→2662 (pinned), assay 2662→3430 (flowed); 1440: both pinned and unchanged.
+
+**Four section rhythms where there should have been one.** Nine flat sections carried
+`py-[12svh]`, `py-[13svh]` and `py-[14svh]` with nothing distinguishing which got which,
+and `#workflow` centred its content group in a 100svh stage. Measured gap from the fixed
+bar to each section's eyebrow at 390×844: **30px** (access, capabilities, provenance,
+performance), **39px** (inheritance, stories), **46px** (menu, contact) — and **129px** for
+workflow. Three values 8% apart, close enough to read as sloppiness rather than intent, plus
+one at four times the rhythm.
+
+All nine now take `section-y` → `--space-section`. The floor is 100px and not less because
+the bar is fixed, 72px tall, and *overlays* the padding rather than adding to it: at 12svh a
+640px-tall handset padded a section to 77px, leaving 5px between the bar and the heading.
+`#workflow` top-aligns like every other heading-above-content section — centring stays for
+`#specimen` and `#assay`, which are side-by-side compositions that genuinely want the
+optical centre. Its cards grew to `min(22rem, 46svh)` to use the space that top-aligning
+freed; which end the slack lands on is not a detail, because space *before* content reads as
+something failing to load and the same space *after* it reads as the track having room to
+run. Measured after: one rhythm per viewport — 28–29px at 360, 29–31px at 390, 36–37px at
+1440.
+
+**Thirteen width breakpoints, and the same value spelled two ways.** `64rem` in four
+places against `1024px` in three; `48rem` against `47.99rem`. A grid and the media query
+meant to answer it were landing 0.16px apart. Everything is `rem` now.
+
+**Five layouts jumped one column straight to `lg:` with no tablet step** — inheritance,
+performance, access, provenance and contact. Provenance was the worst: 1 → 3 columns in a
+single step at 1024, and at 1023 the founder bios ran at up to 944px of measure with
+nothing capping them. They get an `md:` stage, and the bios get 62ch. The assay grid went
+`md:2 → xl:3`, leaving nine cards sitting 2-up at ~590px each between 1024 and 1279; the
+team grid went 2 → 3 → **6**, halving each face across one pixel of resize. Both now step
+through the intermediate.
+
+**`#inhOdds` had no responsive prefix at all** — `grid-cols-3` at every width, which at
+375px is ~67px of content per cell for the word "Unaffected".
+
+**Touch had no affordance and no feedback.** Twenty-five `:hover` rules, zero
+`@media (hover: …)` guards. The `+` cue that says a team face opens a bio only reaches
+full opacity on hover; so do the logo cloud's marks and the portraits' colour. On a phone
+none of those states is reachable, so the cue is simply absent — and
+`-webkit-tap-highlight-color: transparent` had removed the platform's own press flash with
+nothing put back, so a tap produced no visible response at all. PRODUCT.md's audience is
+the touch audience; this was half the interaction model missing. There is now a
+`@media (hover: none)` block that reveals what hover was going to reveal and gives every
+card something to press against. `hover: none` rather than `pointer: coarse`, deliberately:
+a touchscreen laptop is `pointer: fine` and still cannot hover.
+
+**Targets.** The footer index was 40px with 2.4px of separation — the miss distance was
+smaller than the error. The menu button was 37.6px *wide* under a comment claiming "44px is
+the floor for a thumb"; a thumb has no idea which axis it is being measured on. The form
+controls, on the conversion path, had no coarse-pointer rule at all. Measured after: **zero
+targets under 24px at any width, and zero under 44px on a phone.** The 24px floor is
+declared before the coarse-pointer block on purpose — written after it, it won on source
+order and quietly capped the touch sizes back down.
+
+**The HUD rail was standing on the type from 768px to 1440px.** The rail is
+`position: fixed` in the first 4.5rem of the window, and the whole page is composed as
+though that strip belongs to it — which is true at 1520px, where the 86rem shell's auto
+margins hand it over, and false everywhere below. The shell runs out of margin to give at
+1376px, so across the entire laptop band it fell back to its bare 2.5rem of padding and
+walked into the chrome. Measured at 1280: the rotated scale label occupies x 27.9–44.1
+and **every `h2` on the page starts at x 40**. It printed on the first glyph of every
+section heading — clearest on `#workflow`, where a 76px Fraunces "5" had `10⁰ m` lying
+across it — and the gold track ran down through the contact address and all twelve links
+of the footer index, on the bone ground where it is least forgivable.
+
+The shell takes the gutter back and gives it up again exactly as fast as the margins
+grow: `max(2.5rem, 5.5rem - max(0px, (100vw - 86rem) / 2))`, one continuous expression
+rather than a breakpoint with a step in it. `#workflowTrack` takes the same value,
+because its first card is aligned to the heading above it and a gutter on one but not the
+other would have been a new fault in place of the old one — verified equal at 88px, at
+both 1280 and 768. What still crosses the rail is what is meant to: the 3D stages are
+full-bleed, and the lane's timeline rule runs edge to edge on purpose.
+
+**`m` is a metre; `M` is mega.** The chrome voice uppercases everything it carries, and
+the four scale coordinates on this page are carried by it — so a document that writes
+`10⁻³ m` throughout was rendering `10⁻³ M` on screen, in the rail and in three section
+eyebrows, in front of an audience that reads the difference. The rail owns its own type
+and simply stops transforming; the eyebrows keep the transform on the editorial half and
+wrap the unit in `.scale`, unlayered so it beats the `eyebrow` utility without a
+specificity argument. The rest of the chrome is unaffected: this is the one place on the
+page where case is data rather than styling.
+
+**Measured, not assumed:** zero horizontal overflow at 320, 360, 375, 414, 768, 1024, 1280
+and 1440. Worth stating because `body { overflow-x: clip }` *masks* overflow rather than
+preventing it — the page would lose content off the right edge without ever showing a
+scrollbar. (The hero's plate and speck field do extend past the right edge at 768 by
+design — they are the 3D world, not content, and the clip is what they are clipped by.)
+
 ## Technical position — real DOM in real 3D, no WebGL
 All depth is CSS `transform-style: preserve-3d` with a scroll-driven camera, not three.js.
 Deliberate: this company's reach depends on mid-range Android hardware and thin bandwidth.
@@ -467,6 +634,61 @@ fluorophore. `serum` is structural only — it fails contrast as text, so `alarm
 | `deep`  | `oklch(48% .18 30)` | accent text on paper (6.2:1) |
 | `probe` | `oklch(80% .17 148)` | the brand's leaf green, also a real SYBR/FAM emission |
 | `bone` | `oklch(95% .012 85)` | filter paper — the final light |
+
+**Type scale** — added because there was not one. Sixty-six `font-size` declarations,
+every one of them a literal at its call site, and `--tracking-hud` was the only
+typographic token in `@theme`. Nothing was wildly wrong and almost nothing was exactly
+right; near-misses are what read as sloppiness. Two ladders, because the two ends of the
+scale have different jobs.
+
+| Token | Value | Carries |
+|---|---|---|
+| `--text-2xs` | 12px | the machine floor — `datakey`, `micro` |
+| `--text-xs` | 13px | `code`, `meta`, `credential`, `role`, form labels |
+| `--text-sm` | 14px | the chrome voice; small body |
+| `--text-md` | 15px | `claim` |
+| `--text-base` | 16px | running prose |
+| `--text-xl` | 20 → 25px | `display-xs` — pull quotes, the gutter readout |
+| `--text-2xl` | 25 → 31px | `display-sm` — card titles, names, sub-heads |
+| `--text-3xl` | 31 → 39px | `display-md` — founder names, the lead pull quote |
+| `--text-4xl` | 36 → 76px | `display-lg` — every section head |
+| `--display-x` | 40 → 120px | `display-xl` — the hero headline, and the deck under it |
+
+**Small type is an arithmetic ladder, +1px a step.** A geometric ratio is wrong down
+there: 1.08 from 11.5px lands on 12.42, and one pixel is the smallest difference that is
+actually visible at reading size.
+
+**Display type is a 1.25 modular scale.** The two display sizes already committed — 76
+and 120 — sit on it exactly, which is the reason to use it rather than impose it: the
+eleven arbitrary values that had accumulated between 20 and 40px only had to land on rungs
+the page had already chosen. Among them were `clamp(1.3rem,2.3vw,1.85rem)` and
+`clamp(1.35rem,2.3vw,1.85rem)` — same slope, same maximum, minimums 0.8px apart — and one
+sibling pair in a single grid row where the founder's name was fluid 28→40px and the
+cofounder's beside it was a hard 24px.
+
+**Every fluid step is `rem + vw`, never bare `vw`.** A bare-vw clamp ignores the reader's
+root font-size everywhere between its bounds, so someone at 200% gets the floor and the
+ceiling scaled and nothing in between — WCAG 1.4.4, failing on the largest type on the
+page. Twelve of the nineteen clamps here were bare vw.
+
+**Leading is four values, down from twenty-one** (`--leading-display` .94,
+`--leading-title` 1.1, `--leading-tight` 1.35, `--leading-body` 1.6). `1.05 / 1.08 / 1.1 /
+1.12` had been four values inside a 7% band, all on Fraunces headings of nearly the same
+size. **Uppercase tracking is three values, down from six**, and display tracking three
+more — mapped to size bands, because optical compensation genuinely does belong on a scale.
+
+**How the roles stay true.** Everything below the 3D stage system is unlayered component
+CSS, so it beats `@utility` output whatever the specificity says, and the markup had been
+relying on that backwards: `hud` rendered at **five sizes in two families** across its 23
+uses and `code` at 9 / 11.5 / 12.5 / 13px, because elements carried a role class *and* a
+component class that quietly overruled it. `class="nav__tagline hud"` did not mean the
+tagline was `hud`; it meant someone had written `hud` and been ignored. Wrapping the
+components in `@layer components` would fix the cascade and break the page — it inverts
+every component-versus-utility relationship in 2000 lines of layout. So the rule is the
+other way round: **an element does not carry a role class it does not get.** Where a
+component genuinely owns its type — the HUD rail really is mono, the nav really does have
+to fit — the role class is off the markup and the component resolves through the same
+tokens.
 
 **Type** — two voices, because the company has two.
 - **Fraunces** (variable, low WONK) — the human voice. Mission lines, section leads. Warm
@@ -509,16 +731,30 @@ AIG Hospitals" and "Madhya Pradesh" all rendered as 11px uppercase monospace.
 The split is by **voice**, not by size. Mono means a machine reads it back: a code, a
 key, a measurement. Sans means a person reads it: a name, a title, an award, a place.
 
-| Role | Face | Size | Case | Tracking | Carries |
-|---|---|---|---|---|---|
-| `hud` / `eyebrow` | **Condensed** | 14px | UPPER | .10em | eyebrows, nav, buttons |
-| `datakey` | Mono | 11.5px | UPPER | .12em | definition-list and spec-column heads |
-| `code` | Mono | 12.5px | as-set | .04em | `LL-SCA-01`, `DMD`, `SCM / 294609`, `Day 0` |
-| `role` | Sans 600 | 13px | Sentence | .005em | a person's title |
-| `credential` | Sans 500 | 13px | Sentence | 0 | an award, an accreditation, a state |
-| `claim` | Sans 600 | 15px | Sentence | −.004em | an assertion — "No venipuncture" |
-| `meta` | Sans 400 | 12.5px | Sentence | .01em | attributions and footnotes |
-| `micro` | **Condensed** 500 | 11.5px | UPPER | .10em | taxonomy lines — the floor of the scale |
+| Role | Face | Token | Size | Case | Tracking | Carries |
+|---|---|---|---|---|---|---|
+| `hud` / `eyebrow` | **Condensed** 600 | `--text-sm` | 14px | UPPER | `--tracking-hud` | eyebrows, nav, buttons |
+| `datakey` | Mono 500 | `--text-2xs` | 12px | UPPER | `--tracking-key` | definition-list and spec-column heads |
+| `code` | Mono 500 | `--text-xs` | 13px | as-set | `--tracking-code` | `LL-SCA-01`, `DMD`, `SCM / 294609` |
+| `role` | Sans 600 | `--text-xs` | 13px | Sentence | .005em | a person's title |
+| `credential` | Sans 500 | `--text-xs` | 13px | Sentence | 0 | an award, an accreditation, a state |
+| `claim` | Sans 600 | `--text-md` | 15px | Sentence | −.004em | an assertion — "No venipuncture" |
+| `meta` | Sans 400 | `--text-xs` | 13px | Sentence | .01em | attributions and footnotes |
+| `micro` | **Condensed** 500 | `--text-2xs` | 12px | UPPER | `--tracking-hud` | taxonomy lines — the floor of the scale |
+
+`hud` and `eyebrow` are now **one utility with two names**. They had been separate for
+exactly one declaration — `.10em` against `.11em`, which at 14px is 0.14em of sidebearing
+per glyph and is not a difference anyone can see. `eyebrow` survives as a name because
+"eyebrow" says what the element *is* where "hud" only says what it looks like; it no
+longer carries a size or a tracking of its own, so the two cannot drift apart again.
+
+`datakey` and `micro` moved 11.5 → 12px, `code` and `meta` 12.5 → 13px. Nothing got
+bigger for its own sake: those four sizes — 11.5, 12, 12.5, 13 — were **four steps inside
+1.5px**, spelled `0.71875rem`, `0.75rem`, `0.78125rem` and `0.8125rem`. Below the
+perceptual threshold at reading size the roles stopped reading as *different* and started
+reading as *drift*, which is exactly what "the type feels inconsistent" describes. Two
+roles sharing a size is correct and always was: this table splits by **voice**, not by
+size, and `code` and `meta` at 13px could not look less alike.
 
 Light-on-dark is compensated on all three perceptual axes, so each role runs slightly
 larger, slightly looser in leading, and one step heavier than the same role would be on
@@ -529,8 +765,15 @@ plain paragraphs inherited Plex Sans 400 at 15px, which on this ground reads a s
 smaller than it sets. Body copy is 16px now, and `.prose` carries **weight 450** — a real
 intermediate instance, which is why the font request asks for `IBM Plex Sans wght@400..600`
 rather than three static cuts (400/500/600 have no 450 to snap to, so the weight silently
-did nothing until the range syntax landed). The hero deck scales with its headline via
-`hero-deck`'s clamp instead of sitting at a fixed 17px under a 120px h1.
+did nothing until the range syntax landed). The hero deck is computed **from** its headline — see below.
+
+`.prose` carries the whole running-prose role now — size and leading as well as weight —
+because leading was the quietest of the inconsistencies and the most visible in aggregate.
+`body` declares 1.6, but all seven scene paragraphs also carried Tailwind's `text-base`,
+which ships its own `line-height: 1.5` and silently won; elsewhere the same job was being
+done at 1.5, 1.6, 1.625, 1.65 and 1.4286. Six leadings for one role. The `text-base`
+classes are off the markup, and three paragraphs that carried neither `.prose` nor 450 —
+the test-menu deck, the provenance deck and the contact body — now carry it.
 
 The compensation is opt-in **by role, not by element**. Written once as `p, li, dd`, it
 reached display type — `.story__pull` and `#inhHeadline` are both `<p>` set in Fraunces,

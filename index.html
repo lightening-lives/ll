@@ -30,8 +30,8 @@
          first; under it, it reads as what it is. The two-line block still fits
          inside the 44px symbol's height, so --nav-h does not grow. -->
     <span class="flex flex-col justify-center">
-      <span class="font-display text-[1.35rem] leading-none tracking-[-.02em] text-chalk">Lightening&nbsp;Lives</span>
-      <span class="nav__tagline hud text-mute">Every Life Matters</span>
+      <span class="font-display text-[clamp(1.05rem,0.72rem+0.88vw,1.35rem)] leading-none tracking-[-.02em] text-chalk">Lightening&nbsp;Lives</span>
+      <span class="nav__tagline text-mute">Every Life Matters</span>
     </span>
   </a>
   <!-- Five items, one per question an evaluator actually arrives with, in page
@@ -48,14 +48,14 @@
        slot (the inheritance explainer, capabilities, collaborators, the two
        scroll scenes) are indexed in full in the footer. -->
   <div class="nav__links" id="navLinks">
-    <a href="#stories"     class="hud nav__link no-underline">Impact</a>
-    <a href="#menu"        class="hud nav__link no-underline">Tests</a>
-    <a href="#performance" class="hud nav__link no-underline">Performance</a>
-    <a href="#workflow"    class="hud nav__link no-underline">Workflow</a>
-    <a href="#provenance"  class="hud nav__link no-underline">Who we are</a>
+    <a href="#stories"     class="nav__link no-underline">Impact</a>
+    <a href="#menu"        class="nav__link no-underline">Tests</a>
+    <a href="#performance" class="nav__link no-underline">Performance</a>
+    <a href="#workflow"    class="nav__link no-underline">Workflow</a>
+    <a href="#provenance"  class="nav__link no-underline">Who we are</a>
   </div>
   <div class="nav__end">
-    <a href="#contact" class="nav__cta hud bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
+    <a href="#contact" class="nav__cta bg-lumen text-void px-4 py-2.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
     <button type="button" class="nav__toggle" id="navToggle"
             aria-expanded="false" aria-controls="navLinks">
       <span class="sr-only">Sections</span>
@@ -65,9 +65,9 @@
 </nav>
 
 <div class="hud-rail" aria-hidden="true">
-  <span class="hud-rail__scale hud" id="scaleRead">10⁰ m</span>
+  <span class="hud-rail__scale" id="scaleRead">10⁰ m</span>
   <div class="hud-rail__track"><div class="hud-rail__fill" id="railFill"></div></div>
-  <span class="hud-rail__scale hud" id="pctRead">00%</span>
+  <span class="hud-rail__scale" id="pctRead">00%</span>
 </div>
 
 <main id="top">
@@ -97,12 +97,28 @@
         <h1 class="display-xl text-chalk">
           <span class="block" data-ll="hero.line1"></span>
           <span class="block" data-ll="hero.line2"></span>
-          <span class="block italic" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
+          <!-- No `italic`. Fraunces' italic is a separate variable font and the
+               request never asked for it, so this line — the most prominent on the
+               page — was rendering as a browser-synthesised slant. It also italicised
+               "can afford.", and PRODUCT.md is explicit that price is carried
+               qualitatively, argued from method: a swash flourish on the price claim
+               is the one moment the page leaves instrument register for marketing
+               register, in front of the buyers it is written for. SOFT 40 (double the
+               page's 20) and WONK 1 already set this line apart from the two above
+               it; the slant was a third differentiator on three words. -->
+          <span class="block" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
         </h1>
-        <p class="mt-7 max-w-[44ch] text-mute hero-deck" data-ll="hero.standfirst"></p>
+        <!-- 60ch, not 44ch: at 44 the deck set LARGER type into a NARROWER column
+             than the 16px/52-60ch lead paragraphs everywhere else on the page, which
+             is what made it read as a pull-quote fragment. Its right edge now lands
+             near the headline's instead of at 62% of it. `prose` carries the 450
+             weight; `hero-deck` overrides the size from `--display-x`. -->
+        <p class="mt-7 max-w-[60ch] text-mute prose hero-deck" data-ll="hero.standfirst"></p>
         <div class="mt-8 flex flex-wrap items-center gap-3" id="heroCta">
-          <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors">Contact us</a>
-          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors">See our common tests</a>
+          <a href="#contact" class="hud bg-lumen text-void px-6 py-3.5 no-underline hover:bg-chalk transition-colors"
+             data-ll="hero.ctaPrimary.label">Contact us</a>
+          <a href="#menu" class="hud border border-line text-chalk px-6 py-3.5 no-underline hover:border-lumen hover:text-lumen transition-colors"
+             data-ll="hero.ctaSecondary.label">See our common tests</a>
         </div>
       </div>
     </div>
@@ -155,9 +171,9 @@
     <div class="scene-layer absolute inset-0">
       <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end md:items-center">
         <div class="scene-copy w-full md:w-[46%] md:ml-auto pb-[7svh] md:pb-0 px-5 md:px-0">
-          <p class="eyebrow text-probe mb-4"><span data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
+          <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="specimen.head"></h2>
-          <p class="prose mt-5 text-mute text-base" data-ll="specimen.body"></p>
+          <p class="prose mt-5 text-mute" data-ll="specimen.body"></p>
           <dl class="mt-7 grid gap-px bg-line border border-line" id="specimenPoints"></dl>
         </div>
       </div>
@@ -178,9 +194,9 @@
            also hitting the index panel, which is the scene-layer's other child -->
       <div class="scene-frame mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end lg:items-center">
         <div class="scene-copy w-full lg:w-[38%] pb-[7svh] lg:pb-0 px-5 md:px-0">
-          <p class="eyebrow text-probe mb-4"><span data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
+          <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
-          <p class="prose mt-5 text-mute text-base" data-ll="assay.body"></p>
+          <p class="prose mt-5 text-mute" data-ll="assay.body"></p>
           <ol class="mt-7 border-t border-line" id="assayStack"></ol>
           <!-- below lg the scene flows, so the index runs at its natural length
                under the copy. At lg and up it moves to the gutter instead. -->
@@ -206,20 +222,20 @@
      rebuilt in the Darkfield vocabulary: the four possible children are
      shown as WELLS on a plate, which is the page's own hero object.
      ============================================================= -->
-<section id="inheritance" class="relative z-10 py-[13svh] border-t border-line">
+<section id="inheritance" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <p class="eyebrow text-probe mb-4"><span data-ll="inheritance.scale"></span> ·
+    <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="inheritance.scale"></span> ·
        <span data-ll="inheritance.kicker"></span></p>
     <h2 class="display-lg text-chalk max-w-[19ch]" data-ll="inheritance.head"></h2>
-    <p class="prose mt-6 max-w-[60ch] text-mute text-base" data-ll="inheritance.body"></p>
+    <p class="prose mt-6 max-w-[60ch] text-mute" data-ll="inheritance.body"></p>
 
-    <div class="mt-14 grid gap-12 lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-16 items-start">
+    <div class="mt-14 grid gap-12 md:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] md:gap-10 lg:gap-16 items-start">
       <div>
         <div id="inhControls"></div>
 
         <div class="inh-readout mt-10 rule-t pt-7" role="status" aria-live="polite">
-          <p id="inhHeadline" class="font-display text-[clamp(1.3rem,2.3vw,1.85rem)] leading-[1.08] text-chalk"></p>
-          <p id="inhBody" class="prose mt-3.5 text-mute text-base max-w-[46ch]"></p>
+          <p id="inhHeadline" class="display-sm text-chalk"></p>
+          <p id="inhBody" class="prose mt-3.5 text-mute max-w-[46ch]"></p>
         </div>
 
         <a id="inhCta" class="inline-block mt-9 hud bg-lumen text-void px-6 py-3.5
@@ -229,8 +245,10 @@
       <div>
         <p class="hud text-mute mb-5" data-ll="inheritance.childrenLabel"></p>
         <ul id="inhChildren" class="inh-children"></ul>
-        <dl id="inhOdds" class="mt-10 grid grid-cols-3 gap-px bg-line border border-line"></dl>
-        <p class="prose mt-7 text-[.9375rem] leading-relaxed text-mute max-w-[58ch]"
+        <!-- was `grid-cols-3` with no responsive prefix at all: at 375px that is
+             ~67px of content per cell, and "Unaffected" does not fit in 67px. -->
+        <dl id="inhOdds" class="mt-10 grid grid-cols-1 min-[26rem]:grid-cols-3 gap-px bg-line border border-line"></dl>
+        <p class="prose mt-7 text-mute max-w-[58ch]"
            data-ll="inheritance.disclaimer"></p>
       </div>
     </div>
@@ -242,7 +260,7 @@
      means for your own children, then the families it happened to, is
      one continuous argument. See DESIGN.md.
      ============================================================= -->
-<section id="stories" class="relative z-10 py-[13svh] border-t border-line">
+<section id="stories" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6">
       <div>
@@ -255,7 +273,7 @@
 </section>
 
 <!-- ================= 6 · ASSAY MENU ================= -->
-<section id="menu" class="relative z-10 py-[14svh]">
+<section id="menu" class="relative z-10 section-y">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6 pb-8 border-b border-line">
       <div>
@@ -263,28 +281,28 @@
         <h2 class="display-lg text-chalk max-w-[14ch]" data-ll="menu.head"></h2>
         <!-- The cards are a selection, not the catalogue. Without this line the
              header reads as a complete offer and the lab looks smaller than it is. -->
-        <p class="mt-5 max-w-[46ch] text-mute" data-ll="menu.deck"></p>
+        <p class="prose mt-5 max-w-[46ch] text-mute" data-ll="menu.deck"></p>
       </div>
     </header>
     <!-- The two umbrella families, glossed once. Same `gap-px bg-line` inset-rule
          grid the specimen points and the cost claim use, so it reads as part
          of the instrument register rather than as a new component. -->
     <dl class="mt-10 grid gap-px bg-line border border-line sm:grid-cols-3" id="menuFamilies"></dl>
-    <div class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3" style="perspective:1400px" id="assayGrid"></div>
+    <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" style="perspective:1400px" id="assayGrid"></div>
   </div>
 </section>
 
 <!-- ================= 7 · PERFORMANCE ================= -->
-<section id="performance" class="relative z-10 py-[12svh] border-t border-line">
+<section id="performance" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <div class="grid gap-12 lg:grid-cols-[1fr_1.35fr] lg:gap-20 items-start">
+    <div class="grid gap-12 md:grid-cols-[1fr_1.35fr] md:gap-12 lg:gap-20 items-start">
       <div class="lg:sticky lg:top-28">
         <p class="eyebrow text-probe mb-4" data-ll="validation.kicker"></p>
         <h2 class="display-lg text-chalk" data-ll="validation.head"></h2>
         <p class="build-note mt-6 meta text-alarm max-w-[40ch]" data-slot="SLOT-12" data-ll="validation.disclaimer"></p>
         <div class="mt-10 rule-t pt-6">
           <p class="datakey text-mute" data-ll="validation.runNote"></p>
-          <p class="figure-num text-lumen text-[clamp(2.5rem,6vw,4.5rem)] leading-none mt-2"
+          <p class="figure-num text-lumen text-[clamp(2.5rem,0.9rem+4.3vw,4.5rem)] leading-none mt-2"
             ><span id="runCounter">0</span></p>
           <p class="datakey text-mute mt-1.5" data-ll="validation.runUnit"></p>
         </div>
@@ -313,7 +331,7 @@
   </div>
 </section>
 
-<!-- ================= 8b · WHAT IT COSTS =========================
+<!-- ================= 9 · WHAT IT COSTS ==========================
      A flat, unpinned block — deliberately NOT inside #workflow, which is a
      pinned .scene at 240svh; anything added inside it breaks the pin and the
      scrub. Modelled on #capabilities below: same rhythm, same rule, same
@@ -321,23 +339,23 @@
      Sits here because the commercial spine now reads straight through:
      what we test → how well it works → how you run it → what it costs.
      ============================================================ -->
-<section id="access" class="relative z-10 py-[12svh] border-t border-line">
+<section id="access" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <div class="grid lg:grid-cols-2 gap-x-16 gap-y-10 items-start">
+    <div class="grid md:grid-cols-2 gap-x-10 lg:gap-x-16 gap-y-10 items-start">
       <div>
         <p class="eyebrow text-lumen mb-4" data-ll="access.kicker"></p>
         <h2 class="display-lg text-chalk max-w-[15ch]" data-ll="access.head"></h2>
       </div>
       <div>
-        <p class="prose text-mute text-base max-w-[52ch]" data-ll="access.body"></p>
+        <p class="prose text-mute max-w-[52ch]" data-ll="access.body"></p>
         <dl class="mt-8 grid gap-px bg-line border border-line" id="accessPoints"></dl>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= 9 · CAPABILITIES ================= -->
-<section id="capabilities" class="relative z-10 py-[12svh] border-t border-line">
+<!-- ================= 10 · CAPABILITIES ================= -->
+<section id="capabilities" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="eyebrow text-lumen mb-4" data-ll="capabilities.kicker"></p>
     <h2 class="display-lg text-chalk max-w-[18ch]" data-ll="capabilities.head"></h2>
@@ -345,14 +363,14 @@
   </div>
 </section>
 
-<!-- ================= 10 · PROVENANCE ================= -->
-<section id="provenance" class="relative z-10 py-[12svh] border-t border-line">
+<!-- ================= 11 · PROVENANCE ================= -->
+<section id="provenance" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="eyebrow text-lumen mb-4" data-ll="provenance.kicker"></p>
     <h2 class="display-lg text-chalk max-w-[26ch]" data-ll="provenance.head"></h2>
-    <p class="mt-5 max-w-[46ch] text-mute" data-ll="provenance.deck"></p>
+    <p class="prose mt-5 max-w-[46ch] text-mute" data-ll="provenance.deck"></p>
 
-    <div class="mt-14 grid gap-10 lg:grid-cols-[minmax(200px,270px)_1.35fr_1fr] lg:gap-14 items-start">
+    <div class="mt-14 grid gap-10 md:grid-cols-[minmax(180px,240px)_1fr] lg:grid-cols-[minmax(200px,270px)_1.35fr_1fr] lg:gap-14 items-start">
       <figure class="portrait">
         <span class="portrait__frame">
           <img id="foundersImg" alt="" width="592" height="760" loading="lazy" decoding="async">
@@ -362,29 +380,29 @@
       </figure>
       <article class="border-t border-line pt-7">
         <p class="role text-probe" data-ll="provenance.founder.role"></p>
-        <h3 class="font-display text-[clamp(1.75rem,3.2vw,2.5rem)] leading-[1.05] text-chalk mt-2"
+        <h3 class="display-md text-chalk mt-2"
             data-ll="provenance.founder.name"></h3>
-        <p class="prose mt-5 text-mute text-base" data-ll="provenance.founder.bio"></p>
+        <p class="prose mt-5 max-w-[62ch] text-mute" data-ll="provenance.founder.bio"></p>
         <ul class="mt-7 flex flex-wrap gap-2" id="founderCreds"></ul>
       </article>
       <article class="border-t border-line pt-7">
         <p class="role text-probe" data-ll="provenance.cofounder.role"></p>
-        <h3 class="font-display text-[1.5rem] leading-[1.1] text-chalk mt-2" data-ll="provenance.cofounder.name"></h3>
-        <p class="prose mt-5 text-mute text-base" data-ll="provenance.cofounder.bio"></p>
+        <h3 class="display-md text-chalk mt-2" data-ll="provenance.cofounder.name"></h3>
+        <p class="prose mt-5 max-w-[62ch] text-mute" data-ll="provenance.cofounder.bio"></p>
       </article>
     </div>
 
     <div class="mt-14 grid gap-4 md:grid-cols-3" id="governance"></div>
     <div class="mt-10">
       <p class="hud text-mute mb-2">Core team</p>
-      <p class="prose text-[.9375rem] text-mute mb-6">Select anyone for more details.</p>
+      <p class="prose text-mute mb-6">Select anyone for more details.</p>
       <ul class="team-grid" id="teamList"></ul>
     </div>
   </div>
 </section>
 
-<!-- ================= 11 · COLLABORATORS ================= -->
-<section id="collaborators" class="relative z-10 py-[12svh] border-t border-line">
+<!-- ================= 12 · COLLABORATORS ================= -->
+<section id="collaborators" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6">
       <div>
@@ -397,14 +415,14 @@
   </div>
 </section>
 
-<!-- ================= 11 · CONTACT — the page resolves to light ============ -->
-<section id="contact" class="relative z-10 bg-bone text-void py-[14svh]" data-lit>
+<!-- ================= 13 · CONTACT — the page resolves to light =========== -->
+<section id="contact" class="relative z-10 bg-bone text-void section-y" data-lit>
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <div class="grid gap-14 lg:grid-cols-2 lg:gap-24">
+    <div class="grid gap-14 md:grid-cols-2 md:gap-12 lg:gap-24">
       <div>
         <p class="eyebrow text-deep mb-4" data-ll="contact.kicker"></p>
         <h2 class="display-lg" data-ll="contact.head"></h2>
-        <p class="mt-6 max-w-[38ch] text-[oklch(38%_.02_250)]" data-ll="contact.body"></p>
+        <p class="prose mt-6 max-w-[38ch] text-[oklch(38%_.02_250)]" data-ll="contact.body"></p>
         <dl class="mt-12 grid gap-6 sm:grid-cols-2 text-[oklch(30%_.02_250)]">
           <div><dt class="datakey text-[oklch(48%_.02_250)]">Email</dt>
                <dd class="mt-1"><a class="underline underline-offset-4 decoration-1" id="cEmail" href="#"></a></dd></div>
@@ -485,9 +503,5 @@
 <script src="./src/content.js"></script>
 <script src="./src/scene.js"></script>
 
-<!-- TEMPORARY — live ground switcher for the client review, 2026-08-19.
-     Sticky control at the foot of the viewport; swaps the ground token family
-     on the real page. Remove this one line together with `rm -rf preview/`
-     once the ground is signed off and baked into src/input.css. -->
 </body>
 </html>

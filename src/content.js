@@ -48,8 +48,10 @@ window.LL_CONTENT = {
     standfirst:
       'Dried blood spot screening for haemoglobinopathies and musculopathies '
       + 'including Sickle Cell Anaemia, Thalassaemia, Spinal Muscular Atrophy '
-      + 'and Duchenne Muscular Atrophy along with pharmacogenetics in broad '
+      + 'and Duchenne Muscular Dystrophy along with pharmacogenetics in broad '
       + 'aspects. Affordable, and built for all the people.',
+    // Labels are bound into index.html by `data-ll`; the hrefs live in the
+    // markup, so both buttons still go somewhere if the script never runs.
     ctaPrimary:   { label: 'Contact us', href: '#contact' },
     ctaSecondary: { label: 'See our common tests', href: '#menu' }
   },
@@ -103,8 +105,8 @@ window.LL_CONTENT = {
     // from both the body and the pipeline in the same pass — the page no longer
     // states anywhere that positives are re-tested by a second method.
     body: 'A single punch from the dried blood spot is utilised to run against a ' +
-          'targeted panel. We read four kinds of change: a base substituted, exons ' +
-          'missing, a gene carried twice and many more.',
+          'targeted panel. We read three kinds of change: a base substituted, exons ' +
+          'missing, a segment inverted, and many more.',
     stack: [
       { step: '01', t: 'Punch & proceed',    d: 'Single disc, single-tube multiplex reaction' },
       { step: '02', t: 'Targeted amplify',   d: 'Closed-tube molecular panel' },
@@ -186,8 +188,8 @@ window.LL_CONTENT = {
       listLabel: 'All six variants',
       listLabelOpen: 'Hide the list',
       // ✅ the sickle figure is real: HBB c.20A>T is one base of ~3.1 Gb
-      note: 'One base out of three billion, a missing exon, an inverted intron, ' +
-            'a gene carried twice. Four classes of change, one dried blood spot punch.'
+      note: 'One base out of three billion, a missing exon, an inverted intron. ' +
+            'Three classes of change, one dried blood spot punch.'
       // The per-variant "LL-… → See the test" link was removed by the client on
       // 2026-08-20. The `menu` field on each locus above is retained purely as a
       // cross-reference: it records which menu card reports that locus, so the
@@ -241,7 +243,7 @@ window.LL_CONTENT = {
                 'substitute for genetic counselling.'
   },
 
-  /* --- 4 · WHAT WE TEST FOR ----------------------------------------- */
+  /* --- 6 · WHAT WE TEST FOR ----------------------------------------- */
   menu: {
     kicker: 'Most requested tests',
     head: 'The tests we are asked for most.',
@@ -346,7 +348,7 @@ window.LL_CONTENT = {
     }
   },
 
-  /* --- 5 · PERFORMANCE ---------------------------------------------- */
+  /* --- 7 · PERFORMANCE ---------------------------------------------- */
   validation: {
     kicker: 'Analytical performance',
     head: 'Numbers, with their denominators.',
@@ -373,20 +375,20 @@ window.LL_CONTENT = {
     runUnit: 'samples and counting…'
   },
 
-  /* --- 6 · WORKFLOW ------------------------------------------------- */
+  /* --- 8 · WORKFLOW ------------------------------------------------- */
   workflow: {
     kicker: 'How you run it',
-    head: '5 steps, one courier!',
+    head: '5 steps, one stamp.',
     steps: [                                            // 🟠 SLOT-15 confirm steps + timings
       { n: '01', t: 'Request kits',  d: 'Tell us volume and panel. Kits ship free.',       time: 'Day 0' },
       { n: '02', t: 'Collect',       d: 'Finger or heel prick onto the card. Air-dry.',    time: 'Day 1' },
       { n: '03', t: 'Post',          d: 'Paper mailer, ordinary post, prepaid.',           time: 'Day 1' },
-      { n: '04', t: 'We run it',     d: 'Batch runs daily. Positives confirmed twice.',    time: 'Day 3' },
+      { n: '04', t: 'We run it',     d: 'Batch runs daily.',                               time: 'Day 3' },
       { n: '05', t: 'Signed report', d: 'Report to you. Genetic counselling on request.',  time: 'Day 3' }
     ]
   },
 
-  /* --- 6b · WHAT IT COSTS ------------------------------------------
+  /* --- 9 · WHAT IT COSTS ------------------------------------------
      The page could argue analytical performance, logistics, scope and people,
      and never once said what it costs — while "very affordable" is the single
      strongest thing this company has for the two audiences it is targeting
@@ -403,12 +405,11 @@ window.LL_CONTENT = {
      followed rather than as a fresh boast.
      ------------------------------------------------------------------- */
   access: {
-    scale: '10⁰ m',
     kicker: 'What it costs',
     head: 'Priced so a programme can include everyone.',
     body: 'Cost is a design decision here, not a discount. A dried blood spot ' +
           'collection needs no phlebotomist, no centrifuge, no cold chain and no ' +
-          'manual job — so the cost of reaching one more village is close to the ' +
+          'courier — so the cost of reaching one more village is close to the ' +
           'cost of a stamp.',
     // ✅ SLOT-27 resolved 2026-08-20. All three claims the section used to make
     // were struck by the client — "One price per sample", the unverified "No cost
@@ -421,7 +422,7 @@ window.LL_CONTENT = {
     points: []
   },
 
-  /* --- 7 · CAPABILITIES --------------------------------------------- */
+  /* --- 10 · CAPABILITIES --------------------------------------------- */
   capabilities: {
     kicker: 'Beyond the assay',
     head: 'What else we can do for you!',
@@ -473,7 +474,7 @@ window.LL_CONTENT = {
     }
   },
 
-  /* --- 7 · PROVENANCE  (replaces the Golden Circle section) ---------- */
+  /* --- 11 · PROVENANCE  (replaces the Golden Circle section) ---------- */
   provenance: {
     kicker: 'Who is behind the assay',
     // ✅ client copy, 2026-08-20.
@@ -586,7 +587,7 @@ window.LL_CONTENT = {
     ]
   },
 
-  /* --- 8 · COLLABORATORS -------------------------------------------- */
+  /* --- 12 · COLLABORATORS -------------------------------------------- */
   collaborators: {
     kicker: 'Collaborations',
     head: 'We work with the same ethos.',
@@ -634,7 +635,7 @@ window.LL_CONTENT = {
     ]
   },
 
-  /* --- 9 · IMPACT --------------------------------------------------- */
+  /* --- 5 · IMPACT --------------------------------------------------- */
   stories: {
     kicker: 'Impact',
     head: 'What early detection actually changes.',
@@ -694,7 +695,7 @@ window.LL_CONTENT = {
     ]
   },
 
-  /* --- 11 · CONTACT ------------------------------------------------- */
+  /* --- 13 · CONTACT ------------------------------------------------- */
   contact: {
     kicker: 'Request a kit',
     head: 'Tell us the volume. We will send the cards.',
