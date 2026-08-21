@@ -17,9 +17,8 @@ window.LL_CONTENT = {
     tagline: 'Every Life Matters',                     // ✅ from the kit + logo
     email: 'admin@lighteninglives.in',                 // ✅
     phone: '+91 91825 88191',                          // ✅
-    city: 'Hyderabad – 500068, Telangana, India',      // ✅
-    addressFull: 'D 306, Sy. No. 117, Indu Aranya Pallavi Apts, GSI SR, ' +
-                 'Bandlaguda, Hayath Nagar, Ranga Reddy',              // ✅
+    city: 'Hyderabad, Secunderabad – 500076, Telangana, India',   // ✅ client, 2026-08-22
+    addressFull: 'Sree Sai Nilayam, 4-9-7, MBD Complex, HMT Nagar, Nacharam',  // ✅ client, 2026-08-22
     cin: 'AAA-0000',                                   // 🟠 SLOT-02 LLPIN
     // ✅ both pulled from the live site
     mark: 'assets/brand/mark.png',                     // the sun symbol alone,
@@ -697,31 +696,34 @@ window.LL_CONTENT = {
 
   /* --- 13 · CONTACT ------------------------------------------------- */
   contact: {
-    kicker: 'Request a kit',
-    head: 'Tell us the volume. We will send the cards.',
+    // The eyebrow is a plain noun label like every other section's; the
+    // headline is the one place the page says its own name. "Bring the light"
+    // is the brand's double meaning — to bring light, to lighten a burden — on
+    // the only section set in light, which is what the whole scroll set up.
+    // The previous head ("Tell us the volume. We will send the cards.") was a
+    // supplier sentence on the payoff section; the body and the submit button
+    // still carry that practical detail.
+    kicker: 'Start here',
+    head: 'Bring the light to your programme.',
     body: 'Let us know what you’re looking for and we will come back with a panel ' +
           'recommendation, a per-sample price and a collection schedule — whether ' +
           'you are a laboratory, a hospital, an NGO or a district programme.',
-    // The organisation field used to be labelled "Hospital / laboratory", which
-    // quietly told an NGO field lead and a district health officer that the form
-    // was not for them — while both are named target buyers. It is now a neutral
-    // "Organisation" plus an explicit type, which also tells us who is asking
-    // before we quote.
-    fields: [
-      { n: 'name',    l: 'Name',                  t: 'text',   req: true },
-      { n: 'org',     l: 'Organisation',          t: 'text',   req: true },
-      // this select carries its OWN options; without them it would inherit the
-      // test-menu list that every other select on this form uses
-      { n: 'orgType', l: 'Type of organisation',  t: 'select', req: false,
-        options: ['Laboratory', 'Hospital', 'NGO / foundation',
-                  'Government or public health programme', 'Research institute',
-                  'Other'] },
-      { n: 'email',   l: 'Email',                 t: 'email',  req: true },
-      { n: 'phone',   l: 'Phone',                 t: 'tel',    req: false },
-      { n: 'volume',  l: 'Samples per month',     t: 'text',   req: false },
-      { n: 'panel',   l: 'Panel of interest',     t: 'select', req: false }
+    // The form is Typeform. `typeform` is the form ID from its public URL
+    // (https://form.typeform.com/to/<id>). Until it is set the button falls
+    // back to a pre-addressed email, so the page never offers a dead control.
+    typeform: '',                                       // 🟠 SLOT-19 Typeform form ID
+    // The three things the body copy promises, set out as steps so the reader
+    // knows what the click costs and what comes back before they commit.
+    steps: [
+      { t: 'Tell us about your programme',
+        d: 'Who you are, roughly how many samples a month, and which disorders matter to you. About two minutes; no patient identifiers.' },
+      { t: 'We come back within one working day',
+        d: 'A panel recommendation, a per-sample price and a collection schedule, written for your volume.' },
+      { t: 'Cards are on their way',
+        d: 'Collection cards, return packaging and a one-page collection guide, by ordinary post.' }
     ],
-    endpoint: '',                                       // 🟠 SLOT-19 form endpoint
-    submit: 'Request a kit'
+    submit: 'Request a kit',
+    duration: 'Takes about two minutes',
+    note: 'Opens a short form. Prefer email? Write to admin@lighteninglives.in'
   }
 };

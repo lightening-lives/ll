@@ -175,6 +175,22 @@
   }
   @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+  /* LARGE SCREENS — TVs, 4K monitors, ultrawides. Every size on the page is
+     set in rem (the type scale, the 86rem shell, the section rhythm, the
+     nav), and every clamp caps in rem, so past ~1800px the page simply
+     stopped growing: a 120px headline and a 1376px column floating in a
+     2560px ground, with more empty slate than page. Scaling the ROOT is the
+     one change that grows all of it in proportion — type, measure, gutters
+     and shell together — without touching a single component.
+
+     The ramp: 16px until 1800, ~17px at 1920, ~21px at 2560, capped at 28px
+     (3840 and beyond). Breakpoints are unaffected: media queries resolve
+     against the initial 16px, not the scaled root. The 3D geometry is in
+     vmin and scales with the viewport on its own. */
+  @media (min-width: 1800px) {
+    html { font-size: clamp(1rem, 5px + 0.625vw, 1.75rem); }
+  }
+
   body {
     background: transparent;              /* the ground lives on `html` now */
     color: var(--color-chalk);
@@ -1319,7 +1335,24 @@
 
 @media (min-width: 48rem) {
   .scene-copy { background: none; padding-top: 0; }
-  .plate-layer { --plate-x: 64%; --plate-y: 40%; --plate-w: 58vmin; --drop-w: 8.2vmin; }
+  /* THE HERO COLLISION. The headline's longest line ("Genetic answers" at
+     118px Fraunces) runs to ~52% of a 1440 viewport, and the plate, centred
+     at 64% with a 58vmin width, started at ~47% — a 5% overlap on the word
+     "answers" at rest, and worse as the plate dollies toward the camera
+     (z: 0 → 340 across the scroll, which scales it up ~1.3x about the
+     viewport centre). Measured at 1024 and 1440; both collided.
+
+     The composition is now two real columns. The copy owns the left 55% of
+     the frame (the h1 is capped there, so a longer translation wraps rather
+     than runs under the plate), and the plate is centred at 73% with its
+     width capped at 35vw as well as in vmin, so its left edge sits past 55%
+     at ANY aspect ratio and stays there through the dolly (measured ~1.11x
+     at the end of the scroll). vmin alone let a wide-and-short laptop window
+     grow the plate into the text. A first pass at 71% / 38vw still grazed
+     the word once the plate had dollied forward; this is the second. */
+  .plate-layer { --plate-x: 73%; --plate-y: 38%;
+                 --plate-w: min(52vmin, 35vw); --drop-w: min(7.5vmin, 5vw); }
+  #hero h1 { max-width: 55%; }
   .dbs   { --dbs-x: 30%;  --dbs-y: 52%; --dbs-w: min(37vmin, 330px); }
 }
 /* The ladder only moves off centre where the side-by-side composition exists —
@@ -1970,18 +2003,26 @@ li.chip { display: inline-flex; }
   display: grid; place-items: center;
   background: var(--color-void);
   padding: 1.5rem 1.25rem;
+  /* one height for every row, so the tall emblems do not make their row
+     deeper than the wordmark rows and the wall stays a single ruled plate */
+  min-height: 8rem;
   transition: background-color .35s ease;
 }
-@media (min-width: 40rem) { .cloud__cell { padding: 2rem 1.75rem; } }
+@media (min-width: 40rem) { .cloud__cell { padding: 2rem 1.75rem; min-height: 9.75rem; } }
 /* the same lift the assay cards and collaborator rows use on hover */
 .cloud__cell:hover { background: var(--color-ink); }
 
 .cloud__cell img {
   display: block;
-  width: 100%; max-width: 13rem;
+  /* 62% of the cell, not a fixed 13rem: the cell is what the eye measures
+     the mark against, and a fixed cap left the wordmarks short in wide cells
+     and cramped in narrow ones. */
+  width: 100%; max-width: min(62%, 16rem);
   max-height: var(--cap, 3.25rem);
   object-fit: contain; object-position: center;
-  opacity: calc(0.34 + var(--reveal) * 0.38);
+  /* rests at ~85% once revealed (was ~72%): still quieter than the hover
+     state, but no longer reads as disabled */
+  opacity: calc(0.45 + var(--reveal) * 0.40);
   transition: opacity .35s ease;
 }
 .cloud__cell:hover img { opacity: 1; }

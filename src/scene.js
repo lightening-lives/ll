@@ -357,7 +357,14 @@
      own aspect instead, which balances them optically inside a uniform grid. */
   $('#collabGrid').innerHTML = C.collaborators.items.map((o) => {
     const ar = o.ar || 1;
-    const cap = ar >= 3.5 ? '2.2rem' : ar >= 2 ? '2.7rem' : ar >= 1.2 ? '3.4rem' : '4.3rem';
+    /* Measured 2026-08-22 at 1440: cells are ~280x115 and the old caps
+       (2.2 - 4.3rem) filled about a quarter of each cell, so thirteen real
+       partners read as faint stamps. These caps put every mark at ~60% of the
+       cell and at roughly EQUAL INK AREA (~7k px² at 1440): a 4.5:1 wordmark
+       runs ~175x40, a 2:1 mark ~120x58, a 1.5:1 ~110x72, a square emblem
+       ~75x92. The width limit in CSS (62% of the cell) is what catches the
+       wordmarks; the height caps catch everything else. */
+    const cap = ar >= 3.5 ? '2.6rem' : ar >= 2 ? '3.6rem' : ar >= 1.2 ? '4.5rem' : '5.75rem';
     return `
     <li class="cloud__cell" style="--cap:${cap}" data-slot="logo: ${esc(o.n)}">
       <img src="${esc(o.logo)}" alt="${esc(o.n)}${o.d ? ' — ' + esc(o.d) : ''}"
@@ -395,112 +402,58 @@
       <dd class="prose text-mute mt-2">${esc(p.d)}</dd>
     </div>`).join('');
 
-  // contact form
-  $('#formFields').innerHTML = C.contact.fields.map((f) => {
-    // a select with its own `options` uses them; one without falls back to the
-    // test menu, which is what `panel` wants and what `orgType` must not inherit
-    const opts = f.options
-      ? f.options.map((o) => `<option>${esc(o)}</option>`).join('')
-      : C.menu.items.map((a) => `<option>${esc(a.name)}</option>`).join('')
-        + '<option>Not sure yet</option>';
-    const control = f.t === 'select'
-      ? `<select id="f-${f.n}" name="${f.n}">${opts}</select>`
-      : `<input id="f-${f.n}" name="${f.n}" type="${f.t}" ${f.req ? 'required' : ''} autocomplete="on">`;
-    // `org` used to span both columns, which left a hole beside `name`. With the
-    // organisation type added there are seven fields, so six pair off cleanly and
-    // only `panel` — the widest label and the longest options — takes the full row.
-    return `<div class="field ${f.n === 'panel' ? 'sm:col-span-2' : ''}">
-        <label class="field__label role block mb-1.5" for="f-${f.n}">${esc(f.l)}${f.req ? ' *' : ''}</label>
-        ${control}
-        <p class="field__err credential" id="e-${f.n}" hidden></p>
-      </div>`;
-  }).join('');
+  // contact — the "what happens next" steps, and the Typeform hand-off
+  $('#kitSteps').innerHTML = C.contact.steps.map((st, i) => `
+    <li class="grid grid-cols-[2.5rem_1fr] gap-x-3 py-5">
+      <span class="datakey text-deep pt-1">0${i + 1}</span>
+      <div>
+        <p class="role text-[oklch(22%_.02_250)]">${esc(st.t)}</p>
+        <p class="prose text-[oklch(40%_.02_250)] mt-1 max-w-[42ch]">${esc(st.d)}</p>
+      </div>
+    </li>`).join('');
 
-  /* The form kept `novalidate` and then validated nothing, so an empty
-     submission succeeded silently. `novalidate` stays — the native bubbles are
-     unstyleable and vanish on scroll — but checkValidity() now drives our own
-     messages: aria-invalid on the field, a described-by error line under it,
-     and focus moved to the first failure so a keyboard user lands on the
-     problem instead of hunting for it. */
-  const kitForm = $('#kitForm'), formNote = $('#formNote');
-  const MSG = {
-    valueMissing: (l) => l + ' is required.',
-    typeMismatch: () => 'That does not look like an email address.'
-  };
+  /* The form is Typeform (SLOT-19). The button is a real link to the form's
+     public URL, so it works before the SDK loads and with no JS at all; once
+     the SDK is in, the click opens the same form as a popup over the page
+     instead of leaving it. The SDK is only fetched when the contact section
+     comes into view — nobody who never reaches the foot of the page pays for
+     it. With no form ID yet, the link is a pre-addressed email, so the control
+     is never dead. */
+  const kitOpen = $('#kitOpen'), formNote = $('#formNote');
+  const TF_ID = C.contact.typeform;
+  if (!TF_ID) {
+    kitOpen.href = 'mailto:' + C.brand.email
+      + '?subject=' + encodeURIComponent('Kit request')
+      + '&body=' + encodeURIComponent('Organisation:\nType of organisation:\nSamples per month:\nPanels of interest:\n');
+    kitOpen.removeAttribute('target');
+  } else {
+    kitOpen.href = 'https://form.typeform.com/to/' + TF_ID;
+    let sdk = null;
+    const loadTypeform = () => sdk || (sdk = new Promise((res, rej) => {
+      const css = document.createElement('link');
+      css.rel = 'stylesheet'; css.href = 'https://embed.typeform.com/next/css/popup.css';
+      const js = document.createElement('script');
+      js.src = 'https://embed.typeform.com/next/embed.js'; js.async = true;
+      js.onload = () => res(window.tf); js.onerror = rej;
+      document.head.append(css, js);
+    }));
+    new IntersectionObserver((es, io) => {
+      if (es.some((e) => e.isIntersecting)) { loadTypeform().catch(() => {}); io.disconnect(); }
+    }, { rootMargin: '400px' }).observe($('#contact'));
 
-  const clearErr = (el) => {
-    el.removeAttribute('aria-invalid');
-    el.removeAttribute('aria-describedby');
-    const slot = $('#e-' + el.name);
-    if (slot) { slot.hidden = true; slot.textContent = ''; }
-  };
-
-  const showErr = (el) => {
-    const label = (C.contact.fields.find((f) => f.n === el.name) || {}).l || 'This field';
-    const v = el.validity;
-    const msg = v.valueMissing ? MSG.valueMissing(label)
-              : v.typeMismatch ? MSG.typeMismatch()
-              : 'Please check this field.';
-    el.setAttribute('aria-invalid', 'true');
-    const slot = $('#e-' + el.name);
-    if (slot) {
-      slot.textContent = msg;
-      slot.hidden = false;
-      el.setAttribute('aria-describedby', slot.id);
-    }
-  };
-
-  // re-validating on input would shout at someone mid-typing; clearing is safe
-  kitForm.addEventListener('input', (e) => {
-    if (e.target.hasAttribute('aria-invalid')) clearErr(e.target);
-  });
-
-  kitForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const fields = [...kitForm.elements].filter((el) => el.name && el.willValidate);
-    fields.forEach(clearErr);
-    const bad = fields.filter((el) => !el.checkValidity());
-
-    if (bad.length) {
-      bad.forEach(showErr);
-      formNote.textContent = bad.length === 1
-        ? 'One field needs attention.'
-        : bad.length + ' fields need attention.';
-      formNote.style.color = 'var(--color-deep)';
-      bad[0].focus();
-      return;
-    }
-
-    // 🟠 SLOT-19 still needs an endpoint. Until it exists the honest path is
-    // also the DESIGNED path: hand the visitor a pre-filled mail draft rather
-    // than an apology. Everything they just typed travels with it, so a valid
-    // submission never costs them the typing.
-    if (C.contact.endpoint) {
-      formNote.textContent = 'Sending…';
-      formNote.style.color = 'var(--color-deep)';
-      kitForm.submit();
-      return;
-    }
-
-    const get = (n) => (kitForm.elements[n] || {}).value || '—';
-    const body = [
-      'Name: ' + get('name'),
-      'Organisation: ' + get('org'),
-      'Type of organisation: ' + get('orgType'),
-      'Email: ' + get('email'),
-      'Phone: ' + get('phone'),
-      'Samples per month: ' + get('volume'),
-      'Panel of interest: ' + get('panel')
-    ].join('\n');
-
-    window.location.href = 'mailto:' + C.brand.email
-      + '?subject=' + encodeURIComponent('Kit request — ' + get('org'))
-      + '&body=' + encodeURIComponent(body);
-
-    formNote.textContent = 'Opening your email app with these details filled in. '
-      + 'If nothing happens, write to ' + C.brand.email + '.';
-    formNote.style.color = 'var(--color-deep)';
-  });
+    let popup = null;
+    kitOpen.addEventListener('click', (e) => {
+      if (e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" be
+      e.preventDefault();
+      loadTypeform().then((tf) => {
+        popup = popup || tf.createPopup(TF_ID, {
+          size: 100, autoClose: 4000, medium: 'lightening-lives-site',
+          hidden: { source: 'site' }
+        });
+        popup.open();
+      }).catch(() => { window.open(kitOpen.href, '_blank', 'noopener'); });
+    });
+  }
 
   /* --- the inheritance machine (interactive) --------------------------
      Direction 15 of the design catalogue, rebuilt in this page's own

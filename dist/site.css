@@ -307,9 +307,6 @@
   .mt-auto {
     margin-top: auto;
   }
-  .mb-1\.5 {
-    margin-bottom: calc(var(--spacing) * 1.5);
-  }
   .mb-2 {
     margin-bottom: calc(var(--spacing) * 2);
   }
@@ -412,6 +409,12 @@
   .max-w-\[40ch\] {
     max-width: 40ch;
   }
+  .max-w-\[42ch\] {
+    max-width: 42ch;
+  }
+  .max-w-\[44ch\] {
+    max-width: 44ch;
+  }
   .max-w-\[46ch\] {
     max-width: 46ch;
   }
@@ -453,6 +456,9 @@
   }
   .grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .grid-cols-\[2\.5rem_1fr\] {
+    grid-template-columns: 2.5rem 1fr;
   }
   .flex-col {
     flex-direction: column;
@@ -499,9 +505,6 @@
   .gap-6 {
     gap: calc(var(--spacing) * 6);
   }
-  .gap-7 {
-    gap: calc(var(--spacing) * 7);
-  }
   .gap-10 {
     gap: calc(var(--spacing) * 10);
   }
@@ -514,8 +517,14 @@
   .gap-px {
     gap: 1px;
   }
+  .gap-x-3 {
+    column-gap: calc(var(--spacing) * 3);
+  }
   .gap-x-4 {
     column-gap: calc(var(--spacing) * 4);
+  }
+  .gap-x-6 {
+    column-gap: calc(var(--spacing) * 6);
   }
   .gap-x-10 {
     column-gap: calc(var(--spacing) * 10);
@@ -523,8 +532,21 @@
   .gap-y-3 {
     row-gap: calc(var(--spacing) * 3);
   }
+  .gap-y-4 {
+    row-gap: calc(var(--spacing) * 4);
+  }
   .gap-y-10 {
     row-gap: calc(var(--spacing) * 10);
+  }
+  :where(.divide-y > :not(:last-child)) {
+    --tw-divide-y-reverse: 0;
+    border-bottom-style: var(--tw-border-style);
+    border-top-style: var(--tw-border-style);
+    border-top-width: calc(1px * var(--tw-divide-y-reverse));
+    border-bottom-width: calc(1px * calc(1 - var(--tw-divide-y-reverse)));
+  }
+  :where(.divide-\[oklch\(85\%_\.015_85\)\] > :not(:last-child)) {
+    border-color: oklch(85% .015 85);
   }
   .self-start {
     align-self: flex-start;
@@ -541,6 +563,10 @@
   .border {
     border-style: var(--tw-border-style);
     border-width: 1px;
+  }
+  .border-y {
+    border-block-style: var(--tw-border-style);
+    border-block-width: 1px;
   }
   .border-t {
     border-top-style: var(--tw-border-style);
@@ -625,6 +651,9 @@
   .py-4 {
     padding-block: calc(var(--spacing) * 4);
   }
+  .py-5 {
+    padding-block: calc(var(--spacing) * 5);
+  }
   .py-\[12svh\] {
     padding-block: 12svh;
   }
@@ -639,6 +668,9 @@
   }
   .pt-0\.5 {
     padding-top: calc(var(--spacing) * 0.5);
+  }
+  .pt-1 {
+    padding-top: var(--spacing);
   }
   .pt-4 {
     padding-top: calc(var(--spacing) * 4);
@@ -820,11 +852,17 @@
     --tw-tracking: -.02em;
     letter-spacing: -.02em;
   }
+  .text-\[oklch\(22\%_\.02_250\)\] {
+    color: oklch(22% .02 250);
+  }
   .text-\[oklch\(30\%_\.02_250\)\] {
     color: oklch(30% .02 250);
   }
   .text-\[oklch\(38\%_\.02_250\)\] {
     color: oklch(38% .02 250);
+  }
+  .text-\[oklch\(40\%_\.02_250\)\] {
+    color: oklch(40% .02 250);
   }
   .text-\[oklch\(45\%_\.02_250\)\] {
     color: oklch(45% .02 250);
@@ -867,6 +905,9 @@
   }
   .underline {
     text-decoration-line: underline;
+  }
+  .decoration-\[oklch\(75\%_\.015_85\)\] {
+    text-decoration-color: oklch(75% .015 85);
   }
   .decoration-1 {
     text-decoration-thickness: 1px;
@@ -914,8 +955,14 @@
     .hover\:bg-deep:hover {
       background-color: var(--color-deep);
     }
+    .hover\:text-\[oklch\(25\%_\.02_250\)\]:hover {
+      color: oklch(25% .02 250);
+    }
     .hover\:text-lumen:hover {
       color: var(--color-lumen);
+    }
+    .hover\:decoration-current:hover {
+      text-decoration-color: currentcolor;
     }
   }
   .focus\:not-sr-only:focus {
@@ -1081,6 +1128,11 @@
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
+    }
+  }
+  @media (min-width: 1800px) {
+    html {
+      font-size: clamp(1rem, 5px + 0.625vw, 1.75rem);
     }
   }
   body {
@@ -1990,10 +2042,13 @@
     padding-top: 0;
   }
   .plate-layer {
-    --plate-x: 64%;
-    --plate-y: 40%;
-    --plate-w: 58vmin;
-    --drop-w: 8.2vmin;
+    --plate-x: 73%;
+    --plate-y: 38%;
+    --plate-w: min(52vmin, 35vw);
+    --drop-w: min(7.5vmin, 5vw);
+  }
+  #hero h1 {
+    max-width: 55%;
   }
   .dbs {
     --dbs-x: 30%;
@@ -2631,11 +2686,13 @@ li.chip {
   place-items: center;
   background: var(--color-void);
   padding: 1.5rem 1.25rem;
+  min-height: 8rem;
   transition: background-color .35s ease;
 }
 @media (min-width: 40rem) {
   .cloud__cell {
     padding: 2rem 1.75rem;
+    min-height: 9.75rem;
   }
 }
 .cloud__cell:hover {
@@ -2644,11 +2701,11 @@ li.chip {
 .cloud__cell img {
   display: block;
   width: 100%;
-  max-width: 13rem;
+  max-width: min(62%, 16rem);
   max-height: var(--cap, 3.25rem);
   object-fit: contain;
   object-position: center;
-  opacity: calc(0.34 + var(--reveal) * 0.38);
+  opacity: calc(0.45 + var(--reveal) * 0.40);
   transition: opacity .35s ease;
 }
 .cloud__cell:hover img {
@@ -3699,6 +3756,11 @@ body.no-motion {
   syntax: "*";
   inherits: false;
 }
+@property --tw-divide-y-reverse {
+  syntax: "*";
+  inherits: false;
+  initial-value: 0;
+}
 @property --tw-border-style {
   syntax: "*";
   inherits: false;
@@ -3861,6 +3923,7 @@ body.no-motion {
       --tw-rotate-z: initial;
       --tw-skew-x: initial;
       --tw-skew-y: initial;
+      --tw-divide-y-reverse: 0;
       --tw-border-style: solid;
       --tw-leading: initial;
       --tw-tracking: initial;

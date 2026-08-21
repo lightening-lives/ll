@@ -438,14 +438,24 @@
                <dd class="meta mt-1 text-[oklch(45%_.02_250)]"><span data-ll="brand.city"></span></dd></div>
         </dl>
       </div>
-      <form class="self-start" data-slot="SLOT-19" id="kitForm" novalidate
-            aria-describedby="formNote">
-        <div class="grid gap-7 sm:grid-cols-2" id="formFields"></div>
-        <button type="submit" class="mt-10 hud bg-void text-bone px-8 py-4 hover:bg-deep transition-colors">
-          <span data-ll="contact.submit"></span>
-        </button>
-        <p class="meta mt-4 text-[oklch(45%_.02_250)]" id="formNote">We reply within one working day with a panel recommendation, a per-sample price and a collection schedule. No patient identifiers are needed.</p>
-      </form>
+      <!-- The form itself is Typeform (SLOT-19 is its form ID): one question at a
+           time, on its own full-screen sheet over the page. So this column does
+           not imitate form fields — it sets expectations, then hands over. The
+           button is a real link to the form URL, so it works with no JS; with JS
+           the embed SDK opens it as a popup instead. The SDK is fetched only when
+           this section comes into view (scene.js). -->
+      <div class="self-start" data-slot="SLOT-19" id="kitPanel">
+        <p class="datakey text-[oklch(48%_.02_250)]">What happens next</p>
+        <ol class="mt-5 divide-y divide-[oklch(85%_.015_85)] border-y border-[oklch(85%_.015_85)]" id="kitSteps"></ol>
+        <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
+          <a id="kitOpen" href="#" target="_blank" rel="noopener"
+             class="hud bg-void text-bone px-8 py-4 no-underline hover:bg-deep transition-colors">
+            <span data-ll="contact.submit"></span>
+          </a>
+          <span class="meta text-[oklch(45%_.02_250)]" data-ll="contact.duration"></span>
+        </div>
+        <p class="meta mt-5 max-w-[44ch] text-[oklch(45%_.02_250)]" id="formNote" data-ll="contact.note"></p>
+      </div>
     </div>
   </div>
 </section>
@@ -493,7 +503,7 @@
       <img src="assets/brand/lockup-on-light.png" alt="Lightening Lives" width="209" height="260"
            class="w-[112px] h-auto -my-3" decoding="async">
       <span>© <span id="year"></span> <span data-ll="brand.legal"></span></span>
-      <span data-ll="brand.city"></span>
+      <span>Plugged in by <a href="https://www.codeastra.com" target="_blank" rel="noopener" class="underline underline-offset-4 decoration-[oklch(75%_.015_85)] hover:text-[oklch(25%_.02_250)] hover:decoration-current transition-colors">CodeAstra</a></span>
     </div>
   </div>
 </footer>
