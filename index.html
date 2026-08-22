@@ -111,24 +111,22 @@
       <span class="nav__tagline text-mute">Every Life Matters</span>
     </span>
   </a>
-  <!-- Five items, one per question an evaluator actually arrives with, in page
+  <!-- Four items, one per question an evaluator actually arrives with, in page
        order so the active marker only ever travels left to right:
          Impact       does the mission hold up          NGOs, government
          Tests        what can I order                  labs, hospitals
          Performance  does it work — and the NABL /     labs, government
                       ICMR / ISO 15189 accreditations
-         Workflow     can we run it where we work       NGOs, labs
          Who we are   can we trust you at scale         government, NGOs
-       Every audience has at least three entries here. The set no longer steps
-       down at breakpoints — these same five hold from 768px up, and below that
-       they become the sheet the menu button opens. Sections that lost their
-       slot (the inheritance explainer, capabilities, collaborators, the two
-       scroll scenes) are indexed in full in the footer. -->
+       The set no longer steps down at breakpoints — these same four hold from
+       768px up, and below that they become the sheet the menu button opens.
+       Sections that lost their slot (the inheritance explainer, capabilities,
+       collaborators, the two scroll scenes) are indexed in full in the
+       footer. -->
   <div class="nav__links" id="navLinks">
     <a href="#stories"     class="nav__link no-underline">Impact</a>
     <a href="#menu"        class="nav__link no-underline">Tests</a>
     <a href="#performance" class="nav__link no-underline">Performance</a>
-    <a href="#workflow"    class="nav__link no-underline">Workflow</a>
     <a href="#provenance"  class="nav__link no-underline">Who we are</a>
   </div>
   <div class="nav__end">
@@ -392,29 +390,11 @@
   </div>
 </section>
 
-<!-- ================= 8 · WORKFLOW ================= -->
-<section class="scene" id="workflow" style="height:240svh">
-  <div class="stage" data-pin>
-    <div class="scene-layer absolute inset-0 flex flex-col justify-center">
-      <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10 pb-10">
-        <p class="eyebrow text-lumen mb-4" data-ll="workflow.kicker"></p>
-        <h2 class="display-lg text-chalk max-w-[12ch]" data-ll="workflow.head"></h2>
-      </div>
-      <div class="wf-lane overflow-hidden" style="perspective:1100px">
-        <div class="flex gap-5 pl-6 md:pl-10 will-change-transform" data-slot="SLOT-15"
-             id="workflowTrack" style="transform-style:preserve-3d"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= 9 · WHAT IT COSTS ==========================
-     A flat, unpinned block — deliberately NOT inside #workflow, which is a
-     pinned .scene at 240svh; anything added inside it breaks the pin and the
-     scrub. Modelled on #capabilities below: same rhythm, same rule, same
-     container, so it costs the page one section and no new vocabulary.
-     Sits here because the commercial spine now reads straight through:
-     what we test → how well it works → how you run it → what it costs.
+<!-- ================= 8 · WHAT IT COSTS ==========================
+     A flat, unpinned block, modelled on #capabilities below: same rhythm,
+     same rule, same container, so it costs the page one section and no new
+     vocabulary. Sits here because the commercial spine reads straight
+     through: what we test → how well it works → what it costs.
      ============================================================ -->
 <section id="access" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
@@ -431,7 +411,7 @@
   </div>
 </section>
 
-<!-- ================= 10 · CAPABILITIES ================= -->
+<!-- ================= 9 · CAPABILITIES ================= -->
 <section id="capabilities" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="eyebrow text-lumen mb-4" data-ll="capabilities.kicker"></p>
@@ -440,7 +420,7 @@
   </div>
 </section>
 
-<!-- ================= 11 · PROVENANCE ================= -->
+<!-- ================= 10 · PROVENANCE ================= -->
 <section id="provenance" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <p class="eyebrow text-lumen mb-4" data-ll="provenance.kicker"></p>
@@ -478,7 +458,7 @@
   </div>
 </section>
 
-<!-- ================= 12 · COLLABORATORS ================= -->
+<!-- ================= 11 · COLLABORATORS ================= -->
 <section id="collaborators" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <header class="flex flex-wrap items-end justify-between gap-6">
@@ -492,7 +472,7 @@
   </div>
 </section>
 
-<!-- ================= 13 · CONTACT — the page resolves to light =========== -->
+<!-- ================= 12 · CONTACT — the page resolves to light =========== -->
 <section id="contact" class="relative z-10 bg-bone text-void section-y" data-lit>
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
     <div class="grid gap-14 md:grid-cols-2 md:gap-12 lg:gap-24">
@@ -562,7 +542,6 @@
           <li><a href="#specimen">The specimen</a></li>
           <li><a href="#assay">The assay</a></li>
           <li><a href="#inheritance">What a carrier result means</a></li>
-          <li><a href="#workflow">Workflow</a></li>
         </ul>
       </div>
       <div>

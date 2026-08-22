@@ -374,20 +374,7 @@ window.LL_CONTENT = {
     runUnit: 'samples and counting…'
   },
 
-  /* --- 8 · WORKFLOW ------------------------------------------------- */
-  workflow: {
-    kicker: 'How you run it',
-    head: '5 steps, one stamp.',
-    steps: [                                            // 🟠 SLOT-15 confirm steps + timings
-      { n: '01', t: 'Request kits',  d: 'Tell us volume and panel. Kits ship free.',       time: 'Day 0' },
-      { n: '02', t: 'Collect',       d: 'Finger or heel prick onto the card. Air-dry.',    time: 'Day 1' },
-      { n: '03', t: 'Post',          d: 'Paper mailer, ordinary post, prepaid.',           time: 'Day 1' },
-      { n: '04', t: 'We run it',     d: 'Batch runs daily.',                               time: 'Day 3' },
-      { n: '05', t: 'Signed report', d: 'Report to you. Genetic counselling on request.',  time: 'Day 3' }
-    ]
-  },
-
-  /* --- 9 · WHAT IT COSTS ------------------------------------------
+  /* --- 8 · WHAT IT COSTS ------------------------------------------
      The page could argue analytical performance, logistics, scope and people,
      and never once said what it costs — while "very affordable" is the single
      strongest thing this company has for the two audiences it is targeting
@@ -413,15 +400,16 @@ window.LL_CONTENT = {
     // ✅ SLOT-27 resolved 2026-08-20. All three claims the section used to make
     // were struck by the client — "One price per sample", the unverified "No cost
     // to the family", and finally "Kits ship free". The section is now the
-    // argument alone, which is the strongest part of it anyway. Free kits are
-    // still promised in workflow step 01, and the per-sample quote still reaches
-    // the reader through `contact.body` and the form note.
+    // argument alone, which is the strongest part of it anyway. The per-sample
+    // quote still reaches the reader through `contact.body` and the form note.
+    // 🟠 Free kits are now promised NOWHERE on the page: the Workflow section
+    // was deleted 2026-08-22 and step 01 ("Kits ship free") went with it.
     // Adding a claim back is just pushing an object into this array — the grid
     // renders itself from it, and disappears when it is empty.
     points: []
   },
 
-  /* --- 10 · CAPABILITIES --------------------------------------------- */
+  /* --- 9 · CAPABILITIES --------------------------------------------- */
   capabilities: {
     kicker: 'Beyond the assay',
     head: 'What else we can do for you!',
@@ -473,7 +461,7 @@ window.LL_CONTENT = {
     }
   },
 
-  /* --- 11 · PROVENANCE  (replaces the Golden Circle section) ---------- */
+  /* --- 10 · PROVENANCE  (replaces the Golden Circle section) ---------- */
   provenance: {
     kicker: 'Who is behind the assay',
     // ✅ client copy, 2026-08-20.
@@ -589,7 +577,7 @@ window.LL_CONTENT = {
     ]
   },
 
-  /* --- 12 · COLLABORATORS -------------------------------------------- */
+  /* --- 11 · COLLABORATORS -------------------------------------------- */
   collaborators: {
     kicker: 'Collaborations',
     head: 'We work with the same ethos.',
@@ -697,7 +685,7 @@ window.LL_CONTENT = {
     ]
   },
 
-  /* --- 13 · CONTACT ------------------------------------------------- */
+  /* --- 12 · CONTACT ------------------------------------------------- */
   contact: {
     // The eyebrow is a plain noun label like every other section's; the
     // headline is the one place the page says its own name. "Bring the light"

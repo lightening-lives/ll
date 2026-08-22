@@ -1203,7 +1203,7 @@
    So below 768 these scenes flow instead of pinning: the geometry takes a
    band of its own at the top, the copy runs at its natural length underneath,
    and neither can reach the other. The hero keeps its pin (its copy measures
-   593px and fits), and the workflow lane is horizontal and already works.
+   593px and fits).
 
    The assay carries the same treatment all the way to 1024, not 768: it now
    has to hold the variant index as well as the pipeline, and the side-by-side
@@ -1472,18 +1472,14 @@ body.is-lit .grain { mix-blend-mode: multiply; opacity: 0.05; }
    track ran down through the contact address and the footer index.
 
    So the shell takes the gutter back, and gives it up again exactly as fast as
-   the margins grow — one continuous expression, no breakpoint to jump at. The
-   workflow track takes the same value because its first card is aligned to the
-   heading above it, and a gutter on one and not the other is a new fault in
-   place of the old one. Everything else that overlaps the rail is meant to:
-   the 3D stages are full-bleed, and the workflow lane's timeline rule runs
-   edge to edge on purpose.
+   the margins grow — one continuous expression, no breakpoint to jump at.
+   Everything else that overlaps the rail is meant to: the 3D stages are
+   full-bleed on purpose.
    ===================================================================== */
 @media (min-width: 48rem) {
   :root { --shell-gutter: max(2.5rem, 5.5rem - max(0px, (100vw - 86rem) / 2)); }
   main  .max-w-\[86rem\],
-  footer .max-w-\[86rem\],
-  #workflowTrack { padding-left: var(--shell-gutter); }
+  footer .max-w-\[86rem\] { padding-left: var(--shell-gutter); }
 }
 
 /* HUD inverts over the closing light section */
@@ -1634,46 +1630,6 @@ body.is-lit .nav__link::after { background: var(--color-deep); }
     font-size: max(var(--text-base), 1rem);
   }
 }
-
-/* =====================================================================
-   THE WORKFLOW SCENE'S TOP RHYTHM
-   ---------------------------------------------------------------------
-   `#workflow` is a pinned 100svh stage whose `.scene-layer` centres its
-   content group. On a phone that group is 441px — a 145px heading block and
-   a 296px lane — inside an 844px frame, so centring left 201px above it, and
-   the fixed bar covers 72px of that. Measured gap from the bar to the
-   section's eyebrow: 129px, against 30px for every flat section on the page.
-   Over four times the rhythm, and it reads as exactly what the eye reports:
-   a third of the screen empty before anything starts.
-
-   Centring is right for `#specimen` and `#assay`, and they keep it — those
-   are side-by-side compositions where the copy sits beside the object and
-   both want the optical centre of the frame. `#workflow` is not that shape.
-   It is a heading above its content, which is the same shape as every flat
-   section, so it gets the same rhythm: the heading enters on
-   `--space-section` like everything else, and the lane takes the space that
-   is left — so the slack ends up at the FOOT of the frame, below the track,
-   instead of above the heading.
-
-   Which end the slack lands on is not a detail. Space before content reads as
-   something failing to load; the same space after it reads as the track having
-   somewhere to run. The lane keeps its natural height and sits directly under
-   the heading, where it was — an earlier pass centred the cards in the
-   leftover space and simply moved the hole from above the heading to below
-   it. */
-#workflow .scene-layer {
-  justify-content: flex-start;
-  padding-top: var(--space-section);
-}
-
-/* Top-aligning the heading moved the slack to the foot of the frame, and at a
-   248px card there was still a third of the screen empty under the track. The
-   card is the thing that should be using it: it is a step in a sequence, its
-   number sits at the top and its title at the bottom (`mt-auto`), and that
-   composition wants height. Capped rather than stretched — a card that fills
-   whatever is left becomes a 500px column on a phone, which is a different and
-   worse problem. */
-.wf-step { min-height: min(22rem, 46svh); }
 
 /* =====================================================================
    TOUCH — affordance and feedback
@@ -1853,23 +1809,6 @@ body.is-lit .nav__toggle { border-color: oklch(82% 0.015 85); }
 }
 body.is-lit .nav           { background-color: transparent; }
 body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
-
-/* the workflow lane — a real timeline above the steps, filling as you scroll */
-.wf-lane { position: relative; padding-top: 3rem; }
-.wf-lane::before,
-.wf-lane::after {
-  content: ""; position: absolute; top: 1.35rem; height: 1px; pointer-events: none;
-}
-.wf-lane::before {
-  left: 0; right: 0;
-  background: linear-gradient(90deg, transparent, var(--color-line) 4%,
-              var(--color-line) 96%, transparent);
-}
-.wf-lane::after {
-  left: 0; width: calc(var(--wf-progress, 0) * 100%);
-  background: var(--color-lumen);
-  box-shadow: 0 0 10px oklch(80% 0.15 72 / .7);
-}
 
 /* assay cards tilt into place — 3D, not a fade */
 .assay-card {
@@ -2757,11 +2696,6 @@ body.no-motion #assay .scene-copy { width: 100%; max-width: 44rem; }
    flow layout — but the child tiles must not sit at opacity 0 if the class
    that reveals them is never applied */
 body.no-motion .inh-child { opacity: 1; transform: none; }
-body.no-motion #workflowTrack  { flex-wrap: wrap; transform: none !important;
-                              gap: 1rem; padding-right: 1.5rem; }
-body.no-motion .wf-step     { width: 100%; min-height: 0; }
-body.no-motion .wf-lane     { overflow: visible; padding-top: 2rem; }
-body.no-motion .wf-lane::after { width: 100%; }
 body.no-motion .hud-rail    { display: none; }
 body.no-motion .vignette    { display: none; }
 /* without scroll there is no arc to travel, so hold a mid value rather than

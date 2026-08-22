@@ -115,18 +115,6 @@
   $('#accreditations').innerHTML = C.validation.accreditations.map((a) =>
     `<span class="chip credential text-mute">${esc(a)}</span>`).join('');
 
-  // workflow track
-  $('#workflowTrack').innerHTML = C.workflow.steps.map((s) => `
-    <article class="wf-step shrink-0 w-[78vw] sm:w-[42vw] lg:w-[26vw] min-h-[15.5rem]
-                    flex flex-col bg-ink border border-line p-7">
-      <div class="flex items-baseline justify-between">
-        <span class="figure-num text-lumen text-[clamp(2rem,1.3rem+1.88vw,3rem)] leading-none">${esc(s.n)}</span>
-        <span class="code text-probe">${esc(s.time)}</span>
-      </div>
-      <h3 class="display-sm text-chalk mt-auto pt-8">${esc(s.t)}</h3>
-      <p class="prose text-chalk mt-2">${esc(s.d)}</p>
-    </article>`).join('');
-
   const fi = $('#foundersImg');
   fi.src = C.provenance.portrait; fi.alt = C.provenance.portraitAlt;
 
@@ -1291,7 +1279,7 @@
   const SCALES = [
     ['hero', '10⁰ m'], ['specimen', '10⁻³ m'], ['assay', '10⁻⁹ m'],
     ['inheritance', '10⁰ m'], ['stories', '10⁰ m'],
-    ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'], ['workflow', '10⁰ m'],
+    ['menu', '10⁻⁶ m'], ['performance', '10⁻³ m'],
     ['access', '10⁰ m'], ['capabilities', '10⁰ m'], ['provenance', '10⁰ m'],
     ['collaborators', '10³ m'], ['contact', '10⁰ m']
   ];
@@ -1502,22 +1490,6 @@
     v: runTarget, duration: 2.2, ease: 'power2.out',
     scrollTrigger: { trigger: '#performance', start: 'top 70%', once: true },
     onUpdate() { $('#runCounter').textContent = Math.round(counter.v).toLocaleString('en-IN'); }
-  });
-
-  // ---- 6 · workflow rides sideways on a 3D track
-  const track = $('#workflowTrack');
-  const trackShift = () => Math.max(0, track.scrollWidth - window.innerWidth + 40);
-  const lane = $('.wf-lane');
-  gsap.timeline({ scrollTrigger: scrub('#workflow', {
-      invalidateOnRefresh: true,
-      onUpdate: (self) => lane.style.setProperty('--wf-progress', self.progress.toFixed(3))
-    }) })
-    .fromTo(track, { x: 0 }, { x: () => -trackShift(), ease: 'none', duration: 1 }, 0);
-  gsap.utils.toArray('.wf-step').forEach((s, i) => {
-    gsap.fromTo(s, { rotateY: 26, z: -160 }, {
-      rotateY: -12, z: 0, ease: 'none',
-      scrollTrigger: { trigger: '#workflow', start: 'top top', end: 'bottom bottom', scrub: 0.6 }
-    });
   });
 
   // Lazy images finish loading AFTER window.load, each one changing document

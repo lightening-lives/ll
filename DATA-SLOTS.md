@@ -32,8 +32,9 @@ turnaround, method, throughput), **SLOT-14** (samples reported), **SLOT-27** (co
 - **"Ordinary post"** dropped from the specimen claims. The claim is still made once,
   in the paragraph above them.
 - **"Kits ship free"** dropped from *What it costs*, which was the last of its three
-  claims — the section is now the argument alone. Free kits are still promised in
-  workflow step 01. The grid removes itself rather than ruling off an empty box;
+  claims — the section is now the argument alone. It still stood in workflow step 01
+  at the time; that section has since been deleted (see SLOT-15), so the promise is
+  now made nowhere. The grid removes itself rather than ruling off an empty box;
   pushing a `{ t, d }` back into `access.points` brings it back.
 - **The running total now reads *2,00,000 samples and counting…*.**
 
@@ -44,7 +45,7 @@ turnaround, method, throughput), **SLOT-14** (samples reported), **SLOT-27** (co
 | ~~SLOT-03~~ | Hero | **Done** — replaced wholesale with your own copy. The headline is now *Genetic answers / every family / can afford.* and affordability leads the page rather than waiting for the deck. Note that haemophilia is no longer named in the standfirst although the coagulation panel is still carded in the menu and drawn on the ladder. |
 | **SLOT-26** | Test menu | The **wider catalogue**. The menu now closes on a card that says the eight test cards are a selection, and names *inborn errors of metabolism*, *non-communicable and complex-disease panels* and *other single-gene and carrier tests*. Those three are inferred from your own material — the core offer in PRODUCT.md and the "genetic disorders and NCDs" wording on your R&D pillar. **Send me the real list** and I will name it properly. This is the line that tells a programme with an unusual requirement it is worth asking. |
 | ~~SLOT-14~~ | Performance | **Done** — 2,00,000 samples reported to date. The counter animates to it. |
-| SLOT-15 | Workflow | Confirm the five steps and their day counts. The heading is now *5 steps, one courier!*, but step 03 still reads "paper mailer, ordinary post, prepaid" — tell me which of the two is right and I will make them agree. |
+| ~~SLOT-15~~ | Workflow | **Section deleted** on your instruction (2026-08-22) — the *How you run it* heading, the five step cards and their day counts, the scrolling 3D lane and its timeline rule are all gone, and neither the nav nor the footer index links to it. **One claim went with it:** step 01 promised *"Kits ship free"*, which was the last place on the page that said so — it was struck from *What it costs* on 2026-08-20 on the understanding it still stood here. Tell me if it should come back and I will put it into *What it costs*. |
 | ~~SLOT-17~~ | Reach | **Section deleted** on your instruction — the heading, the empty stat grid and the five-state list are all gone, and the footer index no longer links to it. The five states still appear as the datelines on the impact case notes. |
 | SLOT-18 | Impact | Two of the four narratives are now your rewritten versions (Odisha and Jharkhand), and the "de-identified" note under the heading was struck on your instruction. **Consent is still the open question** — with that note gone, nothing on the page tells a reader these are de-identified case notes rather than named patients. Confirm the consent position. |
 | SLOT-21 | Collaborators | **Done for now** — I extracted all 13 logos from the montage on your Partnerships page and they are live in `assets/partners/`. They are raster crops on white, shown on paper plates. Send vector originals when you have them and they drop straight in. |
