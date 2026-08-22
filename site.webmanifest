@@ -1,0 +1,14 @@
+{
+  "name": "Lightening Lives",
+  "short_name": "Lightening Lives",
+  "description": "Affordable dried-blood-spot DNA screening for India.",
+  "start_url": "./",
+  "display": "browser",
+  "background_color": "#11171c",
+  "theme_color": "#11171c",
+  "icons": [
+    { "src": "./icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "./icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "./icon-512-maskable.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

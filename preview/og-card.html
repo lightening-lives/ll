@@ -1,0 +1,34 @@
+<!doctype html><html><head><meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Sans:wght@400..600&family=IBM+Plex+Sans+Condensed:wght@500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  html,body{margin:0;width:1200px;height:630px;overflow:hidden}
+  body{position:relative;background:
+      radial-gradient(560px 420px at 78% 40%, oklch(83% 0.16 88 / .13) 0%, transparent 65%),
+      linear-gradient(180deg, oklch(19.5% 0.016 250), oklch(23% 0.012 244));
+      color:oklch(94% .014 250);font-family:"IBM Plex Sans Condensed",sans-serif}
+  .rail{position:absolute;left:56px;top:96px;bottom:96px;width:1px;background:oklch(39% .014 250)}
+  .rail i{position:absolute;left:0;top:0;width:1px;height:38%;background:oklch(83% .16 88)}
+  .scale{position:absolute;left:40px;top:58px;font:500 15px "IBM Plex Mono",monospace;letter-spacing:.12em;color:oklch(69% .014 250);writing-mode:vertical-rl;transform:rotate(180deg)}
+  .eyebrow{position:absolute;left:112px;top:96px;font:600 17px/1 "IBM Plex Sans Condensed";letter-spacing:.12em;text-transform:uppercase;color:oklch(83% .16 88)}
+  h1{position:absolute;left:108px;top:142px;margin:0;width:760px;font-family:Fraunces,serif;font-weight:400;font-size:98px;line-height:.9;letter-spacing:-.03em;font-variation-settings:"opsz" 144,"SOFT" 20,"WONK" 0}
+  h1 b{font-weight:400;font-variation-settings:"opsz" 144,"SOFT" 40,"WONK" 1}
+  .deck{position:absolute;left:112px;bottom:92px;width:560px;font:400 21px/1.5 "IBM Plex Sans",sans-serif;color:oklch(72% .014 250)}
+  .brand{position:absolute;right:96px;bottom:88px;display:flex;align-items:center;gap:18px}
+  .brand img{width:88px;height:88px}
+  .brand .n{font-family:Fraunces,serif;font-size:30px;letter-spacing:-.02em}
+  .brand .t{font:500 13px "IBM Plex Sans Condensed";letter-spacing:.12em;text-transform:uppercase;color:oklch(69% .014 250);margin-top:6px}
+  .plate{position:absolute;right:-40px;top:70px;width:420px;height:300px;transform:perspective(900px) rotateX(54deg) rotate(-6deg);border-radius:6px;background:oklch(27% .012 250);box-shadow:0 40px 80px -30px #000;display:grid;grid-template-columns:repeat(12,1fr);grid-template-rows:repeat(8,1fr);padding:26px 30px;gap:6px;box-sizing:border-box}
+  .plate i{border-radius:50%;background:oklch(21% .012 250);box-shadow:inset 0 1px 2px #000}
+  .plate i.r{background:oklch(40% .14 28)}
+  .plate i.l{background:oklch(83% .16 88);box-shadow:0 0 28px 10px oklch(83% .16 88 / .55)}
+</style></head><body>
+<div class="scale">10⁰ m</div><div class="rail"><i></i></div>
+<div class="plate" id="p"></div>
+<div class="eyebrow">Dried blood spot · DNA screening</div>
+<h1>Genetic answers<br>every family<br><b>can afford.</b></h1>
+<div class="deck">Sickle cell, thalassaemia, SMA, Duchenne and pharmacogenomics from one dried blood spot — for labs, NGOs and public health programmes across India.</div>
+<div class="brand"><img src="../assets/brand/mark.png"><div><div class="n">Lightening Lives</div><div class="t">Every Life Matters</div></div></div>
+<script>
+  let s=7,h='';for(let i=0;i<96;i++){s=(s*16807)%2147483647;const r=s/2147483647;h+=`<i class="${i===42?'l':(i%12<8&&r>0.5)?'r':''}"></i>`}
+  document.getElementById('p').innerHTML=h;
+</script></body></html>
