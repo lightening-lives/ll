@@ -603,17 +603,39 @@
                <dd class="meta mt-1 text-[oklch(45%_.02_250)]"><span data-ll="brand.city"></span></dd></div>
         </dl>
       </div>
-      <!-- The form itself is Typeform (SLOT-19 is its form ID): one question at a
-           time, on its own full-screen sheet over the page. So this column does
-           not imitate form fields — it sets expectations, then hands over. The
-           button is a real link to the form URL, so it works with no JS; with JS
-           the embed SDK opens it as a popup instead. The SDK is fetched only when
-           this section comes into view (scene.js). -->
+      <!-- The form itself is Youform (SLOT-19 is `contact.formId`), opened as a
+           modal over the page by Youform's own widget — the site wraps it in
+           no chrome of its own. So this column does not imitate form fields:
+           it sets expectations, then hands over. The three steps beside the
+           button are that hand-over — what the click costs and what comes
+           back, said before it is asked for. -->
       <div class="self-start" data-slot="SLOT-19" id="kitPanel">
         <p class="datakey text-[oklch(48%_.02_250)]">What happens next</p>
         <ol class="mt-5 divide-y divide-[oklch(85%_.015_85)] border-y border-[oklch(85%_.015_85)]" id="kitSteps"></ol>
         <div class="mt-10 flex flex-wrap items-center gap-x-6 gap-y-4">
-          <a id="kitOpen" href="#" target="_blank" rel="noopener"
+          <!-- THREE LAYERS, and each works without the one above it.
+
+               `data-youform-open` is what Youform's widget.js looks for: it
+               binds one delegated click listener and, on a hit, builds its own
+               modal — overlay, close button, stylesheet — and calls
+               preventDefault(). `center` is its modal position; any other
+               value gives a bottom-right slide-in instead.
+
+               `href` is the fallback, and it is a real URL rather than the
+               `href="#"` this carried until 2026-08-22: if widget.js is
+               blocked or slow the click is not prevented and the link opens
+               the same form. Without it the button was dead to anything that
+               did not run scene.js. `target="_blank"` matters only there.
+
+               Both values are duplicated in src/content.js as
+               `contact.formId` — ON PURPOSE, because the markup has to carry
+               them for the no-JS path. scene.js warns in the console if the
+               two ever drift apart, and content.js wins. -->
+          <a id="kitOpen"
+             data-youform-open="eicdgbx0"
+             data-youform-position="center"
+             href="https://app.youform.com/forms/eicdgbx0"
+             target="_blank" rel="noopener"
              class="hud bg-void text-bone px-8 py-4 no-underline hover:bg-deep transition-colors">
             <span data-ll="contact.submit"></span>
           </a>
@@ -676,6 +698,24 @@
 <script src="./vendor/ScrollTrigger.min.js"></script>
 <script src="./src/content.js"></script>
 <script src="./src/scene.js"></script>
+
+<!-- Youform's modal widget. It supplies the whole popup — overlay, close
+     control and stylesheet — so the site draws none of its own. Without this
+     tag the button is still a valid link, which is exactly what went wrong
+     between 2026-08-22 and now: the markup lost it, nothing intercepted the
+     click, and the form opened in a new tab instead of over the page.
+
+     DEFER, NEVER ASYNC. The script's last line is
+     `document.addEventListener("DOMContentLoaded", youFormFunc)`, and that is
+     the only thing that binds its click listener. A deferred script runs
+     before DOMContentLoaded fires, so the binding happens; an async one can
+     land after it, and then the listener is never bound and the button
+     silently reverts to navigating away — invisible on a fast connection and
+     constant on a slow one.
+
+     3.6KB at load and nothing else: widget.css and the form itself are only
+     fetched on the first click. -->
+<script src="https://app.youform.com/widgets/widget.js" defer></script>
 
 <!-- TEMPORARY — the design preview bar (ground + type), bottom of the viewport.
      Loads LAST and on purpose: it overrides the built stylesheet's tokens from
