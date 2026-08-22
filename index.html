@@ -569,5 +569,13 @@
 <script src="./src/content.js"></script>
 <script src="./src/scene.js"></script>
 
+<!-- TEMPORARY — the design preview bar (ground + type), bottom of the viewport.
+     Loads LAST and on purpose: it overrides the built stylesheet's tokens from
+     an unlayered sheet, and it reads the rendered page rather than the source,
+     so it has to run after scene.js has bound content and measured --nav-h.
+     Press G to hide it, R to go back to what is built.
+     DELETE this tag and rm -rf preview/ once the two decisions are signed off. -->
+<script src="./preview/design-switcher.js" defer></script>
+
 </body>
 </html>
