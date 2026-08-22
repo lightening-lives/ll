@@ -492,11 +492,14 @@ window.LL_CONTENT = {
            'Director of the Centre for DNA Fingerprinting and Diagnostics (CDFD). ' +
            'He led the vision for the Sickle Cell Anaemia Elimination Mission across ' +
            'underserved populations in several states.',
+      // `icon` names a glyph in scene.js's CRED_ICONS: medal (a named
+      // fellowship), seal (an academy fellowship), globe (an international
+      // body), columns (an institutional post).
       credentials: [
-        'Sir J.C. Bose Fellowship',
-        'Fellow of all four Indian National Science Academies',
-        'Fellow of The World Academy of Sciences',
-        'Former Director, CDFD'
+        { t: 'Sir J.C. Bose Fellowship',                            icon: 'medal' },
+        { t: 'Fellow of all four Indian National Science Academies', icon: 'seal' },
+        { t: 'Fellow of The World Academy of Sciences',             icon: 'globe' },
+        { t: 'Former Director, CDFD',                               icon: 'columns' }
       ]
     },
     cofounder: {

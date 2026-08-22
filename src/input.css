@@ -1951,6 +1951,32 @@ body.is-lit .nav.is-stuck  { background-color: oklch(95% 0.012 85 / .94); }
 li.chip { display: inline-flex; }
 .chip:hover { border-color: oklch(52% 0.08 88); }
 
+/* --- the founder's credentials ----------------------------------------
+   Set as honours rather than as chips. The earlier version was four gold
+   13px labels in gold-bordered boxes, which is the grammar of a filter bar.
+   Now: a gold glyph names the KIND of honour, the wording sits in chalk in
+   the chrome voice, and the only enclosure is a hairline — the same plate
+   language as the rest of the page, one notch quieter than the nav. */
+.cred {
+  display: inline-flex; align-items: center; gap: .6rem;
+  padding: .55rem .95rem .55rem .75rem;
+  border: 1px solid var(--color-line);
+  background: oklch(17% 0.014 250 / .5);
+  font-family: var(--font-cond);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: var(--leading-tight);
+  color: var(--color-chalk);
+  transition: border-color .28s ease;
+}
+.cred:hover { border-color: oklch(52% 0.08 88); }
+.cred__icon {
+  flex: none; width: 1.1rem; height: 1.1rem;
+  fill: none; stroke: var(--color-lumen); stroke-width: 1.5;
+  stroke-linecap: round; stroke-linejoin: round;
+}
+
 /* --- the collaborators: a logo cloud -----------------------------------
    The Tailwind UI logo-cloud pattern, inverted for a dark ground: hairline
    0.5 gaps over the section ground draw the rules, each cell carries a barely

@@ -145,8 +145,20 @@
     </article>`).join('');
 
   // provenance — the founder's record is the strongest thing on this page
-  $('#founderCreds').innerHTML = C.provenance.founder.credentials.map((c) =>
-    `<li class="chip credential text-lumen">${esc(c)}</li>`).join('');
+  /* Credentials as honours, not buttons: a gold stroke glyph names the KIND
+     of honour, the text sits in chalk in the chrome face. 1.5px strokes on a
+     24-unit grid, drawn to the same weight as the nav burger and the HUD. */
+  const CRED_ICONS = {
+    medal:   '<circle cx="12" cy="14.5" r="5.5"/><path d="M9.5 9.5 6.5 2.5h4l1.5 3 1.5-3h4l-3 7M12 12.2l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2L9.1 14.3l2-.3z"/>',
+    seal:    '<path d="M12 2.8l2.1 1.9 2.8-.4 1 2.7 2.6 1.2-.6 2.8 1.7 2.3-1.7 2.3.6 2.8-2.6 1.2-1 2.7-2.8-.4L12 21.2l-2.1-1.9-2.8.4-1-2.7-2.6-1.2.6-2.8L2.4 12l1.7-2.3-.6-2.8 2.6-1.2 1-2.7 2.8.4z"/><path d="M8.8 12.2l2.2 2.2 4.3-4.6"/>',
+    globe:   '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 2.6 4.2 5.6 4.2 9s-1.4 6.4-4.2 9c-2.8-2.6-4.2-5.6-4.2-9S9.2 5.6 12 3z"/>',
+    columns: '<path d="M3 21h18M4.5 18h15M5.5 9v9M9.8 9v9M14.2 9v9M18.5 9v9M3 9h18M12 3 3 8.2h18z"/>'
+  };
+  $('#founderCreds').innerHTML = C.provenance.founder.credentials.map((c) => `
+    <li class="cred">
+      <svg class="cred__icon" viewBox="0 0 24 24" aria-hidden="true">${CRED_ICONS[c.icon] || CRED_ICONS.seal}</svg>
+      <span>${esc(c.t)}</span>
+    </li>`).join('');
 
   $('#governance').innerHTML = [C.provenance.patron, ...C.provenance.advisors].map((p) => `
     <div class="gov">
