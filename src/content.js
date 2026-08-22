@@ -35,20 +35,49 @@ window.LL_CONTENT = {
 
   /* --- 1 · HERO ----------------------------------------------------- */
   hero: {
-    line1: 'Genetic answers',
-    line2: 'every family',
-    line3: 'can afford.',
-    // ✅ Title and positioning line are the client's own copy, supplied
-    // 2026-08-20. Affordability now leads the headline itself rather than
-    // waiting for the deck. The disorders named here still match the test menu
-    // and the variant ladder — if one of the three changes, change all three.
-    // Note: haemophilia is NOT named in this line although the coagulation
-    // panel is still carded in the menu and drawn in the ladder (locus 04).
+    /* SEARCH, 2026-08-22. The brief is "genetic testing" and "genetic testing
+       for [disorder]", and the h1 is the single strongest on-page signal for
+       both. The previous line — the client's own copy of 2026-08-20, *Genetic
+       answers / every family / can afford.* — carried the positioning but not
+       the term anyone types: it said "genetic answers", never "genetic
+       testing", and never named India.
+
+       Nothing approved has been thrown away. The old line survives verbatim as
+       the last sentence of the standfirst, where it still closes the argument
+       — the headline now states what this is and the deck says who it is for,
+       which is the order those two sentences always wanted to be in.
+
+       The break is three lines because `display-xl` is composed for three, and
+       the emphasis line (SOFT 40 / WONK 1 in index.html) is the one that
+       should carry the term: it lands on "genetic testing." */
+    line1: 'India’s',   // curly apostrophe — the page sets ’ everywhere else
+    line2: 'most affordable',
+    line3: 'genetic testing.',
+    /* The deck is the long-tail. Every test the lab can actually run is named
+       here in the reader's own words, governed by a single "Genetic testing
+       for …", so the page states the phrase for each one instead of hoping a
+       crawler infers it from a card grid built by JS. The two clinical
+       umbrellas are the client's own vocabulary and stay — they are what a lab
+       director scans for, and they are what the families block in the menu
+       section repeats.
+
+       NO METHOD HERE, by decision 2026-08-22. This sentence used to end "all
+       from a single dried blood spot sent by ordinary post", which is the best
+       thing about the service and still the wrong thing for this particular
+       sentence to spend itself on: the brief is that anyone searching "genetic
+       testing for <anything>" should reach the page, and the deck is the one
+       block of prose above the fold that can name the whole menu. The dried
+       spot is not dropped — the Specimen section one screen down is entirely
+       about it, and argues it properly.
+
+       Keep this list in step with `menu.items` and with the JSON-LD
+       availableService block in index.html: three places, one menu. */
     standfirst:
-      'Dried blood spot screening for haemoglobinopathies and musculopathies '
-      + 'including Sickle Cell Anaemia, Thalassaemia, Spinal Muscular Atrophy '
-      + 'and Duchenne Muscular Dystrophy along with pharmacogenetics in broad '
-      + 'aspects. Affordable, and built for all the people.',
+      'Genetic testing for haemoglobinopathies and musculopathies — sickle cell '
+      + 'anaemia, thalassaemia, spinal muscular atrophy and Duchenne muscular '
+      + 'dystrophy — plus haemophilia, pharmacogenomics, inborn errors of '
+      + 'metabolism, and carrier, newborn and pre-marital screening. Genetic '
+      + 'answers every family can afford.',
     // Labels are bound into index.html by `data-ll`; the hrefs live in the
     // markup, so both buttons still go somewhere if the script never runs.
     ctaPrimary:   { label: 'Contact us', href: '#contact' },
@@ -57,7 +86,6 @@ window.LL_CONTENT = {
 
   /* --- 2 · THE SPECIMEN --------------------------------------------- */
   specimen: {
-    scale: '10⁻³ m',
     kicker: 'The specimen',
     head: 'A card that makes the difference!',
     // ✅ client copy, 2026-08-20.
@@ -97,7 +125,6 @@ window.LL_CONTENT = {
 
   /* --- 3 · THE ASSAY ------------------------------------------------ */
   assay: {
-    scale: '10⁻⁹ m',
     kicker: 'The assay',
     head: 'We read the variant, not the symptom.',
     // ✅ client copy, 2026-08-20. The orthogonal-confirmation claim was dropped
@@ -203,7 +230,6 @@ window.LL_CONTENT = {
      here is a lookup table of pre-written results.
      ------------------------------------------------------------------- */
   inheritance: {
-    scale: '10⁰ m',
     kicker: 'What a carrier result means',
     head: 'Love brought them together. Genetics changed the odds. Four possible children.',
     // ✅ client copy, 2026-08-20. It replaced the line that told the reader the
@@ -245,13 +271,21 @@ window.LL_CONTENT = {
   /* --- 6 · WHAT WE TEST FOR ----------------------------------------- */
   menu: {
     kicker: 'Most requested tests',
-    head: 'The tests we are asked for most.',
+    /* The h2 states the term rather than gesturing at it. "The tests we are
+       asked for most." was true and invisible to search: this is the only
+       heading on the page that sits directly above the disorder names, so it
+       is the one place "genetic testing for …" can be said in a heading
+       without straining the sentence. 8 words / 46 characters — the h2 is
+       capped at 14ch in index.html and wraps to three lines, which is what
+       `display-lg` is set for. */
+    head: 'Genetic testing for the disorders India asks about most.',
     // The menu below is a SELECTION, not the catalogue — the lab runs more than
     // it shows here. Saying so in the header is what stops a lab or a district
     // programme reading eight cards as the whole of what we can do and leaving.
     // The deck now leads on the two FAMILIES rather than on the disorders, so
     // the section reads as a discipline with a long menu behind it.
-    deck: 'What you see here is just a glimpse. Our DNA menu goes much further, with customised panels built around the needs of every programme.',
+    deck: 'What you see here is just a glimpse. Our genetic testing menu goes much ' +
+          'further, with customised panels built around the needs of every programme.',
 
     /* --- the two umbrella families, glossed once ------------------------
        ✅ "Haemoglobinopathies" and "musculopathies" are the company's own
@@ -699,10 +733,18 @@ window.LL_CONTENT = {
     body: 'Let us know what you’re looking for and we will come back with a panel ' +
           'recommendation, a per-sample price and a collection schedule — whether ' +
           'you are a laboratory, a hospital, an NGO or a district programme.',
-    // The form is Typeform. `typeform` is the form ID from its public URL
-    // (https://form.typeform.com/to/<id>). Until it is set the button falls
-    // back to a pre-addressed email, so the page never offers a dead control.
-    typeform: '',                                       // 🟠 SLOT-19 Typeform form ID
+    /* The form is Youform, opened as a modal over the page by Youform's own
+       widget — the site draws no overlay, panel or close button of its own.
+
+       `formId` is the id from the form's public URL,
+       https://app.youform.com/forms/<id>. It is the source of truth; the same
+       value appears in index.html on the button (widget.js reads it from the
+       DOM, and the href has to work without any script at all), and scene.js
+       warns in the console if the two ever drift apart.
+
+       Empty it and the button falls back to a pre-addressed email, so the
+       page never offers a dead control. */
+    formId: 'eicdgbx0',                                 // ✅ SLOT-19 — client, 2026-08-22
     // The three things the body copy promises, set out as steps so the reader
     // knows what the click costs and what comes back before they commit.
     steps: [
@@ -713,7 +755,11 @@ window.LL_CONTENT = {
       { t: 'Cards are on their way',
         d: 'Collection cards, return packaging and a one-page collection guide, by ordinary post.' }
     ],
-    submit: 'Request a kit',
+    /* The trigger names the outcome, not the mechanism. "Request a kit" was
+       the old label and described what the LAB does afterwards; the reader's
+       act is sending an enquiry, and it is also what the form's own submit
+       button says, so the two now agree end to end. */
+    submit: 'Send an enquiry',
     duration: 'Takes about two minutes',
     note: 'Opens a short form. Prefer email? Write to admin@lighteninglives.in'
   }

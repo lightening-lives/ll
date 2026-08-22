@@ -1335,16 +1335,20 @@
 
 @media (min-width: 48rem) {
   .scene-copy { background: none; padding-top: 0; }
-  /* THE HERO COLLISION. The headline's longest line ("Genetic answers" at
-     118px Fraunces) runs to ~52% of a 1440 viewport, and the plate, centred
+  /* THE HERO COLLISION. Measured against the headline of the day ("Genetic
+     answers" at 118px Fraunces; the line is "most affordable" since
+     2026-08-22, and slightly longer). The longest line ran to ~52% of a 1440
+     viewport, and the plate, centred
      at 64% with a 58vmin width, started at ~47% — a 5% overlap on the word
      "answers" at rest, and worse as the plate dollies toward the camera
      (z: 0 → 340 across the scroll, which scales it up ~1.3x about the
      viewport centre). Measured at 1024 and 1440; both collided.
 
      The composition is now two real columns. The copy owns the left 55% of
-     the frame (the h1 is capped there, so a longer translation wraps rather
-     than runs under the plate), and the plate is centred at 73% with its
+     the frame (the h1 is capped there, so a longer line — a translation, or
+     a rewritten headline — wraps rather than runs under the plate; that cap
+     is what absorbed the 2026-08-22 rewrite without a new measurement), and
+     the plate is centred at 73% with its
      width capped at 35vw as well as in vmin, so its left edge sits past 55%
      at ANY aspect ratio and stays there through the dolly (measured ~1.11x
      at the end of the scroll). vmin alone let a wide-and-short laptop window
@@ -1456,7 +1460,6 @@ body.is-lit .grain { mix-blend-mode: multiply; opacity: 0.05; }
    `m` is a metre and `M` is mega, and this page prints its scale in front of
    an audience that reads the difference. Unlayered, so it beats the `eyebrow`
    utility that sets the transform without a specificity argument. */
-.scale { text-transform: none; }
 
 /* =====================================================================
    THE RAIL'S GUTTER

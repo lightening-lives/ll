@@ -402,7 +402,7 @@
       <dd class="prose text-mute mt-2">${esc(p.d)}</dd>
     </div>`).join('');
 
-  // contact — the "what happens next" steps, and the Typeform hand-off
+  // contact — the "what happens next" steps, and the Youform hand-off
   $('#kitSteps').innerHTML = C.contact.steps.map((st, i) => `
     <li class="grid grid-cols-[2.5rem_1fr] gap-x-3 py-5">
       <span class="datakey text-deep pt-1">0${i + 1}</span>
@@ -412,47 +412,54 @@
       </div>
     </li>`).join('');
 
-  /* The form is Typeform (SLOT-19). The button is a real link to the form's
-     public URL, so it works before the SDK loads and with no JS at all; once
-     the SDK is in, the click opens the same form as a popup over the page
-     instead of leaving it. The SDK is only fetched when the contact section
-     comes into view — nobody who never reaches the foot of the page pays for
-     it. With no form ID yet, the link is a pre-addressed email, so the control
-     is never dead. */
-  const kitOpen = $('#kitOpen'), formNote = $('#formNote');
-  const TF_ID = C.contact.typeform;
-  if (!TF_ID) {
-    kitOpen.href = 'mailto:' + C.brand.email
-      + '?subject=' + encodeURIComponent('Kit request')
-      + '&body=' + encodeURIComponent('Organisation:\nType of organisation:\nSamples per month:\nPanels of interest:\n');
-    kitOpen.removeAttribute('target');
-  } else {
-    kitOpen.href = 'https://form.typeform.com/to/' + TF_ID;
-    let sdk = null;
-    const loadTypeform = () => sdk || (sdk = new Promise((res, rej) => {
-      const css = document.createElement('link');
-      css.rel = 'stylesheet'; css.href = 'https://embed.typeform.com/next/css/popup.css';
-      const js = document.createElement('script');
-      js.src = 'https://embed.typeform.com/next/embed.js'; js.async = true;
-      js.onload = () => res(window.tf); js.onerror = rej;
-      document.head.append(css, js);
-    }));
-    new IntersectionObserver((es, io) => {
-      if (es.some((e) => e.isIntersecting)) { loadTypeform().catch(() => {}); io.disconnect(); }
-    }, { rootMargin: '400px' }).observe($('#contact'));
+  /* THE FORM (SLOT-19). Youform, opened as a modal by Youform's own widget.
 
-    let popup = null;
-    kitOpen.addEventListener('click', (e) => {
-      if (e.metaKey || e.ctrlKey || e.shiftKey) return;   // let "open in new tab" be
-      e.preventDefault();
-      loadTypeform().then((tf) => {
-        popup = popup || tf.createPopup(TF_ID, {
-          size: 100, autoClose: 4000, medium: 'lightening-lives-site',
-          hidden: { source: 'site' }
-        });
-        popup.open();
-      }).catch(() => { window.open(kitOpen.href, '_blank', 'noopener'); });
-    });
+     The site draws NOTHING around it. An earlier pass built an overlay here —
+     a bone panel with its own close button — and it was the wrong shape: it
+     dressed a third-party form in our chrome, so the reader met two close
+     affordances and two ideas of where they were. Youform ships the modal;
+     this page only has to say which form and where.
+
+     Two Youform scripts exist and they are not interchangeable:
+
+       widget.js   binds ONE delegated click listener and, on any element
+                   carrying `data-youform-open="<id>"`, builds a modal —
+                   overlay, close button, its own stylesheet — then calls
+                   preventDefault(). `data-youform-position` picks "center"
+                   (a modal) or anything else (a bottom-right slide-in).
+                   THIS IS THE ONE. It is in index.html, deferred.
+
+       embed.js    scans for `[data-youform-embed]` divs and drops an INLINE
+                   iframe into each. No button trigger exists in it; its only
+                   overlay is behind `data-fullscreen-mobile`, which swaps the
+                   inline embed for a tap-to-open thumbnail under 768px. It
+                   would put the form in the page, not over it.
+
+     So there is no JavaScript here for the modal at all — the markup carries
+     `data-youform-open` and widget.js does the rest. This block exists only
+     to keep the markup honest against content.js, and to supply the email
+     fallback when there is no form id. */
+  const kitOpen = $('#kitOpen');
+  const FORM_ID = C.contact.formId;
+  const YOUFORM = 'https://app.youform.com/forms/';
+
+  if (!FORM_ID) {
+    /* No form: strip the widget's hook as well as the href, or widget.js
+       would swallow the click and open a modal on an empty id. */
+    kitOpen.removeAttribute('data-youform-open');
+    kitOpen.removeAttribute('target');
+    kitOpen.removeAttribute('rel');
+    kitOpen.href = 'mailto:' + C.brand.email
+      + '?subject=' + encodeURIComponent('Enquiry')
+      + '&body=' + encodeURIComponent('Organisation:\nType of organisation:\nSamples per month:\nTests of interest:\n');
+  } else if (kitOpen.dataset.youformOpen !== FORM_ID) {
+    /* content.js is the source of truth. The warning is deliberate: silently
+       correcting the markup would let the two drift for months unnoticed,
+       and the value that drifts is the one the button exists for. */
+    console.warn('[LL] contact.formId and the #kitOpen markup disagree; using content.js.',
+                 { markup: kitOpen.dataset.youformOpen, content: FORM_ID });
+    kitOpen.dataset.youformOpen = FORM_ID;
+    kitOpen.href = YOUFORM + FORM_ID;
   }
 
   /* --- the inheritance machine (interactive) --------------------------

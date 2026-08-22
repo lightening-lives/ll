@@ -3,8 +3,36 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Lightening Lives — affordable dried-blood-spot DNA screening for India</title>
-<meta name="description" content="Affordable dried-blood-spot DNA screening for haemoglobinopathies and musculopathies — sickle cell, thalassaemia, haemophilia, SMA, Duchenne — plus pharmacogenomics, newborn and carrier panels, and a wider genetic test menu. For laboratories, NGOs and public health programmes across India.">
+<!-- SEARCH TARGET, 2026-08-22. The brief is BREADTH: anyone typing "genetic
+     testing" or "genetic testing for <anything>" should be able to land here.
+     So none of the metadata below names the method.
+
+     That is the change of 2026-08-22 (second pass). The first pass described
+     the offer the way the page argues it — "from one dried blood spot, by
+     ordinary post" — which is the strongest thing about the service and the
+     wrong thing to put in a description: it spends the character budget on
+     HOW, and a reader searching "genetic testing for thalassaemia" is asking
+     WHAT. The method is not hidden, it is simply not the metadata's job: the
+     Specimen section argues it in full, one screen down.
+
+     What the budget buys instead is coverage. The head term is stated
+     literally in the title, the h1 and the menu h2; the tail is every test
+     the lab can actually run, named as "genetic testing for X" in the hero
+     deck and again — statically, for a crawler that does not execute JS — in
+     the availableService block below. Adding a test to the menu means adding
+     it in BOTH places.
+
+     SCOPE DISCIPLINE. availableService lists only what the company has
+     confirmed it runs. Prenatal screening is deliberately absent: it appears
+     on the capabilities pillar (verbatim from the client's own Solutions
+     page) but was struck from the test menu on 2026-08-20, and a structured
+     claim to a test the lab does not offer is worse than a missing one.
+
+     LENGTH. Title 58 characters, description 153; Google renders roughly
+     600px of each, so both survive whole. Keep any future title under ~60
+     and any description under ~160. -->
+<title>India's Most Affordable Genetic Testing | Lightening Lives</title>
+<meta name="description" content="India's most affordable genetic testing: sickle cell, thalassaemia, SMA, Duchenne, haemophilia, pharmacogenomics, carrier, newborn and customised panels.">
 <meta name="theme-color" content="#11171c">
 
 <!-- SEO. The canonical origin is the company's domain; it is the only
@@ -19,21 +47,23 @@
 <meta name="geo.placename" content="Hyderabad">
 
 <!-- Social cards. The image is rendered from preview/og-card.html in the
-     page's own type and palette; re-render it there if the headline changes. -->
+     page's own type and palette. Its headline was updated with the h1 on
+     2026-08-22 — assets/brand/og.png is STILL THE OLD ARTWORK and has to be
+     re-rendered from that file before this ships. -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Lightening Lives">
 <meta property="og:locale" content="en_IN">
 <meta property="og:url" content="https://lighteninglives.in/">
-<meta property="og:title" content="Genetic answers every family can afford — Lightening Lives">
-<meta property="og:description" content="Dried-blood-spot DNA screening for sickle cell, thalassaemia, SMA, Duchenne and pharmacogenomics. One card, by ordinary post, for laboratories, NGOs and public health programmes across India.">
+<meta property="og:title" content="India's most affordable genetic testing — Lightening Lives">
+<meta property="og:description" content="Genetic testing for sickle cell anaemia, thalassaemia, spinal muscular atrophy, Duchenne muscular dystrophy, haemophilia and pharmacogenomics, plus carrier, newborn and customised community panels — for laboratories, NGOs and public health programmes across India.">
 <meta property="og:image" content="https://lighteninglives.in/assets/brand/og.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Lightening Lives — Genetic answers every family can afford. A 96-well assay plate with one lit well.">
+<meta property="og:image:alt" content="Lightening Lives — India's most affordable genetic testing. A 96-well assay plate with one lit well.">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@LivesLlp85686">
-<meta name="twitter:title" content="Genetic answers every family can afford — Lightening Lives">
-<meta name="twitter:description" content="Dried-blood-spot DNA screening for sickle cell, thalassaemia, SMA, Duchenne and pharmacogenomics — for labs, NGOs and public health programmes across India.">
+<meta name="twitter:title" content="India's most affordable genetic testing — Lightening Lives">
+<meta name="twitter:description" content="Genetic testing for sickle cell, thalassaemia, SMA, Duchenne, haemophilia and pharmacogenomics, plus carrier, newborn and customised panels — anywhere in India.">
 <meta name="twitter:image" content="https://lighteninglives.in/assets/brand/og.png">
 
 <!-- Icons. All generated from assets/brand/mark.png (256px) — a vector
@@ -67,7 +97,7 @@
   "url": "https://lighteninglives.in/",
   "logo": "https://lighteninglives.in/assets/brand/mark.png",
   "image": "https://lighteninglives.in/assets/brand/og.png",
-  "description": "Affordable dried-blood-spot DNA screening for haemoglobinopathies and musculopathies — sickle cell, thalassaemia, SMA, Duchenne — plus pharmacogenomics, for laboratories, NGOs and public health programmes across India.",
+  "description": "India's most affordable genetic testing. Genetic testing for sickle cell anaemia, thalassaemia, spinal muscular atrophy, Duchenne muscular dystrophy, haemophilia and other coagulation disorders, pharmacogenomics, inborn errors of metabolism, and carrier, newborn, pre-marital and pre-conception screening — for families, laboratories, NGOs and public health programmes across India.",
   "email": "admin@lighteninglives.in",
   "telephone": "+91 91825 88191",
   "address": {
@@ -80,7 +110,85 @@
   },
   "areaServed": { "@type": "Country", "name": "India" },
   "medicalSpecialty": "Genetic",
-  "knowsAbout": ["Sickle cell anaemia", "Thalassaemia", "Spinal muscular atrophy", "Duchenne muscular dystrophy", "Haemophilia", "Pharmacogenomics", "Newborn screening", "Carrier screening", "Dried blood spot testing"],
+  "availableService": [
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for sickle cell anaemia",
+      "alternateName": "Sickle cell DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Sickle cell anaemia" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for thalassaemia",
+      "alternateName": "Alpha and beta thalassaemia DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Thalassaemia" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for haemophilia",
+      "alternateName": "Haemophilia and coagulation disorder DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Haemophilia" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for spinal muscular atrophy",
+      "alternateName": "SMA DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Spinal muscular atrophy" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for Duchenne muscular dystrophy",
+      "alternateName": "DMD muscular dystrophy DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Duchenne muscular dystrophy" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for inborn errors of metabolism",
+      "alternateName": "Metabolic disorder DNA panel",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Inborn errors of metabolism" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for single-gene disorders",
+      "alternateName": "Single-gene DNA test",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Monogenic genetic disorder" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic testing for non-communicable and complex diseases",
+      "alternateName": "Complex-disease DNA panel",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Non-communicable disease" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Genetic carrier testing",
+      "alternateName": "Genetic testing for carriers, couples and families",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Inherited genetic disorders" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Newborn genetic screening",
+      "alternateName": "Genetic testing for newborns",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Genetic disorders of the newborn" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Pre-marital and pre-conception genetic screening",
+      "alternateName": "Genetic testing before marriage or pregnancy",
+      "usedToDiagnose": { "@type": "MedicalCondition", "name": "Inherited genetic disorders" }
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Pharmacogenomic testing",
+      "alternateName": "Genetic testing for drug response and metaboliser status"
+    },
+    {
+      "@type": "MedicalTest",
+      "name": "Customised community genetic testing panels",
+      "alternateName": "Genetic testing panels built for a specific community or programme"
+    }
+  ],
+  "knowsAbout": ["Genetic testing", "DNA testing", "Molecular diagnostics", "Sickle cell anaemia", "Thalassaemia", "Spinal muscular atrophy", "Duchenne muscular dystrophy", "Muscular dystrophy", "Haemophilia", "Coagulation disorders", "Pharmacogenomics", "Inborn errors of metabolism", "Single-gene disorders", "Newborn screening", "Carrier screening", "Pre-marital screening", "Genetic counselling", "Dried blood spot testing"],
   "sameAs": [
     "https://www.linkedin.com/in/lightening-lives-llp-32a12b392/",
     "https://www.youtube.com/@LighteningLivesLLP",
@@ -172,15 +280,16 @@
         <h1 class="display-xl text-chalk">
           <span class="block" data-ll="hero.line1"></span>
           <span class="block" data-ll="hero.line2"></span>
-          <!-- No `italic`. Fraunces' italic is a separate variable font and the
+          <!-- The emphasis line. It carried "can afford." until 2026-08-22 and now
+               carries "genetic testing." — the search term the page is written to
+               win, given the one piece of typographic weight the headline has.
+               No `italic`. Fraunces' italic is a separate variable font and the
                request never asked for it, so this line — the most prominent on the
-               page — was rendering as a browser-synthesised slant. It also italicised
-               "can afford.", and PRODUCT.md is explicit that price is carried
-               qualitatively, argued from method: a swash flourish on the price claim
-               is the one moment the page leaves instrument register for marketing
-               register, in front of the buyers it is written for. SOFT 40 (double the
-               page's 20) and WONK 1 already set this line apart from the two above
-               it; the slant was a third differentiator on three words. -->
+               page — was rendering as a browser-synthesised slant, on the price
+               claim, which PRODUCT.md is explicit should be argued from method
+               rather than flourished. SOFT 40 (double the page's 20) and WONK 1
+               already set this line apart from the two above it; the slant was a
+               third differentiator on two words. -->
           <span class="block" style="font-variation-settings:'opsz'144,'SOFT'40,'WONK'1" data-ll="hero.line3"></span>
         </h1>
         <!-- 60ch, not 44ch: at 44 the deck set LARGER type into a NARROWER column
@@ -246,7 +355,7 @@
     <div class="scene-layer absolute inset-0">
       <div class="mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end md:items-center">
         <div class="scene-copy w-full md:w-[46%] md:ml-auto pb-[7svh] md:pb-0 px-5 md:px-0">
-          <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="specimen.scale"></span> · <span data-ll="specimen.kicker"></span></p>
+          <p class="eyebrow text-probe mb-4" data-ll="specimen.kicker"></p>
           <h2 class="display-lg text-chalk" data-ll="specimen.head"></h2>
           <p class="prose mt-5 text-mute" data-ll="specimen.body"></p>
           <dl class="mt-7 grid gap-px bg-line border border-line" id="specimenPoints"></dl>
@@ -269,7 +378,7 @@
            also hitting the index panel, which is the scene-layer's other child -->
       <div class="scene-frame mx-auto h-full w-full max-w-[86rem] px-6 md:px-10 flex items-end lg:items-center">
         <div class="scene-copy w-full lg:w-[38%] pb-[7svh] lg:pb-0 px-5 md:px-0">
-          <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="assay.scale"></span> · <span data-ll="assay.kicker"></span></p>
+          <p class="eyebrow text-probe mb-4" data-ll="assay.kicker"></p>
           <h2 class="display-lg text-chalk" data-ll="assay.head"></h2>
           <p class="prose mt-5 text-mute" data-ll="assay.body"></p>
           <ol class="mt-7 border-t border-line" id="assayStack"></ol>
@@ -299,8 +408,7 @@
      ============================================================= -->
 <section id="inheritance" class="relative z-10 section-y border-t border-line">
   <div class="mx-auto w-full max-w-[86rem] px-6 md:px-10">
-    <p class="eyebrow text-probe mb-4"><span class="scale" data-ll="inheritance.scale"></span> ·
-       <span data-ll="inheritance.kicker"></span></p>
+    <p class="eyebrow text-probe mb-4" data-ll="inheritance.kicker"></p>
     <h2 class="display-lg text-chalk max-w-[19ch]" data-ll="inheritance.head"></h2>
     <p class="prose mt-6 max-w-[60ch] text-mute" data-ll="inheritance.body"></p>
 
