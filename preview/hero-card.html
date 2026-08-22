@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hero — the constellation resolves</title>
+<meta name="theme-color" content="#11171c">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,300..700,0..100,0..1&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400..600&family=IBM+Plex+Sans+Condensed:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* =====================================================================
+     HERO — "The constellation resolves"
+     A darkfield of unread lives gathers into a helix; a pulse reads it base
+     by base; one rung is the variant, found; the light it throws lifts the
+     page. Canvas 2D with additive compositing. Self-contained so it can be
+     judged on its own; tokens match src/input.css so it drops in unchanged.
+     ===================================================================== */
+  :root{
+    --void:oklch(20% .014 250); --ink:oklch(24% .014 250); --line:oklch(39% .014 250);
+    --mute:oklch(69% .014 250); --chalk:oklch(94% .014 250);
+    --lumen:oklch(83% .16 88); --bone:oklch(95% .012 85);
+    --font-display:"Fraunces",ui-serif,Georgia,serif; --font-sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+    --font-mono:"IBM Plex Mono",ui-monospace,monospace; --font-cond:"IBM Plex Sans Condensed","IBM Plex Sans",sans-serif;
+    --display-x:clamp(2.5rem, min(0.4rem + 7.75vw, 15.5svh), 7.5rem);
+    --p:0;                /* 0 → 1, the "lit" phase; written by scene JS */
+  }
+  @media (min-width:1800px){ html{ font-size:clamp(1rem, 5px + .625vw, 1.75rem); } }
+  *{box-sizing:border-box} html{background:var(--void);scroll-behavior:smooth}
+  body{margin:0;color:var(--chalk);font-family:var(--font-sans);-webkit-font-smoothing:antialiased}
+
+  .scene{height:200svh;position:relative}
+  .stage{position:sticky;top:0;height:100svh;overflow:hidden;background:var(--void)}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .grain{position:absolute;inset:0;pointer-events:none;opacity:.04;mix-blend-mode:screen;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* the locus tag that rides the variant rung once it is found */
+  .tag{position:absolute;left:0;top:0;transform:translate(14px,-50%);pointer-events:none;opacity:0;
+       font:500 .75rem/1.35 var(--font-mono);letter-spacing:.04em;color:var(--chalk);white-space:nowrap;
+       padding:.3rem .55rem;border:1px solid oklch(66% .19 30 / .6);background:oklch(20% .014 250 / .72);
+       transition:opacity .4s ease}
+  .tag b{font-weight:500;color:oklch(72% .18 30)} .tag i{font-style:normal;color:var(--mute)}
+  .tag.is-on{opacity:1}
+
+  /* type: flat, at z=0, bottom-anchored like the live hero */
+  .copy{position:absolute;inset:0;display:flex;align-items:flex-end;pointer-events:none}
+  .copy>div{width:100%;max-width:86rem;margin:0 auto;padding:0 1.5rem 9svh}
+  @media (min-width:48rem){ .copy>div{padding:0 2.5rem 9svh} }
+  .eyebrow{font:600 .875rem/1 var(--font-cond);letter-spacing:.1em;text-transform:uppercase;color:var(--lumen);margin:0 0 1.25rem}
+  h1{font-family:var(--font-display);font-weight:400;font-size:var(--display-x);line-height:.9;letter-spacing:-.035em;margin:0;
+     font-variation-settings:"opsz" 144,"SOFT" 20,"WONK" 0;text-wrap:balance;
+     color:color-mix(in oklch, var(--chalk), var(--bone) calc(var(--p) * 100%))}
+  @media (min-width:48rem){ h1{max-width:55%} }
+  h1 .w{font-variation-settings:"opsz" 144,"SOFT" 40,"WONK" 1}
+  .deck{max-width:60ch;margin:1.75rem 0 0;color:var(--mute);font-size:clamp(1.0625rem, calc(var(--display-x) * .178), 1.375rem);line-height:1.6;text-wrap:pretty}
+  .cta{display:flex;flex-wrap:wrap;gap:.75rem;margin-top:2rem;pointer-events:auto}
+  .cta a{font:600 .875rem/1 var(--font-cond);letter-spacing:.1em;text-transform:uppercase;text-decoration:none;padding:.9rem 1.5rem;transition:background-color .2s,color .2s,border-color .2s}
+  .cta a.p{background:var(--lumen);color:var(--void)} .cta a.p:hover{background:var(--chalk)}
+  .cta a.s{border:1px solid var(--line);color:var(--chalk)} .cta a.s:hover{border-color:var(--lumen);color:var(--lumen)}
+  .cta a:focus-visible{outline:2px solid var(--lumen);outline-offset:3px}
+
+  /* the HUD readout, in the page's own voice */
+  .hud{position:absolute;right:1.5rem;top:50%;transform:translateY(-50%);writing-mode:vertical-rl;
+       font:500 .75rem var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--mute);opacity:.8;pointer-events:none}
+  @media (max-width:47.99rem){ .hud,.tag{display:none} }
+
+  /* after the hero: a placeholder so the scroll has somewhere to land */
+  .after{min-height:60svh;background:var(--bone);color:oklch(20% .014 250);padding:12svh 1.5rem}
+  .after p{max-width:60ch;margin:0 auto;color:oklch(38% .02 250);font-size:1.1rem;line-height:1.6}
+  .after h2{font-family:var(--font-display);font-weight:400;font-size:2.4rem;max-width:60ch;margin:0 auto 1rem;letter-spacing:-.02em}
+
+  /* reduced motion: the scene holds its resolved state and nothing travels */
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} .scene{height:100svh} .tag{transition:none} }
+</style>
+</head>
+<body>
+<section class="scene" id="hero" aria-label="Lightening Lives">
+  <div class="stage">
+    <canvas id="field" aria-hidden="true"></canvas>
+    <div class="grain" aria-hidden="true"></div>
+    <div class="tag" id="tag" aria-hidden="true"><b>HBB</b> c.20A&gt;T <i>· rs334 · found</i></div>
+    <div class="hud" id="hud" aria-hidden="true">10⁰ m · darkfield</div>
+    <div class="copy"><div>
+      <p class="eyebrow">Dried blood spot · DNA screening</p>
+      <h1><span style="display:block">Genetic answers</span><span style="display:block">every family</span><span class="w" style="display:block">can afford.</span></h1>
+      <p class="deck">Dried blood spot screening for haemoglobinopathies and musculopathies including Sickle Cell Anaemia, Thalassaemia, Spinal Muscular Atrophy and Duchenne Muscular Dystrophy along with pharmacogenetics in broad aspects. Affordable, and built for all the people.</p>
+      <div class="cta"><a class="p" href="#contact">Contact us</a><a class="s" href="#menu">See our common tests</a></div>
+    </div></div>
+  </div>
+</section>
+<section class="after" id="contact">
+  <h2>The page resolves to light.</h2>
+  <p>This is where the specimen section begins on the live site. The hero above is production-ready: stepped reading cadence, a pinned locus tag on the variant, phone layout, reduced-motion and no-JS states, and it pauses when off-screen or in a hidden tab.</p>
+</section>
+
+<script src="../vendor/gsap.min.js"></script>
+<script src="../vendor/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  'use strict';
+  const cv = document.getElementById('field');
+  if (!cv || !cv.getContext) return;                       // no canvas: the type stands on the plain ground
+  const ctx = cv.getContext('2d', { alpha: false });
+  const root = document.documentElement, tag = document.getElementById('tag'), hud = document.getElementById('hud');
+  const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const narrow = () => innerWidth < 768;
+
+  /* ---- budgets ------------------------------------------------------ */
+  let W = 0, H = 0, DPR = 1;
+  const DPR_CAP = 1.5;                                      // additive blending is fill-rate bound; 2x buys nothing visible
+  const smooth = (x) => x <= 0 ? 0 : x >= 1 ? 1 : x * x * (3 - 2 * x);
+  const lerp = (a, b, t) => a + (b - a) * t;
+  let seed = 11; const rnd = () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+
+  /* ---- the field ----------------------------------------------------
+     Strand points sit on two helices; rung points sit on the base pair
+     between them; free specks never join — they are the population. Every
+     point also owns a scattered start position, and `gather` lerps between
+     the two, so the helix literally condenses out of the field. */
+  const RUNGS = 112, VARIANT = 66;
+  const FREE = narrow() ? 900 : Math.round(Math.min(2600, (innerWidth * innerHeight) / 520));
+  const pts = [];
+  for (let i = 0; i < RUNGS; i++) {
+    for (let s = 0; s < 2; s++) pts.push({ k: 1, rung: i, side: s, sx: (rnd() - .5) * 2.6, sy: (rnd() - .5) * 2.2, sz: (rnd() - .5) * 2.6, size: 1 + rnd() * .8, ph: rnd() * 6.28 });
+    for (let j = 1; j <= 6; j++) pts.push({ k: 2, rung: i, frac: j / 7, sx: (rnd() - .5) * 2.6, sy: (rnd() - .5) * 2.2, sz: (rnd() - .5) * 2.6, size: .55 + rnd() * .5, ph: rnd() * 6.28 });
+  }
+  for (let i = 0; i < FREE; i++) {
+    const r = 1.2 + rnd() * 1.9, a = rnd() * 6.28, b = (rnd() - .5) * 3.14;
+    pts.push({ k: 0, sx: Math.cos(a) * Math.cos(b) * r, sy: Math.sin(b) * r * .8, sz: Math.sin(a) * Math.cos(b) * r, size: .4 + rnd() * .9, ph: rnd() * 6.28, gold: rnd() > .88 });
+  }
+  // per-point helix targets, computed once
+  const R = .36, PITCH = 1.75, TURN = .32;
+  for (const p of pts) {
+    if (!p.k) continue;
+    const a0 = p.rung * TURN, yy = (p.rung / RUNGS - .5) * PITCH;
+    if (p.k === 1) { const a = a0 + (p.side ? Math.PI : 0); p.hx = Math.cos(a) * R; p.hz = Math.sin(a) * R; }
+    else { const f = p.frac * 2 - 1; p.hx = Math.cos(a0) * R * f; p.hz = Math.sin(a0) * R * f; }
+    p.hy = yy; p.front = 1 - p.rung / RUNGS;
+  }
+  const proj = new Array(pts.length);
+
+  /* ---- colour cache: 3k oklch strings a frame is the one real cost ---- */
+  const HUES = { 0: '94% .014 250', 1: '83% .16 88', 2: '80% .17 148', 3: '66% .19 30' };
+  const cache = new Map();
+  const col = (h, a) => { const q = Math.round(a * 40) / 40, key = h * 100 + q; let s = cache.get(key); if (!s) { s = `oklch(${HUES[h]} / ${q})`; cache.set(key, s); } return s; };
+
+  function resize() {
+    DPR = Math.min(devicePixelRatio || 1, DPR_CAP);
+    W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    dirty = true;
+  }
+
+  /* ---- input -------------------------------------------------------- */
+  let P = REDUCED ? 1 : 0, mx = 0, my = 0, tmx = 0, tmy = 0, dirty = true;
+  addEventListener('pointermove', (e) => { if (e.pointerType === 'mouse') { tmx = (e.clientX / W - .5) * 2; tmy = (e.clientY / H - .5) * 2; } }, { passive: true });
+
+  /* ---- the frame ---------------------------------------------------- */
+  function draw(t) {
+    mx = lerp(mx, tmx, .06); my = lerp(my, tmy, .06);
+    const gather = smooth((P - .04) / .36);                 // .04 → .40  the helix condenses
+    const read   = smooth((P - .38) / .40);                 // .38 → .78  the pulse reads it
+    const lit    = smooth((P - .66) / .30);                 // .66 → .96  the field is lit
+    // the read cadence is STEPPED: it pauses on every eighth base, so it
+    // reads as reading rather than as a wipe
+    const steps = 10, rs = Math.floor(read * steps) / steps + smooth((read * steps % 1) * 1.6 - .3) / steps;
+
+    const isN = narrow();
+    const F = Math.min(W, H) * (isN ? .85 : 1.05), YS = isN ? .62 : 1;   // narrow: smaller, squatter, in the top band
+    const CX = isN ? W * .5 : W * .68, CY = isN ? H * .21 : H * .47;
+    const rotY = t * .2 + mx * .35 + gather * .6, rotX = -.18 + my * .22;
+    const cy = Math.cos(rotY), sy = Math.sin(rotY), cx = Math.cos(rotX), sx = Math.sin(rotX);
+
+    // ground: the neutral lift, then the gold source at the helix
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.fillStyle = `oklch(${(20 + lit * 6).toFixed(1)}% .014 250)`; ctx.fillRect(0, 0, W, H);
+    const g = ctx.createRadialGradient(CX, CY, 0, CX, CY, Math.max(W, H) * .6);
+    g.addColorStop(0, `oklch(83% .16 88 / ${(.02 + lit * .16).toFixed(3)})`);
+    g.addColorStop(.45, `oklch(83% .14 88 / ${(lit * .05).toFixed(3)})`);
+    g.addColorStop(1, 'oklch(83% .14 88 / 0)');
+    ctx.fillStyle = g; ctx.fillRect(0, 0, W, H);
+
+    ctx.globalCompositeOperation = 'lighter';
+    let vx = 0, vy = 0, vn = 0;
+    for (let i = 0; i < pts.length; i++) {
+      const p = pts[i];
+      const dx = p.sx + Math.sin(t * .25 + p.ph) * .04, dy = p.sy + Math.cos(t * .2 + p.ph) * .04, dz = p.sz;
+      let x, y, z, b, h, sz = p.size;
+      if (!p.k) {
+        x = dx; y = dy; z = dz; h = p.gold ? 1 : 0;
+        b = (.22 + .10 * Math.sin(t * 1.3 + p.ph)) * (1 - lit * .35);
+      } else {
+        x = lerp(dx, p.hx, gather); y = lerp(dy, p.hy * YS, gather); z = lerp(dz, p.hz, gather);
+        const passed = smooth((rs - p.front) / .06);
+        const wave = Math.exp(-Math.pow((rs - p.front) / .04, 2));
+        const isVar = p.rung === VARIANT;
+        b = .22 + gather * .18 + passed * .22 + wave * 1.2;
+        h = isVar && passed > 0 ? 3 : (passed > 0 || wave > .1) ? 1 : (p.k === 2 ? 2 : 0);
+        if (isVar) { sz *= 1 + passed * 1.6; b += passed * (1.1 + .45 * Math.sin(t * 5)); }
+        if (isVar && p.k === 2 && passed > .5) { vx += x; vy += y; vn++; }
+      }
+      let X = x * cy - z * sy, Z = x * sy + z * cy, Y = y;
+      const Y2 = Y * cx - Z * sx; Z = Y * sx + Z * cx; Y = Y2;
+      const s = F / (3.2 + Z);
+      const r = Math.min(p.k ? 4.5 : 2.4, sz * s * .0035 + .3);
+      let q = proj[i]; if (!q) q = proj[i] = {};
+      q.X = CX + X * s; q.Y = CY + Y * s; q.r = r; q.h = h; q.z = Z; q.p = p;
+      q.b = b * (1.1 - Z * .22) * (!p.k && Z < -1.2 ? .45 : 1);
+    }
+    proj.sort((a, b) => b.z - a.z);
+    for (let i = 0; i < proj.length; i++) {
+      const q = proj[i], a = Math.min(1, q.b);
+      if (q.b > .5 && q.p.k) { ctx.fillStyle = col(q.h, a * .18); ctx.beginPath(); ctx.arc(q.X, q.Y, q.r * 5, 0, 6.2832); ctx.fill(); }
+      ctx.fillStyle = col(q.h, a); ctx.beginPath(); ctx.arc(q.X, q.Y, q.r, 0, 6.2832); ctx.fill();
+    }
+    // strands and rungs as hairlines once gathered
+    if (gather > .3) {
+      ctx.lineWidth = 1; ctx.globalAlpha = (gather - .3) / .7 * .5;
+      const st = proj.filter(q => q.p.k === 1).sort((a, b) => a.p.rung - b.p.rung || a.p.side - b.p.side);
+      for (let i = 0; i + 3 < st.length; i += 2) {
+        for (const s of [0, 1]) { const A = st[i + s], B = st[i + 2 + s]; ctx.strokeStyle = col(A.h, Math.min(1, A.b) * .55); ctx.beginPath(); ctx.moveTo(A.X, A.Y); ctx.lineTo(B.X, B.Y); ctx.stroke(); }
+        const A = st[i], B = st[i + 1]; ctx.strokeStyle = col(A.h, Math.min(1, A.b) * .22); ctx.beginPath(); ctx.moveTo(A.X, A.Y); ctx.lineTo(B.X, B.Y); ctx.stroke();
+      }
+      ctx.globalAlpha = 1;
+    }
+    // the locus tag rides the variant rung once it is read
+    if (vn) {
+      let X = (vx / vn) * cy - 0, Z = (vx / vn) * sy, Y = vy / vn;  // rung centre has z≈0 on the axis
+      const Y2 = Y * cx - Z * sx; Z = Y * sx + Z * cx; Y = Y2;
+      const s = F / (3.2 + Z);
+      tag.style.transform = `translate(${(CX + X * s + 22).toFixed(1)}px, ${(CY + Y * s).toFixed(1)}px) translateY(-50%)`;
+      tag.classList.add('is-on');
+    } else tag.classList.remove('is-on');
+
+    hud.textContent = P < .3 ? '10⁰ m · darkfield' : P < .78 ? '10⁻⁹ m · reading the helix' : '10⁻⁹ m · the variant, found';
+    root.style.setProperty('--p', lit.toFixed(3));
+  }
+
+  /* ---- the loop: runs only while the stage is on screen, the tab is
+     visible and motion is allowed; otherwise draws one frame on demand ---- */
+  let running = false, visible = true, t0 = performance.now();
+  function loop(now) { if (!running) return; draw((now - t0) / 1000); requestAnimationFrame(loop); }
+  function start() { if (running || REDUCED || !visible) return; running = true; requestAnimationFrame(loop); }
+  function stop() { running = false; }
+  new IntersectionObserver((es) => { visible = es[0].isIntersecting; visible ? start() : stop(); }).observe(cv);
+  document.addEventListener('visibilitychange', () => document.hidden ? stop() : start());
+  addEventListener('resize', () => { resize(); if (REDUCED) draw(0); }, { passive: true });
+  resize();
+
+  if (REDUCED) { draw(0); return; }                         // a still, resolved helix; the copy is the hero
+  gsap.registerPlugin(ScrollTrigger);
+  ScrollTrigger.create({ trigger: '#hero', start: 'top top', end: 'bottom bottom', scrub: .5, onUpdate: (st) => { P = st.progress; } });
+  start();
+})();
+</script>
+</body>
+</html>
